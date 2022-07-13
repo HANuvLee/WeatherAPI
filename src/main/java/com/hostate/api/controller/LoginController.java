@@ -53,7 +53,7 @@ public class LoginController {
 		
 		model.addAttribute("board", board);
 		
-		return "test";
+		return "/login/test";
 	}
 	
 }
