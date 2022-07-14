@@ -1,21 +1,17 @@
 package com.hostate.api.controller;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.security.MessageDigest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.hostate.api.service.EncryptService;
 import com.hostate.api.service.LoginService;
-import com.hostate.api.vo.Board;
+import com.hostate.api.vo.LoginData;
 
 /**
  * Handles requests for the application home page.
@@ -25,35 +21,33 @@ public class LoginController {
 	
 	@Autowired
 	LoginService loginService;
+	@Autowired
+	EncryptService encryptService;
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 	
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
-	@RequestMapping(value = "/test.do", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
+	
+	//로그인 jsp 페이지 이동
+	@RequestMapping(value = "/login/login.do", method = RequestMethod.GET)
+	public String login() throws Exception {
 		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
-		return "home";
+		return "/login/login";
 	}
 	
-	@RequestMapping(value = "/login.do", method = RequestMethod.GET)
-	public String login(Locale locale, Model model) throws Exception {
-		List<Board> board = new ArrayList<>();
+	//로그인 검증 메소드
+	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
+	public String loginAction(LoginData loginData) throws Exception {
 		
-		board = loginService.selectTest();
+		 String EncChk = encryptService.pwEncrypt(loginData.getUser_id() ,loginData.getUser_pw()); 
+		 System.out.println(EncChk);
 		
-		model.addAttribute("board", board);
 		
-		return "/login/test";
+		return "/main/mainpage";
 	}
+	
+	
 	
 }

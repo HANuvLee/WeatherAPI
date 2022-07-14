@@ -11,9 +11,9 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	 <bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> 
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property> 
-        <property name="url" value="jdbc:mysql://127.0.0.1:3306/spbsecur?serverTimezone=Asia/Seoul"></property> 
-        <property name="username" value="user01"></property> 
-        <property name="password" value="1234"></property> 
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/api_db?serverTimezone=Asia/Seoul"></property> 
+        <property name="username" value="user_weather"></property> 
+        <property name="password" value="dlwngh2@"></property> 
     </bean> 
     
     <!-- 트랜잭션 -->

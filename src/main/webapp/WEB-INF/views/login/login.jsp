@@ -20,11 +20,28 @@
 					<input type="text" id="user_id" name="user_id"><br>
 					<label for="user_pw">pw</label>
 					<input type="password" id="user_pw" name="user_pw" ><br>
-					<button id="loginBtn" class="btn btn-link">login</button>
 				</div>
 			</div>
 		</form>
 	</div>
+	<button id="loginBtn" class="btn btn-link">login</button>
 </body>
-<script type="text/javascript" src="/resources/js/login.js" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+$(function(){
+	$("#loginBtn").on("click", function() {
+		var user_id = $("#user_id").val();
+		var user_pw= $("#user_pw").val();
+		
+		if(user_id == ''){
+			alert("아이디를 입력해주세요.");
+		}else if(user_pw == ''){
+			alert("비밀번호를 입력해 주세요.");
+		}else{
+			$("#loginAction").submit();
+		}
+	});
+	
+});
+
+</script>
 </html>

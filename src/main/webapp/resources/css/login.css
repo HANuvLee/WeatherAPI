@@ -22,11 +22,11 @@
 
 #loginBtn {
 	float: right;
+	padding-right: 750px;
+	border: 0;
+	outline: 0;
 }
 
-#loginBtn {
-	float: right;
-}
 #joinbtn{
 	float: left;
 }

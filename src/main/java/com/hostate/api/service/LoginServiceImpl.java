@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hostate.api.dao.LoginDao;
-import com.hostate.api.vo.Board;
+import com.hostate.api.vo.TestTableVO;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -14,7 +14,7 @@ public class LoginServiceImpl implements LoginService {
 	LoginDao logindao;
 	
 	@Override
-	public List<Board> selectTest() throws Exception {
+	public List<TestTableVO> selectTest() throws Exception {
 		// TODO Auto-generated method stub
 		return logindao.selectTest();
 	}

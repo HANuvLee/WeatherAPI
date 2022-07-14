@@ -2,10 +2,10 @@ package com.hostate.api.dao;
 
 import java.util.List;
 
-import com.hostate.api.vo.Board;
+import com.hostate.api.vo.TestTableVO;
 
 public interface LoginDao {
 
-	List<Board> selectTest() throws Exception;
+	List<TestTableVO> selectTest() throws Exception;
 
 }
