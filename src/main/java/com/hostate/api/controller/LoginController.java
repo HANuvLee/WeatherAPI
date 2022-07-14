@@ -41,13 +41,12 @@ public class LoginController {
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	public String loginAction(LoginData loginData) throws Exception {
 		
-		 String EncChk = encryptService.pwEncrypt(loginData.getUser_id() ,loginData.getUser_pw()); 
+		 int EncChk = encryptService.pwEncrypt(loginData.getUser_id() ,loginData.getUser_pw()); 
 		 System.out.println(EncChk);
 		
 		
 		return "/main/mainpage";
 	}
 	
-	
-	
+s
 }

@@ -6,9 +6,9 @@
 		from testtable
 	</select>
 	
-	<select id="pwEncryptuUpdate" parameterType="hashmap" resultType="int">
+	<update id="pwEncryptuUpdate" parameterType="hashmap">
 		update tb_user_info
 		set  user_pw = #{user_pw}
 		where user_id = #{user_id}
-	</select>
+	</update>
 </mapper>

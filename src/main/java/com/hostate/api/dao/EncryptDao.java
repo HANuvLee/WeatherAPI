@@ -4,6 +4,6 @@ import java.security.MessageDigest;
 
 public interface EncryptDao {
 
-	String pwEncrypt(String user_id, String cryptPw) throws Exception;
+	int pwEncrypt(String user_id, String cryptPw) throws Exception;
 
 }

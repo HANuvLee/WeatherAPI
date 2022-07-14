@@ -10,6 +10,9 @@ import com.hostate.api.dao.EncryptDao;
 @Service
 public class EncryptServiceImpl implements EncryptService {
 	
+	@Autowired
+	EncryptDao encryptDao;
+	
 	private String bytesToHex(byte[] bytes) {
 		StringBuilder builder = new StringBuilder();
 		for(byte b : bytes) {
@@ -17,12 +20,9 @@ public class EncryptServiceImpl implements EncryptService {
 		}
 		return builder.toString();
 	}
-	
-	@Autowired
-	EncryptDao encryptDao;
 
 	@Override
-	public String pwEncrypt(String user_id, String user_pw) throws Exception {
+	public int pwEncrypt(String user_id, String user_pw) throws Exception {
 	
 		MessageDigest md = MessageDigest.getInstance("SHA-256"); //"SHA-256 형식으로 암호화를 위한 인스턴스 생성"
 		md.update(user_pw.getBytes()); //해쉬값 업데이트

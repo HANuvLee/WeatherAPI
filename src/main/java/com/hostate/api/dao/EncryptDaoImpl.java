@@ -15,13 +15,13 @@ public class EncryptDaoImpl implements EncryptDao {
 	private SqlSession sqlsession;
 
 	@Override
-	public String pwEncrypt(String user_id, String cryptPw) throws Exception {
+	public int pwEncrypt(String user_id, String cryptPw) throws Exception {
 		// TODO Auto-generated method stub
 		Map<String, String> param = new HashMap<>();
 		
 		param.put("user_id", user_id);
 		param.put("user_pw", cryptPw);
 		
-		return sqlsession.selectOne("pwEncryptuUpdate", param);
+		return sqlsession.update("pwEncryptuUpdate", param);
 	}
 }
