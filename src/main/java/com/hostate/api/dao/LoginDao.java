@@ -7,5 +7,5 @@ import com.hostate.api.vo.TestTableVO;
 public interface LoginDao {
 
 	List<TestTableVO> selectTest() throws Exception;
-
+	
 }

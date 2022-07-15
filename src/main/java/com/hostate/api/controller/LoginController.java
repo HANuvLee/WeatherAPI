@@ -1,6 +1,6 @@
 package com.hostate.api.controller;
 
-import java.security.MessageDigest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +39,15 @@ public class LoginController {
 	
 	//로그인 검증 메소드
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
-	public String loginAction(LoginData loginData) throws Exception {
+	public String loginAction(LoginData loginData, HttpSession session) throws Exception {	
 		
-		 int EncChk = encryptService.pwEncrypt(loginData.getUser_id() ,loginData.getUser_pw()); 
-		 System.out.println(EncChk);
+		int encChk = encryptService.pwEncrypt(loginData);
 		
-		
-		return "/main/mainpage";
-	}
-	
-s
+		if(encChk != 0) {
+			session.setAttribute("user_id", loginData.getUser_id());
+			return "redirect:/main/mainpage.do";
+		}else {
+			return "redirect:/login/login.do";
+		}
+	}	
 }

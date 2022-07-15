@@ -1,0 +1,98 @@
+@charset "EUC-KR";
+
+.joinbtn {
+	text-align: left;
+}
+.parentheader{
+	background-color: #333333;
+	width: 1450px;
+	margin: 0px auto;
+	border-radius: 0px;
+}
+.header{
+	margin: 0px auto;
+	width: 1450px;
+	background-color: #333333;
+/* 	border-top: 2px solid #D2D2D2;
+	border-bottom: 2px solid #D2D2D2; */
+}
+.headerContent{
+	background-color: #fbfbfd;
+	height:46px;
+	width: 1450px;
+	margin: 0px auto;
+	text-align: center;
+
+}
+.headerContentText{
+	line-height:46px;
+}
+.headerContentText > a{
+	color: #0066cc !important;
+}
+a{
+	color: #f5f5f7 !important;
+}
+.contents {
+	margin: 0px auto;
+	width: 1100px;
+	height : 500px;
+}
+.logo{
+ 	font-size: 25px; 	
+}
+
+.logstate{
+	float: right;
+	font-size : 12px; 
+}
+.search{
+	margin: 0px auto;
+	width: 1450px;
+	height : 200px;
+	border-top: 2px solid #D2D2D2;
+	border-bottom: 2px solid #D2D2D2;
+	text-align: center;
+}
+.serarchform{
+	padding-top : 40px;
+}
+.label {
+    display: block;
+    font: 1rem 'Fira Sans', sans-serif;
+}
+.guidetext{
+	padding-top: 20px;
+}
+
+/*≈∏¿Ã∏” css**********************************************************************************/
+.clockdate-wrapper {
+    background-color: #333;
+    padding:10px;
+    width: 480px;
+    text-align:center;
+    border-radius:5px;
+    margin:0px auto;
+  
+}
+#clock{
+    background-color:#333;
+    font-family: sans-serif;
+    font-size:60px;
+    text-shadow:0px 0px 1px #fff;
+    color:#fff;
+}
+#clock span {
+    color:#888;
+    text-shadow:0px 0px 1px #333;
+    font-size:50px;
+    top:-5px;
+    left:10px;
+}
+#date {
+    letter-spacing:3px;
+    font-size:14px;
+    font-family:arial,sans-serif;
+    color:#fff;
+}
+/******************************************************************************************/

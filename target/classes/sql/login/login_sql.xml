@@ -6,9 +6,10 @@
 		from testtable
 	</select>
 	
-	<update id="pwEncryptuUpdate" parameterType="hashmap">
-		update tb_user_info
-		set  user_pw = #{user_pw}
+	<select id="userLoginChk" parameterType="hashmap" resultType="int">
+		select count(*)
+		from tb_user_info
 		where user_id = #{user_id}
-	</update>
+		and user_pw = #{user_pw}
+	</select>
 </mapper>

@@ -1,9 +1,9 @@
 package com.hostate.api.dao;
 
-import java.security.MessageDigest;
+import java.util.Map;
 
 public interface EncryptDao {
-
-	int pwEncrypt(String user_id, String cryptPw) throws Exception;
+	
+	int userLoginChk(Map<String, String> param) throws Exception;
 
 }

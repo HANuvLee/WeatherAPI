@@ -40,7 +40,6 @@ $(function(){
 			$("#loginAction").submit();
 		}
 	});
-	
 });
 
 </script>
