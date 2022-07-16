@@ -1,5 +1,10 @@
 package com.hostate.api.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -37,7 +42,7 @@ public class LoginController {
 		return "/login/login";
 	}
 	
-	//로그인 검증 메소드
+	//로그인 검증
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	public String loginAction(LoginData loginData, HttpSession session) throws Exception {	
 		
@@ -49,5 +54,12 @@ public class LoginController {
 		}else {
 			return "redirect:/login/login.do";
 		}
-	}	
+	}
+	
+	//로그아웃
+	@RequestMapping(value = "/login/logout.do", method = RequestMethod.GET)
+	public String logout(HttpSession session) throws Exception {
+		session.invalidate();
+		return "redirect:/main/mainpage.do";
+	}
 }

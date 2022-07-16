@@ -2,6 +2,9 @@ package com.hostate.api.commonutil;
 
 import java.security.MessageDigest;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class SHA256 {
 	
 	public String encrypt(String text) throws Exception {

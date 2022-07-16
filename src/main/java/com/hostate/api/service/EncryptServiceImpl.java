@@ -15,13 +15,14 @@ public class EncryptServiceImpl implements EncryptService {
 	
 	@Autowired
 	EncryptDao encryptDao;
+	@Autowired
+	SHA256 sha256;
 
 	@Override
 	public int pwEncrypt(LoginData loginData) throws Exception {
 		
 		Map<String, String> param = new HashMap<>();
-		SHA256 sha256 = new SHA256(); 
-		
+ 		
 		String pwEncrypt = sha256.encrypt(loginData.getUser_pw()); //USER_PW ¾ÏÈ£È­ 
 		
 		param.put("user_id", loginData.getUser_id()); 
