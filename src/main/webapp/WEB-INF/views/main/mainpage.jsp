@@ -47,52 +47,18 @@
 			</div>
 		</div>
 		<div class="weatherContents">
-			<div class="weatherForm">
-				<div class="weatherPng">2022. 07. 17<p>weatherPng</p></div>
-				<div class="weatherInfo">
-					<div class="weatherState"><b>weatherState</b></div>
-					<div class="nowTemp">현재온도 : nowTemp</div>
-					<div class="maxTemp">최고온도 : maxTemp</div>
-					<div class="minTemp">최소온도 : minTemp</div>
-					<div class="pop">강수확률 : pop</div>
-					<div class="humidity">습도 : humidity</div>
-				</div>
-			</div>
-			<div class="weatherForm">
-				<div class="weatherPng">2022. 07. 17<p>weatherPng</p></div>
-					<div class="weatherInfo">
-						<div class="weatherState"><b>weatherState</b></div>
-						<div class="nowTemp">현재온도 : nowTemp</div>
-						<div class="maxTemp">최고온도 : maxTemp</div>
-						<div class="minTemp">최소온도 : minTemp</div>
-						<div class="pop">강수확률 : pop</div>
-						<div class="humidity">습도 : humidity</div>
-					</div>
-			</div>
-			<div class="weatherForm">
-				<div class="weatherPng">2022. 07. 17<p>weatherPng</p></div>
-				<div class="weatherInfo">
-					<div class="weatherState"><b>weatherState</b></div>
-					<div class="nowTemp">현재온도 : nowTemp</div>
-					<div class="maxTemp">최고온도 : maxTemp</div>
-					<div class="minTemp">최소온도 : minTemp</div>
-					<div class="pop">강수확률 : pop</div>
-					<div class="humidity">습도 : humidity</div>
-				</div>
-			</div>
+	
 		</div>
 	</div>
 	<c:if test="${sessionScope.user_id != null}">
 	<div class="search">
-		<form class="serarchform">
-    		<label for="start">Start date:</label>
-			<input type="date" id="startdate" name="trip-start" value="2022-07-15" min="2022-07-15" max="2022-07-22">
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    		<label for="start">End date:</label>
-			<input type="date" id="endate" name="trip-start" value="2022-07-15" min="2022-07-15" max="2022-07-22">
-			&nbsp;&nbsp;&nbsp;&nbsp;
-      		<button type="button" class="btn btn-light searcBtn">search</button>
-   		</form>
+   		<label for="start">Start date:</label>
+		<input type="date" id="startdate" name="startdate" value="2022-07-15" min="2022-07-15" max="2022-07-22">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   		<label for="start">End date:</label>
+		<input type="date" id="enddate" name="enddate" value="2022-07-15" min="2022-07-15" max="2022-07-22">
+		&nbsp;&nbsp;&nbsp;&nbsp;
+     	<button class="btn btn-light searcBtn" onclick="serachClick();">search</button>  	
    		<div class="guidetext">
 			*금일부터 최대 <b>7</b>일까지 조회가능합니다.
 		</div>
@@ -105,7 +71,7 @@
 			<input type="date" id="startdate" name="trip-start" value="2022-07-15" min="2022-07-15" max="2022-07-22" disabled="disabled">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     		<label for="start">End date:</label>
-			<input type="date" id="endate" name="trip-start" value="2022-07-15" min="2022-07-15" max="2022-07-22" disabled="disabled">
+			<input type="date" id="enddate" name="trip-start" value="2022-07-15" min="2022-07-15" max="2022-07-22" disabled="disabled">
 			&nbsp;&nbsp;&nbsp;&nbsp;
       		<button type="button" class="btn btn-light searcBtn" disabled="disabled">search</button>
    		</form>
@@ -118,9 +84,30 @@
 <script type="text/javascript" charset="utf-8">
 $("document").ready(function() {
 	startTime(); //메인 페이지 타이머 생성
-	startPage(); //메인 페이지 날씨정보 생성 
 	
 });
+
+function serachClick() {
+	var st = $("#startdate").val();
+	var ed = $("#enddate").val();
+	
+	st = st.replace(/\-/g,"");
+	ed = ed.replace(/\-/g,"");
+	
+	st = parseInt(st);
+	ed = parseInt(ed);
+	
+	if(ed-st < 3){ //조회범위가 3일 미만인경우 단기예보만 조회 서비스 호출
+		searchvilageweather(st, ed);
+	}else{ //아니면 전부호출
+		searchvilageweather(st, ed);
+		searchmidtaweather(st, ed);
+		searchmidlandweather(st, ed);
+	}
+}
+
+
+
 /****************************************** 타이머 생성 함수 ******************************************/
 function startTime() {
     var today = new Date();
@@ -154,17 +141,97 @@ function checkTime(i) {
     return i;
 }
 /*************************************************************************************************/
-function startPage() {
+ function searchvilageweather(st, ed) { //단기예보조회
 	$.ajax({
 		type: 'get',
-		url: '/api/weather.do',
+		url: '/api/searchvilageweather.do',
+		data:{
+			"startdate" : st,
+			"enddate" : ed
+		},
 		timeout : 30000,
 		contentType: 'application/json',
 		dataType: 'json',
 		success: function(data, status, xhr) {
-			var today = getToday();
-			var maxTempArr = new Array();
-			var minTempArr = new Array;
+			let dataHeader = data.result.response.header.resultCode;
+			let sItem = data.result.response.body.items.item;
+			
+		
+			
+			var objarr = new Array();
+			
+			for(st; st<=ed; st++){
+				objarr.push(String(st));
+			}
+	
+			if (dataHeader == "00"){
+				console.log("success ==>");
+				console.log(data);
+				console.log(JSON.stringify(data));
+				console.log(st);
+				console.log(ed);
+				
+				 $.each(objarr, function(index, value){
+			          $(".weatherContents").append($("<div class=weatherForm' id="+value+"'>"
+			          + "<div class=weatherPng><b>"+value+""
+			          + "</b></div>"
+					  +	"<div class=weatherInfo>"
+					  +	"<div class=pop></div>"
+					  +	"<div class=sky></div>"
+					  +	"<div class=maxTemp></div>"
+					  + "<div class=minTemp></div>"
+				      +	"</div>"
+			          + "</div>"));
+			      }); 
+				 
+				 var pop = 0;
+				 var sky = 0;
+				 var maxTemp = 0;
+				 var minTemp = 0;
+				 var cnt = 0;
+				 
+				 $.each(objarr, function(index, value){
+					 console.log("1");
+					 for (var i = 0; i < sItem.length; i++){
+						 	console.log("2");
+							if(sItem[i].fcstDate == value){
+								 var cnt = 0;
+								 console.log("3");
+								if(sItem[i].category == "POP"){
+									console.log("4");
+									cnt += 1;
+									pop += parseInt(sItem[i].fcstValue);
+								}
+							}
+						}
+					 console.log("pop ->" + pop);
+					 console.log("cnt ->" + cnt)
+			      }); 	
+				
+			}else{
+				console.log("fail ==>");
+				console.log(data);
+			}
+		},
+		error: function(e, status, xhr, data) {
+			console.log("error ==>");
+			console.log(e);
+		}
+	});
+}
+/*************************************************************************************************/ 
+ function searchmidtaweather(st, ed) { //중기예보조회
+	$.ajax({
+		type: 'get',
+		url: '/api/searchmidtaweather.do',
+		data:{
+			"startdate" : st,
+			"enddate" : ed
+		},
+		timeout : 30000,
+		contentType: 'application/json',
+		dataType: 'json',
+		success: function(data, status, xhr) {
 			
 			let dataHeader = data.result.response.header.resultCode;
 			
@@ -184,40 +251,39 @@ function startPage() {
 		}
 	});
 }
-
-function getToday() {
-	 var date = new Date();
-	 var year = date.getFullYear();
-	 var month = ("0" + (1 + date.getMonth())).slice(-2);
-	 var day = ("0" + date.getDate()).slice(-2);
-
-	 return year + month + day;
-}
-
-function designWeatherBlock(item) {
-	var maxTempArr = new Array();
-	var minTempArr = new Array;
-	
-	for (var i = 0; i < item.length; i++) {
-		if(item[i].category == "TMX"){
-			maxTempArr.push(item[i].fcstValue);
-		}else if(item[i].category == "TMN"){
-			minTempArr.push(item[i].fcstValue);
+/*************************************************************************************************/
+/*************************************************************************************************/ 
+ function searchmidlandweather(st, ed) { //중기예보조회
+	$.ajax({
+		type: 'get',
+		url: '/api/searchmidlandweather.do',
+		data:{
+			"startdate" : st,
+			"enddate" : ed
+		},
+		timeout : 30000,
+		contentType: 'application/json',
+		dataType: 'json',
+		success: function(data, status, xhr) {
+			
+			let dataHeader = data.result.response.header.resultCode;
+			
+			if (dataHeader == "00"){
+				console.log("success ==>");
+				console.log(data);
+				
+				
+			}else{
+				console.log("fail ==>");
+				console.log(data);
+			}
+		},
+		error: function(e, status, xhr, data) {
+			console.log("error ==>");
+			console.log(e);
 		}
-	}
-	
-	  $.each(maxTempArr, function(index, value){
-          $(".weatherContents").append($("<div class=weatherForm>"
-         
-          + "<div class=weatherPng></div>"
-			  +	"<div class=weatherInfo>"
-				  +	"<div class=weatherState></div>"
-				  +	"<div class=nowTemp></div>"
-				  +	"<div class=maxTemp>"+value+"</div>"
-				  + "<div class=minTemp></div>"
-			  +	"</div>"
-          + "</div>"));
-      });
+	});
 }
+/*************************************************************************************************/
 </script>
 </html>

@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import javax.servlet.http.HttpSession;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hostate.api.commonutil.ApiDateFormat;
+import com.hostate.api.service.LogService;
 
 //@RestController : 기본 하위의 메소드들은 모두 @responsebody를 갖는다
 //@RequestBody : 클라이언트 요청 xml/json을 자바 객체로 변환하여 전달 받을 수 있다.
@@ -30,32 +33,43 @@ public class ApiController {
 	@Autowired
 	ApiDateFormat apiDateFormat;
 
+	@Autowired
+	LogService logService;
+	
 	/*
 	 * @API LIST ~
 	 * 
 	 * getVilageFcst 단기예보조회 getMidTa 중기기온조회 getMidLandFcst 중기육상예보조회
-	 * 
 	 */
-	@RequestMapping(value = "/api/weather.do", method = RequestMethod.GET)
-	public String restApiGetWeather() throws Exception {
 
+	// 단기예보
+	@RequestMapping(value = "/api/searchvilageweather.do", method = RequestMethod.GET)
+	public String getVilageFcst(HttpSession session, String startdate, String enddate) throws Exception {
+		System.out.println("단기예보호출");
+		
+		String user_id = (String) session.getAttribute("user_id");
+		int recordChk = logService.searchWeatherLogInsert(user_id, startdate, enddate); //조회기록저장
+		
 		Date today = new Date(); // 메인페이지 접속 시간
 		Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale); // 원하는 시간 형태
-		StringBuilder baseTime = new StringBuilder(formatter.format(today));
-		apiDateFormat.baseTimeFormat(baseTime); // base_time (발표시각) 파리미터 형태를 맞추기 위한 포멧
+		SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
+		StringBuilder baseTime = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
 		
-		System.out.println(baseTime.substring(8,12));
-		
-		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // https입력 시 Java의 신뢰하는인증서 목록(keystore)에 사용하고자 하는 인증기관이 등록되어 있지 않아 접근이 차단되는 현상발생.
-	
+		StringBuilder startDate = new StringBuilder(startdate+baseTime);
+		apiDateFormat.baseTimeFormat(startDate); // base_time (발표시각) 파리미터 형태를 맞추기 위한포멧
+
+		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // https입력 시 Java의 신뢰하는인증서
+																								// 목록(keystore)에 사용하고자
+																								// 하는 인증기관이 등록되어 있지 않아
+																								// 접근이 차단되는현상발생.
+
 				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // 인증키
 				+ "&pageNo=1" // 페이지번호
-				+ "&numOfRows=36" // 헌 패아자 결과 수
+				+ "&numOfRows=834" // 헌 패아자 결과 수 (금일, 내일, 모레)
 				+ "&dataType=JSON" // XML, JSON
-				+ "&base_date=" + baseTime.substring(0, 8) //발표일자
-				+ "&base_time=" + baseTime.substring(8,12) // + baseTime.substring(8)  //발표시각
-				+ "&nx=60"
+				+ "&base_date=" + startDate.substring(0, 8) // 발표일자
+				+ "&base_time=" + startDate.substring(8) // 발표시각
+				+ "&nx=60" 
 				+ "&ny=127";
 
 		HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
@@ -64,19 +78,26 @@ public class ApiController {
 		jsonObj.put("result", resultMap);
 
 		return jsonObj.toString();
+
 	}
 
-	@RequestMapping(value = "/api/searchweather.do", method = RequestMethod.GET)
-	public String restApiSearchWeather() throws Exception {
+	// 중기기온예보
+	@RequestMapping(value = "/api/searchmidtaweather.do", method = RequestMethod.GET)
+	public String restApiSearchMidTaWeather(HttpSession session, String startdate, String enddate) throws Exception {
+		System.out.println("중기기온예보");
+		System.out.println(startdate);
+		System.out.println(enddate);
 
 		Date today = new Date(); // 메인페이지 접속 시간
 		Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale); // 원하는 시간 형태
+		SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
+		StringBuilder baseTime = new StringBuilder(formatter.format(today));
 
-		StringBuilder tmfc = new StringBuilder(formatter.format(today));
+		StringBuilder tmfc = new StringBuilder(startdate + baseTime);
 		apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
-
-		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa" // https입력 시 Java의 신뢰하는 인증서 목록(keystore)에 사용하고자 하는 인증기관이 등록되어 있지 않아 접근이 차단되는 현상.
+		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa" // https입력 시 Java의 신뢰하는 인증서
+																					// 목록(keystore)에 사용하고자 하는 인증기관이
+																					// 등록되어 있지 않아 접근이 차단되는 현상.
 
 				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // 일반인증키
 				+ "&pageNo=1" // 페이지번호
@@ -93,6 +114,37 @@ public class ApiController {
 		return jsonObj.toString();
 	}
 	
+		// 중기육상예보
+		@RequestMapping(value = "/api/searchmidlandweather.do", method = RequestMethod.GET)
+		public String restApiSearchMidLandWeather(HttpSession session, String startdate, String enddate) throws Exception {
+			System.out.println("중기육상예보");
+			System.out.println(startdate);
+			System.out.println(enddate);
+
+			Date today = new Date(); // 메인페이지 접속 시간
+			Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
+			SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
+			StringBuilder baseTime = new StringBuilder(formatter.format(today));
+
+			StringBuilder tmfc = new StringBuilder(startdate + baseTime);
+			apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
+			String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
+				+"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
+				+"&pageNo=1"
+				+"&numOfRows=10"
+				+"&dataType=JSON"
+				+"&regId=11B10101"
+				+"&tmFc=" + tmfc;
+
+			HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
+			System.out.println("# RESULT : " + resultMap);
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("result", resultMap);
+
+			return jsonObj.toString();
+		}
+	
+
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)
 			throws Exception {
 		boolean isPost = false;

@@ -16,7 +16,7 @@ public class ApiDateFormat {
 	}
 
 	private StringBuilder TmfcFormat(StringBuilder tmFc) {
-		
+		System.out.println("TmfcFormat" + tmFc);
 		int hour = Integer.parseInt(tmFc.substring(9,10)); // 현재 시간
 		int day =  Integer.parseInt(tmFc.substring(0,8)) - 1; // 다음날 00시부터 05시59분까지는 전날 18시 업데이트 정보를 불러와야함.
 
@@ -34,43 +34,45 @@ public class ApiDateFormat {
 			}else {						 //오후 18시 ~ 오후 23시59분
 				tmFc.replace(8, 12, "1800"); 
 			}
-		}	
+		}
+		
 		return tmFc;
 	}
 	
 
-	private StringBuilder BaseTimeFormat(StringBuilder baseTime) {
-		
-		switch (baseTime.substring(8,10)) {	
+	private StringBuilder BaseTimeFormat(StringBuilder startDate) {
+		System.out.println("BaseTimeFormat" + startDate);
+		switch (startDate.substring(8,10)) {	
 			case "03": case "04": case "05":
-				baseTime.replace(8, 12, "0200");
+				startDate.replace(8, 12, "0200");
 				break;
 			case "06": case "07": case "08":
-				baseTime.replace(8, 12, "0500");
+				startDate.replace(8, 12, "0500");
 				break;
 			case "09": case "10": case "11":
-				baseTime.replace(8, 12, "0800");
+				startDate.replace(8, 12, "0800");
 				break;
 			case "12": case "13": case "14":
-				baseTime.replace(8, 12, "1100");
+				startDate.replace(8, 12, "1100");
 				break;
 			case "15": case "16": case "17":
-				baseTime.replace(8, 12, "1400");
+				startDate.replace(8, 12, "1400");
 				break;
 			case "18": case "19": case "20":
-				baseTime.replace(8, 12, "1700");
+				startDate.replace(8, 12, "1700");
 				break;
 			case "21": case "22": case "23":
-				baseTime.replace(8, 12, "2000");
+				startDate.replace(8, 12, "2000");
 				break;
 			case "00": case "01": case "02":
-				int year = Integer.parseInt(baseTime.substring(4, 8)) -1; // 현재 시간
-				baseTime.replace(5, 9,String.valueOf(year));
-				baseTime.replace(8, 12, "2300");
+				int year = Integer.parseInt(startDate.substring(4, 8)) -1; // 현재 시간
+				startDate.replace(5, 9,String.valueOf(year));
+				startDate.replace(8, 12, "2300");
 				break;
 			default:
 				break;
 			}
-		return baseTime;
+		System.out.println("AfterBaseTimeFormat" + startDate);
+		return startDate;
 	}
 }
