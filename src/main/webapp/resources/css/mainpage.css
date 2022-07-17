@@ -35,7 +35,7 @@ a{
 }
 .contents {
 	margin: 0px auto;
-	width: 1100px;
+	width: 100%;
 	height : 560px;
 }
 .logo{
@@ -66,6 +66,47 @@ a{
 }
 .searcBtn{
  padding: 11px 12px;
+}
+.weatherContents{
+	background-color: yellow;
+	position:relative;
+	width: 100%;
+	height:435px;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+}
+
+.weatherForm{
+	background-color: red;
+	width: 25%;
+	height: 150px;
+	margin: 10px;
+	margin-top : 130px;
+	text-align: right;
+	float: left;
+	border-radius:5px;
+}
+.weatherInfo{
+	float: right;
+	text-align : right;
+	height: 100%;
+	width: 190px;
+	padding: 17px;
+}
+.weatherPng{
+	float: left;
+    text-align: left;
+    height: 100%;
+    width: 180px;
+    padding: 7px;
+}
+.todayWeather{
+	background-color: green;
+	width: 100%;
+	height: 320px;
+	position: absolute;
+	margin-top: 125px;
 }
 
 /*≈∏¿Ã∏” css**********************************************************************************/

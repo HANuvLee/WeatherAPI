@@ -46,6 +46,41 @@
 				<div id="date"></div>
 			</div>
 		</div>
+		<div class="weatherContents">
+			<div class="weatherForm">
+				<div class="weatherPng">2022. 07. 17<p>weatherPng</p></div>
+				<div class="weatherInfo">
+					<div class="weatherState"><b>weatherState</b></div>
+					<div class="nowTemp">현재온도 : nowTemp</div>
+					<div class="maxTemp">최고온도 : maxTemp</div>
+					<div class="minTemp">최소온도 : minTemp</div>
+					<div class="pop">강수확률 : pop</div>
+					<div class="humidity">습도 : humidity</div>
+				</div>
+			</div>
+			<div class="weatherForm">
+				<div class="weatherPng">2022. 07. 17<p>weatherPng</p></div>
+					<div class="weatherInfo">
+						<div class="weatherState"><b>weatherState</b></div>
+						<div class="nowTemp">현재온도 : nowTemp</div>
+						<div class="maxTemp">최고온도 : maxTemp</div>
+						<div class="minTemp">최소온도 : minTemp</div>
+						<div class="pop">강수확률 : pop</div>
+						<div class="humidity">습도 : humidity</div>
+					</div>
+			</div>
+			<div class="weatherForm">
+				<div class="weatherPng">2022. 07. 17<p>weatherPng</p></div>
+				<div class="weatherInfo">
+					<div class="weatherState"><b>weatherState</b></div>
+					<div class="nowTemp">현재온도 : nowTemp</div>
+					<div class="maxTemp">최고온도 : maxTemp</div>
+					<div class="minTemp">최소온도 : minTemp</div>
+					<div class="pop">강수확률 : pop</div>
+					<div class="humidity">습도 : humidity</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<c:if test="${sessionScope.user_id != null}">
 	<div class="search">
@@ -84,7 +119,7 @@
 $("document").ready(function() {
 	startTime(); //메인 페이지 타이머 생성
 	startPage(); //메인 페이지 날씨정보 생성 
-
+	
 });
 /****************************************** 타이머 생성 함수 ******************************************/
 function startTime() {
@@ -127,12 +162,17 @@ function startPage() {
 		contentType: 'application/json',
 		dataType: 'json',
 		success: function(data, status, xhr) {
+			var today = getToday();
+			var maxTempArr = new Array();
+			var minTempArr = new Array;
 			
 			let dataHeader = data.result.response.header.resultCode;
 			
 			if (dataHeader == "00"){
 				console.log("success ==>");
 				console.log(data);
+				
+				
 			}else{
 				console.log("fail ==>");
 				console.log(data);
@@ -143,6 +183,41 @@ function startPage() {
 			console.log(e);
 		}
 	});
+}
+
+function getToday() {
+	 var date = new Date();
+	 var year = date.getFullYear();
+	 var month = ("0" + (1 + date.getMonth())).slice(-2);
+	 var day = ("0" + date.getDate()).slice(-2);
+
+	 return year + month + day;
+}
+
+function designWeatherBlock(item) {
+	var maxTempArr = new Array();
+	var minTempArr = new Array;
+	
+	for (var i = 0; i < item.length; i++) {
+		if(item[i].category == "TMX"){
+			maxTempArr.push(item[i].fcstValue);
+		}else if(item[i].category == "TMN"){
+			minTempArr.push(item[i].fcstValue);
+		}
+	}
+	
+	  $.each(maxTempArr, function(index, value){
+          $(".weatherContents").append($("<div class=weatherForm>"
+         
+          + "<div class=weatherPng></div>"
+			  +	"<div class=weatherInfo>"
+				  +	"<div class=weatherState></div>"
+				  +	"<div class=nowTemp></div>"
+				  +	"<div class=maxTemp>"+value+"</div>"
+				  + "<div class=minTemp></div>"
+			  +	"</div>"
+          + "</div>"));
+      });
 }
 </script>
 </html>
