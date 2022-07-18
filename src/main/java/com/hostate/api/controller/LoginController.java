@@ -39,14 +39,14 @@ public class LoginController {
 	//로그인 jsp 페이지 이동
 	@RequestMapping(value = "/login/login.do", method = RequestMethod.GET)
 	public String login(HttpServletRequest res) throws Exception {
-	
+		System.out.println("/login/login.do");
 		return "/login/login";
 	}
 	
 	//로그인 검증
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	public String loginAction(LoginData loginData, HttpSession session) throws Exception {	
-		
+		System.out.println("/login/loginAction.do");
 		int encChk = encryptService.pwEncrypt(loginData);
 		
 		if(encChk != 0) {

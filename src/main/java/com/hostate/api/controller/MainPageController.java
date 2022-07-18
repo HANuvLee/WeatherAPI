@@ -12,7 +12,7 @@ public class MainPageController {
 		//메인 jsp 페이지 이동
 		@RequestMapping(value = "/main/mainpage.do", method = RequestMethod.GET)
 		public String login(HttpServletRequest res) throws Exception {
-			
+			System.out.println("/main/mainpage.do");
 				return "/main/mainpage";
 		}
 	
