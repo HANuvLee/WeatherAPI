@@ -12,4 +12,10 @@
 		where user_id = #{user_id}
 		and user_pw = #{user_pw}
 	</select>
+	
+	<update id="userLoginUpdate" parameterType="hashmap">
+		update tb_user_info
+		set user_pw = #{user_pw}
+		where user_id = #{user_id}
+	</update>
 </mapper>

@@ -86,61 +86,6 @@ $("document").ready(function() {
 	startTime(); //메인 페이지 타이머 생성
 	
 });
-
-function serachClick() {
-	var st = $("#startdate").val();
-	var ed = $("#enddate").val();
-	
-	st = st.replace(/\-/g,"");
-	ed = ed.replace(/\-/g,"");
-	
-	st = parseInt(st);
-	ed = parseInt(ed);
-	
-	if(ed-st < 3){ //조회범위가 3일 미만인경우 단기예보만 조회 서비스 호출
-		searchvilageweather(st, ed);
-	}else{ //아니면 전부호출
-		searchvilageweather(st, ed);
-		searchmidtaweather(st, ed);
-		searchmidlandweather(st, ed);
-	}
-}
-
-
-
-/****************************************** 타이머 생성 함수 ******************************************/
-function startTime() {
-    var today = new Date();
-    var hr = today.getHours();
-    var min = today.getMinutes();
-    var sec = today.getSeconds();
-    ap = (hr < 12) ? "<span>AM</span>" : "<span>PM</span>";
-    hr = (hr == 0) ? 12 : hr;
-    hr = (hr > 12) ? hr - 12 : hr;
-    //Add a zero in front of numbers<10
-    hr = checkTime(hr);
-    min = checkTime(min);
-    sec = checkTime(sec);
-    document.getElementById("clock").innerHTML = hr + ":" + min + ":" + sec + " " + ap;
-    
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    var curWeekDay = days[today.getDay()];
-    var curDay = today.getDate();
-    var curMonth = months[today.getMonth()];
-    var curYear = today.getFullYear();
-    var date = curWeekDay+", "+curDay+" "+curMonth+" "+curYear;
-    document.getElementById("date").innerHTML = date;
-    
-    var time = setTimeout(function(){ startTime() }, 500);
-}
-function checkTime(i) {
-    if (i < 10) {
-        i = "0" + i;
-    }
-    return i;
-}
-/*************************************************************************************************/
  function searchvilageweather(st, ed) { //단기예보조회
 	$.ajax({
 		type: 'get',
@@ -153,12 +98,19 @@ function checkTime(i) {
 		contentType: 'application/json',
 		dataType: 'json',
 		success: function(data, status, xhr) {
+			
 			let dataHeader = data.result.response.header.resultCode;
 			let sItem = data.result.response.body.items.item;
+
+			let objarr = new Array();
+			let toDay = getToday();
+			let pop = 0;
+			let sky = 0;
+			let max = 0;
+			let min = 0;
+			let cnt = 0;
 			
-		
-			
-			var objarr = new Array();
+			console.log(toDay);
 			
 			for(st; st<=ed; st++){
 				objarr.push(String(st));
@@ -167,47 +119,36 @@ function checkTime(i) {
 			if (dataHeader == "00"){
 				console.log("success ==>");
 				console.log(data);
-				console.log(JSON.stringify(data));
-				console.log(st);
-				console.log(ed);
 				
-				 $.each(objarr, function(index, value){
-			          $(".weatherContents").append($("<div class=weatherForm' id="+value+"'>"
-			          + "<div class=weatherPng><b>"+value+""
-			          + "</b></div>"
-					  +	"<div class=weatherInfo>"
-					  +	"<div class=pop></div>"
-					  +	"<div class=sky></div>"
-					  +	"<div class=maxTemp></div>"
-					  + "<div class=minTemp></div>"
-				      +	"</div>"
-			          + "</div>"));
-			      }); 
-				 
-				 var pop = 0;
-				 var sky = 0;
-				 var maxTemp = 0;
-				 var minTemp = 0;
-				 var cnt = 0;
-				 
-				 $.each(objarr, function(index, value){
-					 console.log("1");
-					 for (var i = 0; i < sItem.length; i++){
-						 	console.log("2");
-							if(sItem[i].fcstDate == value){
-								 var cnt = 0;
-								 console.log("3");
-								if(sItem[i].category == "POP"){
-									console.log("4");
-									cnt += 1;
-									pop += parseInt(sItem[i].fcstValue);
-								}
-							}
-						}
-					 console.log("pop ->" + pop);
-					 console.log("cnt ->" + cnt)
-			      }); 	
+				let rephtml = "";
 				
+				for(let i in objarr){ //날씨 내용 폼 및 관련 태그생성
+					rephtml += "<div class=weatherForm' id="+objarr[i]+"'>";
+					rephtml += "<div class=weatherPng><b>"+objarr[i]+"";
+					rephtml += "</b></div>"
+					rephtml += "<div class='repbody'></div>";
+					rephtml	+= "<div class=weatherInfo>"
+					rephtml += "<div class=pop></div>";
+					rephtml += "<div class=sky></div>"
+					rephtml += "<div class=maxTemp></div>";
+					rephtml += "<div class=minTemp></div>";
+					rephtml += "</div>";
+					rephtml += "</div>";
+				}
+			    $('.weatherContents').html(rephtml);
+			    
+			    
+			    for(let i = 0; i < sItem.length; i++){
+			    	if(sItem[i].category === "POP" && sItem[i].fcstDate === toDay){
+			    		for(j in sItem[i]){
+			    			cnt += 1;
+			    			pop += parseInt(sItem[i].fcstValue);
+			    			console.log("pop ===> " + pop);
+			    		}
+			    	}console.log("popAvg ===> " + pop);
+			    }
+	
+
 			}else{
 				console.log("fail ==>");
 				console.log(data);
@@ -219,8 +160,8 @@ function checkTime(i) {
 		}
 	});
 }
-/*************************************************************************************************/ 
- function searchmidtaweather(st, ed) { //중기예보조회
+ /**************************************중기기온예보조회함수*****************************************/
+ function searchmidtaweather(st, ed) {
 	$.ajax({
 		type: 'get',
 		url: '/api/searchmidtaweather.do',
@@ -251,9 +192,8 @@ function checkTime(i) {
 		}
 	});
 }
-/*************************************************************************************************/
-/*************************************************************************************************/ 
- function searchmidlandweather(st, ed) { //중기예보조회
+/**************************************중기육상예보조회함수*****************************************/
+ function searchmidlandweather(st, ed) { 
 	$.ajax({
 		type: 'get',
 		url: '/api/searchmidlandweather.do',
@@ -284,6 +224,66 @@ function checkTime(i) {
 		}
 	});
 }
-/*************************************************************************************************/
+
+/**************************************조회버튼 클릭 함수******************************************/
+function serachClick() {
+	var st = $("#startdate").val();
+	var ed = $("#enddate").val();
+	
+	st = st.replace(/\-/g,"");
+	ed = ed.replace(/\-/g,"");
+	
+	st = parseInt(st);
+	ed = parseInt(ed);
+	
+	if(ed-st < 3){ //조회범위가 3일 미만인경우 단기예보만 조회 서비스 호출
+		searchvilageweather(st, ed);
+	}else{ //아니면 전부호출
+		searchvilageweather(st, ed);
+		searchmidtaweather(st, ed);
+		searchmidlandweather(st, ed);
+	}
+}
+/***************************************타이머 생성 함수*******************************************/
+ function startTime() {
+	    var today = new Date();
+	    var hr = today.getHours();
+	    var min = today.getMinutes();
+	    var sec = today.getSeconds();
+	    ap = (hr < 12) ? "<span>AM</span>" : "<span>PM</span>";
+	    hr = (hr == 0) ? 12 : hr;
+	    hr = (hr > 12) ? hr - 12 : hr;
+	    //Add a zero in front of numbers<10
+	    hr = checkTime(hr);
+	    min = checkTime(min);
+	    sec = checkTime(sec);
+	    document.getElementById("clock").innerHTML = hr + ":" + min + ":" + sec + " " + ap;
+	    
+	    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+	    var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+	    var curWeekDay = days[today.getDay()];
+	    var curDay = today.getDate();
+	    var curMonth = months[today.getMonth()];
+	    var curYear = today.getFullYear();
+	    var date = curWeekDay+", "+curDay+" "+curMonth+" "+curYear;
+	    document.getElementById("date").innerHTML = date;
+	    
+	    var time = setTimeout(function(){ startTime() }, 500);
+	}
+	function checkTime(i) {
+	    if (i < 10) {
+	        i = "0" + i;
+	    }
+	    return i;
+	}
+	/***************************************오늘날짜 생성 함수*******************************************/
+function getToday(){
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = ("0" + (1 + date.getMonth())).slice(-2);
+    var day = ("0" + date.getDate()).slice(-2);
+
+    return year + month + day;
+}
 </script>
 </html>

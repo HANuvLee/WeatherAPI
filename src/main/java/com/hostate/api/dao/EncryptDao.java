@@ -6,4 +6,6 @@ public interface EncryptDao {
 	
 	int userLoginChk(Map<String, String> param) throws Exception;
 
+	int userLoginUpdate(Map<String, String> param) throws Exception;
+
 }

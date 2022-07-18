@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -37,8 +38,8 @@ public class LoginController {
 	
 	//로그인 jsp 페이지 이동
 	@RequestMapping(value = "/login/login.do", method = RequestMethod.GET)
-	public String login() throws Exception {
-		
+	public String login(HttpServletRequest res) throws Exception {
+	
 		return "/login/login";
 	}
 	

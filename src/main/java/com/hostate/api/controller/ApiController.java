@@ -145,21 +145,20 @@ public class ApiController {
 		}
 	
 
-	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)
-			throws Exception {
+	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)throws Exception {
 		boolean isPost = false;
 
-		if ("post".equals(type)) {
+		if ("post".equals(type)) { //post방식
 			isPost = true;
-		} else {
+		} else { //get방식
 			url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr;
+			System.out.println("getDataFromJson url ==>" + url);
 		}
 
 		return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
 	}
 
-	public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter,
-			String contentType) throws Exception {
+	public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter,String contentType) throws Exception {
 
 		URL apiURL = new URL(url);
 

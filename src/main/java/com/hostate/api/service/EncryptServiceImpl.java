@@ -30,7 +30,8 @@ public class EncryptServiceImpl implements EncryptService {
 		
 		int userLoginChk = encryptDao.userLoginChk(param);
 		
-		if(userLoginChk == 0) { //사용자 정보가 DB 존재하지 않으면 0 리턴 
+		if(userLoginChk == 0) { //DB 암호화 패스워드 업데이트 
+			userLoginChk = encryptDao.userLoginUpdate(param);
 			return userLoginChk;
 		}else{ //사용자 아이디가 DB 존재하면 1 리턴
 			return userLoginChk;

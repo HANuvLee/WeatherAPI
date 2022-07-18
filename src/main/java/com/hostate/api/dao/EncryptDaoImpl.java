@@ -17,4 +17,10 @@ public class EncryptDaoImpl implements EncryptDao {
 
 		return sqlsession.selectOne("userLoginChk", param); //유저 정보 조회
 	}
+
+	@Override
+	public int userLoginUpdate(Map<String, String> param) throws Exception {
+		// TODO Auto-generated method stub
+		return sqlsession.selectOne("userLoginUpdate", param);
+	}
 }
