@@ -1,8 +1,13 @@
 package com.hostate.api.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.hostate.api.service.EncryptService;
 import com.hostate.api.service.LoginService;
 import com.hostate.api.vo.LoginData;
+import com.hostate.api.vo.Tb_User_InfoVO;
+import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 /**
  * Handles requests for the application home page.
@@ -46,11 +53,12 @@ public class LoginController {
 	//로그인 검증
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	public String loginAction(LoginData loginData, HttpSession session) throws Exception {	
-		System.out.println("/login/loginAction.do");
-		int encChk = encryptService.pwEncrypt(loginData);
+	
+		Tb_User_InfoVO userChk = loginService.userChk(loginData);
 		
-		if(encChk != 0) {
-			session.setAttribute("user_id", loginData.getUser_id());
+		if(userChk.getUser_id()!=null && !userChk.getUser_id().equals("")) {
+			session.setAttribute("user_id", userChk.getUser_id());
+			session.setAttribute("user_name", userChk.getCreate_user_name());
 			return "redirect:/main/mainpage.do";
 		}else {
 			return "redirect:/login/login.do";

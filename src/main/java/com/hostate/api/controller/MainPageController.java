@@ -13,7 +13,8 @@ public class MainPageController {
 		@RequestMapping(value = "/main/mainpage.do", method = RequestMethod.GET)
 		public String login(HttpServletRequest res) throws Exception {
 			System.out.println("/main/mainpage.do");
-				return "/main/mainpage";
+			
+		    return "/main/mainpage";
 		}
 	
 }

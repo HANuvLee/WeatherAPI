@@ -1,5 +1,7 @@
 package com.hostate.api.interceptor;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,34 +15,40 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  *  
  */
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
+
+
 
 public class CustomInterceptor extends HandlerInterceptorAdapter {
-	
-	 //컨트롤러 요청 전 수행 되는 메서드 
-	 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-	            throws Exception {
+	 
+	//컨트롤러 요청 전 수행 되는 메서드 
+	//return true : preHandle 메서드 수행 후 본래 요청한 컨트롤러 수행
+	//return false : 컨트롤러로 요청이 가지 않는다.
+	 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException
+	            {
 	        
 	        System.out.println("preHandle1");
-	       
-	        HttpSession session = request.getSession();
-			//session.getAttribute("user_id");
-	        System.out.println("preHandle2");
-															// 공백 : .toString().equals("") ***!!!*** 
-			if (session.getAttribute("user_id") == null || session.getAttribute("user_id").toString().equals("") ) {
-				// 로그인 페이지 이동 / 현재 로그인상태가 아님
-				System.out.println("preHandle3");
-				ModelAndView mv = new ModelAndView("redirect:/login/login.do");
-				System.out.println("preHandle4");
-				throw new ModelAndViewDefiningException(mv);
-			}else {
-				// 로그인상태임으로 메인페이지로 이동
-				System.out.println("preHandle5");
-				ModelAndView mv = new ModelAndView("redirect:/main/mainpage.do");
-				 System.out.println("preHandle6");
-				throw new ModelAndViewDefiningException(mv);
+	        System.out.println(request.getRequestURI());
+	        
+	        	System.out.println("preHandle2");
+	        	HttpSession session = request.getSession();
+	        	
+				if (session.getAttribute("user_id") != null && !session.getAttribute("user_id").toString().equals("")) {
+					//해당 요청 컨트롤라 이동
+					System.out.println("preHandle3");
+					return true;
+				}else {
+					if(request.getRequestURI() == "/login/login.do") {
+						System.out.println("preHandle4");
+						return true;
+					}else {
+						System.out.println("preHandle5");
+						response.sendRedirect("/login/login.do");
+						return false;
+					}
+				}
 			}
-	    }
-	 
 		/*
 		 * @Override public void postHandle(HttpServletRequest request,
 		 * HttpServletResponse response, Object handler, ModelAndView modelAndView)
