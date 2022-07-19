@@ -28,22 +28,20 @@ public class CustomInterceptor extends HandlerInterceptorAdapter {
 	 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException
 	            {
 	        
-	        System.out.println("preHandle1");
-	        System.out.println(request.getRequestURI());
-	        
-	        	System.out.println("preHandle2");
+		 		System.out.println("preHandle =====> " + request.getRequestURI());
+		 		System.out.println("preHandle1");
 	        	HttpSession session = request.getSession();
 	        	
-				if (session.getAttribute("user_id") != null && !session.getAttribute("user_id").toString().equals("")) {
-					//해당 요청 컨트롤라 이동
-					System.out.println("preHandle3");
+				if (session.getAttribute("user_id") != null && !session.getAttribute("user_id").toString().equals("")) { //세션이 있다면
+					//해당 요청 컨트롤러 수행
+					System.out.println("preHandle2");
 					return true;
-				}else {
-					if(request.getRequestURI() == "/login/login.do") {
-						System.out.println("preHandle4");
+				}else{//세션이 없고
+					if(request.getRequestURI().equals("/login/login.do") || (request.getRequestURI().equals("/login/loginAction.do"))) { //로그인 페이지 요청 시 응답
+						System.out.println("preHandle3");
 						return true;
-					}else {
-						System.out.println("preHandle5");
+					}else { //로그인페이지가 아닐 시 로그인 페이지로 응답
+						System.out.println("preHandle4");
 						response.sendRedirect("/login/login.do");
 						return false;
 					}
