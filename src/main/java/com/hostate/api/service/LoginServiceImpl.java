@@ -31,7 +31,7 @@ public class LoginServiceImpl implements LoginService {
 	}
 
 	@Override
-	public Tb_User_InfoVO userChk(LoginData loginData) throws Exception {
+	public Tb_User_InfoVO userChk(Tb_User_InfoVO loginData) throws Exception {
 		Tb_User_InfoVO result = new Tb_User_InfoVO();
 		
 		//유저 아이디 값으로 데이터베이스 상의 해당되는 아이디의 salt값 가져오기

@@ -65,7 +65,7 @@ public class ApiDateFormat {
 				startDate.replace(8, 12, "2000");
 				break;
 			case "00": case "01": case "02":
-				int year = Integer.parseInt(startDate.substring(4, 8)) -1; // 현재 시간
+				int year = Integer.parseInt(startDate.substring(4, 8)) -1; // 금일 시간 -1
 				startDate.replace(5, 9,String.valueOf(year));
 				startDate.replace(8, 12, "2300");
 				break;

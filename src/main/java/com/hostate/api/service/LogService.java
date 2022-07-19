@@ -1,7 +1,9 @@
 package com.hostate.api.service;
 
+import com.hostate.api.vo.Tb_weather_search_scope_info;
+
 public interface LogService {
 
-	int searchWeatherLogInsert(String user_id, String startdate, String enddate) throws Exception;
+	int searchWeatherLogInsert(Tb_weather_search_scope_info searchInfo) throws Exception;
 
 }

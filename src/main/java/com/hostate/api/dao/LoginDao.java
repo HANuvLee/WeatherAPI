@@ -10,8 +10,8 @@ public interface LoginDao {
 
 	List<TestTableVO> selectTest() throws Exception;
 
-	String getUserSalt(LoginData loginData) throws Exception;
+	String getUserSalt(Tb_User_InfoVO loginData) throws Exception;
 
-	Tb_User_InfoVO chkUser(LoginData loginData) throws Exception;
+	Tb_User_InfoVO chkUser(Tb_User_InfoVO loginData) throws Exception;
 	
 }

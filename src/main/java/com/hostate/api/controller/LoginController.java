@@ -52,8 +52,8 @@ public class LoginController {
 	
 	//로그인 검증
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
-	public String loginAction(LoginData loginData, HttpSession session) throws Exception {	
-	
+	public String loginAction(Tb_User_InfoVO loginData, HttpSession session) throws Exception {	
+		
 		Tb_User_InfoVO userChk = loginService.userChk(loginData);
 		
 		if(userChk.getUser_id()!=null && !userChk.getUser_id().equals("")) {

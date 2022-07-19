@@ -10,6 +10,6 @@ public interface LoginService {
 
 	List<TestTableVO> selectTest() throws Exception;
 
-	Tb_User_InfoVO userChk(LoginData loginData) throws Exception;
+	Tb_User_InfoVO userChk(Tb_User_InfoVO loginData) throws Exception;
 
 }

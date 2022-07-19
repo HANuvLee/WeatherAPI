@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="api">
-	<insert id="searchWeatherLogInsert">
-		insert into tb_search_record_info(
+	<insert id="searchWeatherLogInsert" parameterType="com.hostate.api.vo.Tb_weather_search_scope_info">
+		insert into tb_weather_search_scope_info(
 			user_id,
-		    record_date,
-		    search_start_date,
-		    search_end_date)
+		    user_name,
+		    search_time,
+		    start_date,
+		    end_date,
+		    create_user_name,
+		    create_table_date
+		    )
 		values(
 			#{user_id},
-			now(), 
-			#{startdate}, 
-			#{enddate}
+			#{user_name}, 
+			now(),
+			#{start_date}, 
+			#{end_date},
+			#{user_name},
+			now()
 			);
 	</insert>
 </mapper>

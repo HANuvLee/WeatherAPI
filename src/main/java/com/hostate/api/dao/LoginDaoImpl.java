@@ -22,13 +22,13 @@ public class LoginDaoImpl implements LoginDao {
 	}
 
 	@Override
-	public String getUserSalt(LoginData loginData) throws Exception {
+	public String getUserSalt(Tb_User_InfoVO loginData) throws Exception {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("getUserSalt", loginData);
 	}
 
 	@Override
-	public Tb_User_InfoVO chkUser(LoginData loginData) throws Exception {
+	public Tb_User_InfoVO chkUser(Tb_User_InfoVO loginData) throws Exception {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("chkUser", loginData);
 	}
