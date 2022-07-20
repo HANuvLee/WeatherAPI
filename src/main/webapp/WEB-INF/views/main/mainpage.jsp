@@ -16,6 +16,7 @@
 <body>
 <nav class="parentheader">
 	<div class="container-fluid header">
+	
 		<a class="navbar-brand logo">HOSTATE</a>
  		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 	 	 	<c:if test="${sessionScope.user_id == null}">
@@ -178,42 +179,87 @@ $("document").ready(function() {
 				
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
+				let formHtml = "";
 				let objarr = new Array();
+				
+				for(let i in sItem){
+					
+				}
+
 				for(var i = 0; i < 3; i++){
 					objarr.push(i)
 				};
-
-				console.log("fcstttime => " + parseInt(sItem[13].fcstTime));
-				console.log("fcstttime => " + sItem[0].fcstTime);
-				console.log("fcstttime => " + parseInt(sItem[11].fcstTime.substr(0,2)));
 					
 				if (dataHeader == "00"){
 					console.log("success ==>");
 					console.log(data);
 					
-					let rephtml = "";
+					let formHtml = "";
 					for(let i in objarr){ //날씨 내용 폼 및 관련 태그생성
-						rephtml += "<div class=weatherForm id=weatherForm"+objarr[i]+">";
-						rephtml += "<div class=weatherPng id=weatherPng"+objarr[i]+"><b>"+objarr[i]+""; //날씨사진
-						rephtml += "</b></div>"
-						rephtml += "<div class=fcstTime id=fcstTime"+objarr[i]+"></div>" //시간
-						rephtml += "<div class=sky id=sky"+objarr[i]+"></div>" //하늘
-						rephtml	+= "<div class=weatherInfo id=weatherInfo"+objarr[i]+">";
-						rephtml += "<div class=pop id=pop"+objarr[i]+"></div>";
-						rephtml += "<div class=maxTemp"+objarr[i]+"></div>";
-						rephtml += "</div>";
-						rephtml += "</div>";
+						formHtml += "<div class=weatherForm id=weatherForm>";
+						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //날씨사진
+						formHtml += "</b></div>"
+						formHtml += "<div class=sky id=TMP></div>" //기온
+						formHtml += "<div class=sky id=SKY>testtest</div>" //하늘
+						formHtml += "<div class=pty id=PTY></div>" //강수형태
+						formHtml += "<div class=pop id=POP></div>"; //강수확률
+						formHtml += "<div class=reh id=REH></div>"; //습도
+						formHtml += "<div class=reh id=VVV></div>"; //습도
+						formHtml += "</div>";
 					}
-					$('.weatherContents').html(rephtml);
+					$('.weatherContents').html(formHtml);
 					
-					for(let i in objarr){
-						for(var j = 0; j < sItem.length; j++){
-							if(parseInt(sItem[j].fcstTime.substr(0,2)) === i && sItem[j].category === "POP"){
-								
-							}$('div[id=pop'+objarr[i]+']').html(sItem[j].fcstTime);
-						}continue;
+					//응답API 데이터를 폼태그 ID에 매치시켜 
+					for(let i in sItem){
+						if(sItem[i].category == "SKY"){ //카테고리가 SKY이라면(하늘상태)
+							$("#SKY").attr("id", "SKY"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
+							$("#fcstTime").attr("id", "fcstTime"+i+"");
+							
+							$("div[id=SKY"+i+"]").each(function(){//id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+								if(sItem[i].fcstValue == 1){
+									$(this).text("날씨 : 맑음");
+								}else if(sItem[i].fcstValue == 3){
+									$(this).text("날씨 : 구름많음");
+								}else if(sItem[i].fcstValue == 4){
+									$(this).text("날씨 : 흐림");
+								}
+							});
+							$("b[id=fcstTime"+i+"]").each(function(){//id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+								$(this).text(sItem[i].fcstTime); //시간 업데이트
+							});
+						}else if(sItem[i].category == "TMP"){ //카테고리가 SKY이라면(하늘상태)
+							$("#TMP").attr("id", "TMP"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
+							$("div[id=TMP"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+								$(this).text("기온 : " + sItem[i].fcstValue+"℃"); 
+							});
+						}else if(sItem[i].category == "PTY"){ //카테고리가 SKY이라면(하늘상태)
+							$("#PTY").attr("id", "PTY"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
+							$("div[id=PTY"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+								if(sItem[i].fcstValue == 0){
+									$(this).text("강수형태 : 없음");
+								}else if(sItem[i].fcstValue == 1){
+									$(this).text("날씨 : 비");
+								}else if(sItem[i].fcstValue == 2){
+									$(this).text("날씨 : 비/눈");
+								}else if(sItem[i].fcstValue == 3){
+									$(this).text("날씨 : 눈");
+								}else{
+									$(this).text("날씨 : 소나기");
+								}
+							});
+						}else if(sItem[i].category == "POP"){ //카테고리가 SKY이라면(하늘상태)
+							$("#POP").attr("id", "POP"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
+							$("div[id=POP"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+								$(this).text("강수확률 : " + sItem[i].fcstValue+"%"); 
+							});
+						}else if(sItem[i].category == "REH"){ //카테고리가 SKY이라면(하늘상태)
+							console.log("2..REH");
+							$("#REH").attr("id", "REH"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
+							$("div[id=REH"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+								$(this).text("습도 : " + sItem[i].fcstValue+"%"); 
+							});
+						}
 					}
-
 				}else{
 					console.log("fail ==>");
 					console.log(data);
