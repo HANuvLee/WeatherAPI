@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>
 <!DOCTYPE html>
 <html>
@@ -20,10 +19,10 @@
 		<a class="navbar-brand logo">HOSTATE</a>
  		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 	 	 	<c:if test="${sessionScope.user_id == null}">
-	     		 <a class="navbar-brand nav-link active logstate" href="/login/login.do">·Î±×ÀÎ</a>
+	     		 <a class="navbar-brand nav-link active logstate" href="/login/login.do">ë¡œê·¸ì¸</a>
 	     	</c:if>
 	     	<c:if test="${sessionScope.user_id != null}">
-				<a class="navbar-brand nav-link active logstate" href="/login/logout.do" class="logoutbtn">·Î±×¾Æ¿ô</a>
+				<a class="navbar-brand nav-link active logstate" href="/login/logout.do" class="logoutbtn">ë¡œê·¸ì•„ì›ƒ</a>
 			</c:if>
     	</div>
 	</div>
@@ -31,12 +30,12 @@
 	<div class="headerContent">
 		<c:if test="${sessionScope.user_id != null}">
 	 		<span class="headerContentText">
-	 			¾Æ·¡ °Ë»ö±â´ÉÀ» ÅëÇØ ¿øÇÏ´Â ³¯ÀÇ ³¯¾¾¸¦ Á¶È¸ÇØº¸¼¼¿ä.
+	 			ì•„ë˜ ê²€ìƒ‰ê¸°ëŠ¥ì„ í†µí•´ ì›í•˜ëŠ” ë‚ ì˜ ë‚ ì”¨ë¥¼ ì¡°íšŒí•´ë³´ì„¸ìš”.
 	 		</span>
  		</c:if>
  		<c:if test="${sessionScope.user_id == null}">
 	 		<span class="headerContentText">
-	 			¿Â¶óÀÎÀ¸·Î <a href="/login/login.do">·Î±×ÀÎ</a>ÇÏ°í, ³¯¾¾¸¦ Á¶È¸ÇØº¸¼¼¿ä.
+	 			ì˜¨ë¼ì¸ìœ¼ë¡œ <a href="/login/login.do">ë¡œê·¸ì¸</a>í•˜ê³ , ë‚ ì”¨ë¥¼ ì¡°íšŒí•´ë³´ì„¸ìš”.
 	 		</span>
  		</c:if>
  	</div>
@@ -61,7 +60,7 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;
      	<button id="searcWeatherBtn" class="btn btn-light">search</button>  	
    		<div class="guidetext">
-			*±İÀÏºÎÅÍ ÃÖ´ë <b>7</b>ÀÏ±îÁö Á¶È¸°¡´ÉÇÕ´Ï´Ù.
+			*ê¸ˆì¼ë¶€í„° ìµœëŒ€ <b>7</b>ì¼ê¹Œì§€ ì¡°íšŒê°€ëŠ¥í•©ë‹ˆë‹¤.
 		</div>
 	</div>
 	</c:if>
@@ -77,54 +76,58 @@
       		<button type="button" id="searcWeatherBtn" class="btn btn-light" disabled="disabled">search</button>
    		</form>
    		<div class="guidetext">
-			*±İÀÏºÎÅÍ ÃÖ´ë <b>7</b>ÀÏ±îÁö Á¶È¸°¡´ÉÇÕ´Ï´Ù.
+			*ê¸ˆì¼ë¶€í„° ìµœëŒ€ <b>7</b>ì¼ê¹Œì§€ ì¡°íšŒê°€ëŠ¥í•©ë‹ˆë‹¤.
 		</div>
 	</div>
 	</c:if>
 </body>
 <script type="text/javascript" charset="utf-8">
 $("document").ready(function() {
-	startTime(); //¸ŞÀÎ ÆäÀÌÁö Å¸ÀÌ¸Ó »ı¼º
-	setCalendar();//´Ş·Â ¹üÀ§ ¼³Á¤
-	firstvilageweather(); //ÆäÀÌÁö Á¢¼Ó ½Ã 3½Ã°£ ´ÜÀ§ÀÇ È­¸é È£Ãâ
+	startTime(); //ë©”ì¸ í˜ì´ì§€ íƒ€ì´ë¨¸ ìƒì„±
+	setCalendar();//ë‹¬ë ¥ ë²”ìœ„ ì„¤ì •
+	firstvilageweather(); //í˜ì´ì§€ ì ‘ì† ì‹œ api í˜¸ì¶œ
 	
 	function setCalendar() {
-		var toDay = getToday(); //yyyymmdd Çü½Ä
-		var toDay2 = getToday2(); //yyyy-mm-ddÇü½Ä
-		var maxdd = parseInt(toDay) + 7; // ±İÀÏ + 7
+		var toDay = getToday(); //yyyymmdd í˜•ì‹
+		var toDay2 = getToday2(); //yyyy-mm-ddí˜•ì‹
+		var maxdd = parseInt(toDay) + 7; // ê¸ˆì¼ + 7
+		var toDayNum = parseInt(toDay);
 		
 		maxdd = String(maxdd);
 		
-		//Á¶È¸½ÃÀÛ³¯Â¥ ¼Ó¼º ¼³Á¤
+		//ì¡°íšŒì‹œì‘ë‚ ì§œ ì†ì„± ì„¤ì •
 		$("#startdate").attr("value", toDay2);
 		$("#startdate").attr("min", toDay2);
 		$("#startdate").attr("max", toDay2.substr(0,8) + maxdd.substr(6));
-		//Á¶È¸³¡³¯Â¥ ¼Ó¼º ¼³Á¤
+		//ì¡°íšŒëë‚ ì§œ ì†ì„± ì„¤ì •
 		$("#enddate").attr("value", toDay2);
 		$("#enddate").attr("min", toDay2);
 		$("#enddate").attr("max", toDay2.substr(0,8) + maxdd.substr(6));
 		
-		//Á¶È¸¹öÆ° Å¬¸¯ ½Ã
+		//ì¡°íšŒë²„íŠ¼ í´ë¦­ ì‹œ
 		$("#searcWeatherBtn").click(function() {
-			var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"¹®ÀÚ¸¦ ¸ğµÎÁ¦°ÅÇÏ´Â Á¤±Ô½Ä
-			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"¹®ÀÚ¸¦ ¸ğµÎÁ¦°ÅÇÏ´Â Á¤±Ô½Ä
-			var num = end_date - start_date
+			var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"ë¬¸ìë¥¼ ëª¨ë‘ì œê±°í•˜ëŠ” ì •ê·œì‹
+			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"ë¬¸ìë¥¼ ëª¨ë‘ì œê±°í•˜ëŠ” ì •ê·œì‹
+			var num = end_date - start_date //ì •ìˆ˜í˜•ìœ¼ë¡œ ë³€í•œ ë‘ ë‚ ì§œì˜ ê°’ì˜ ì°¨ì´ë¥¼ êµ¬í•œë‹¤.
 			
-			//Á¶È¸½ÃÀÛ³¯Â¥¿Í ³¡³¯Â¥ °ËÁõ
-			if(num < 0){
-				alert("½ÃÀÛ³¯Â¥¿Í ³¡³¯Â¥¸¦ È®ÀÎÇÏ¼¼¿ä.");
-			}else if(num == 0){
-				alert("ÃÖ¼Ò ´ÙÀ½³¯ºÎÅÍ Á¶È¸ °¡´ÉÇÕ´Ï´Ù.");
+			if(start_date > end_date){
+				alert("plz chk your date state !!");
+				return false;
+			}else if(start_date-toDayNum < 3 && end_date-toDayNum < 3){
+				alert("short!");
+				searchShortweather(String(start_date), String(end_date)); // ë‹¨ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
+			}else if(start_date-toDayNum > 2 && end_date-toDayNum > 2){
+				alert("middle!");
+				searchMidweather(String(start_date), String(end_date)); //ì¤‘ê¸°ì˜ˆë³´ë§Œí˜¸ì¶œ
 			}else{
-				alert("Á¶È¸ÇÕ´Ï´Ù.");
-				searchvilageweather(start_date, end_date);
+				alert("All!");
+				searchAllweather(String(start_date), String(end_date)) //ëª¨ë‘ í˜¸ì¶œ
 			}
 	    });
 	};
 		
-		/* console.log('"${sessionScope.user_id}"'); ¼¼¼Ç ¾ÆÀÌµğ*/
-	
-/***************************************¿À´Ã³¯Â¥ (YYYYMMDD) »ı¼º ÇÔ¼ö*******************************************/
+		/* console.log('"${sessionScope.user_id}"'); ì„¸ì…˜ ì•„ì´ë””*/
+
 	function getToday(){
 	    var date = new Date();
 	    var year = date.getFullYear();
@@ -133,7 +136,7 @@ $("document").ready(function() {
 
 	    return year + month + day;
 	}
-
+		
 	function getToday2(){
 	    var date = new Date();
 	    var year = date.getFullYear();
@@ -141,30 +144,11 @@ $("document").ready(function() {
 	    var day = ("0" + date.getDate()).slice(-2);
 
 	    return year + "-" + month + "-" + day;
-	}
-
-/**************************************Á¶È¸¹öÆ° Å¬¸¯ ÇÔ¼ö******************************************
-	function serachClick() {
-		var st = $("#startdate").val();
-		var ed = $("#enddate").val();
-		
-		st = st.replace(/\-/g,"");
-		ed = ed.replace(/\-/g,"");
-		
-		st = parseInt(st);
-		ed = parseInt(ed);
-		
-		if(ed-st < 3){ //Á¶È¸¹üÀ§°¡ 3ÀÏ ¹Ì¸¸ÀÎ°æ¿ì ´Ü±â¿¹º¸¸¸ Á¶È¸ ¼­ºñ½º È£Ãâ
-			searchvilageweather(st, ed);
-		}else{ //¾Æ´Ï¸é ÀüºÎÈ£Ãâ
-			searchvilageweather(st, ed);
-			searchmidtaweather(st, ed);
-			searchmidlandweather(st, ed);
-		}
-	}*/
+	}	
 	
-/**************************************ÃÖÃÊ Á¢¼Ó ½Ã 3½Ã°£ ´ÜÀ§ÀÇ ´Ü±â¿¹º¸Á¶È¸******************************************/
+	//ìµœì´ˆ ì§„ì… ì‹œ í•¨ìˆ˜ í˜¸ì¶œ
 	function firstvilageweather() {
+		console.log("firstvilageweather start");
 		var toDay = getToday();
 		$.ajax({			
 			type: 'get',
@@ -195,68 +179,68 @@ $("document").ready(function() {
 					console.log(data);
 					
 					let formHtml = "";
-					for(let i in objarr){ //³¯¾¾ ³»¿ë Æû ¹× °ü·Ã ÅÂ±×»ı¼º
+					for(let i in objarr){ //ë‚ ì”¨ ë‚´ìš© í¼ ë° ê´€ë ¨ íƒœê·¸ìƒì„±
 						formHtml += "<div class=weatherForm id=weatherForm>";
-						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //³¯¾¾»çÁø
+						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //ë‚ ì”¨ì‚¬ì§„
 						formHtml += "</b></div>"
-						formHtml += "<div class=sky id=TMP></div>" //±â¿Â
-						formHtml += "<div class=sky id=SKY>testtest</div>" //ÇÏ´Ã
-						formHtml += "<div class=pty id=PTY></div>" //°­¼öÇüÅÂ
-						formHtml += "<div class=pop id=POP></div>"; //°­¼öÈ®·ü
-						formHtml += "<div class=reh id=REH></div>"; //½Àµµ
-						formHtml += "<div class=reh id=VVV></div>"; //½Àµµ
+						formHtml += "<div class=sky id=TMP></div>" //ê¸°ì˜¨
+						formHtml += "<div class=sky id=SKY>testtest</div>" //í•˜ëŠ˜
+						formHtml += "<div class=pty id=PTY></div>" //ê°•ìˆ˜í˜•íƒœ
+						formHtml += "<div class=pop id=POP></div>"; //ê°•ìˆ˜í™•ë¥ 
+						formHtml += "<div class=reh id=REH></div>"; //ìŠµë„
+						formHtml += "<div class=reh id=VVV></div>"; //ìŠµë„
 						formHtml += "</div>";
 					}
 					$('.weatherContents').html(formHtml);
 					
-					//ÀÀ´äAPI µ¥ÀÌÅÍ¸¦ ÆûÅÂ±× ID¿¡ ¸ÅÄ¡½ÃÄÑ 
+					//ì‘ë‹µAPI ë°ì´í„°ë¥¼ í¼íƒœê·¸ IDì— ë§¤ì¹˜ì‹œì¼œ 
 					for(let i in sItem){
-						if(sItem[i].category == "SKY"){ //Ä«Å×°í¸®°¡ SKYÀÌ¶ó¸é(ÇÏ´Ã»óÅÂ)
-							$("#SKY").attr("id", "SKY"+i+""); //ÆûÅÂ±×¾ÈÀÇ divÅÂ±× Áß id°¡ SKYÀÎ div¿¡  itemsÀÇ ¿ä¼Ò ¹øÈ£ Ãß°¡
+						if(sItem[i].category == "SKY"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
+							$("#SKY").attr("id", "SKY"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
 							$("#fcstTime").attr("id", "fcstTime"+i+"");
 							
-							$("div[id=SKY"+i+"]").each(function(){//id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
+							$("div[id=SKY"+i+"]").each(function(){//idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
 								if(sItem[i].fcstValue == 1){
-									$(this).text("³¯¾¾ : ¸¼À½");
+									$(this).text("ë‚ ì”¨ : ë§‘ìŒ");
 								}else if(sItem[i].fcstValue == 3){
-									$(this).text("³¯¾¾ : ±¸¸§¸¹À½");
+									$(this).text("ë‚ ì”¨ : êµ¬ë¦„ë§ìŒ");
 								}else if(sItem[i].fcstValue == 4){
-									$(this).text("³¯¾¾ : Èå¸²");
+									$(this).text("ë‚ ì”¨ : íë¦¼");
 								}
 							});
-							$("b[id=fcstTime"+i+"]").each(function(){//id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
-								$(this).text(sItem[i].fcstTime); //½Ã°£ ¾÷µ¥ÀÌÆ®
+							$("b[id=fcstTime"+i+"]").each(function(){//idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
+								$(this).text(sItem[i].fcstTime); //ì‹œê°„ ì—…ë°ì´íŠ¸
 							});
-						}else if(sItem[i].category == "TMP"){ //Ä«Å×°í¸®°¡ SKYÀÌ¶ó¸é(ÇÏ´Ã»óÅÂ)
-							$("#TMP").attr("id", "TMP"+i+""); //ÆûÅÂ±×¾ÈÀÇ divÅÂ±× Áß id°¡ SKYÀÎ div¿¡  itemsÀÇ ¿ä¼Ò ¹øÈ£ Ãß°¡
-							$("div[id=TMP"+i+"]").each(function(){ //id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
-								$(this).text("±â¿Â : " + sItem[i].fcstValue+"¡É"); 
+						}else if(sItem[i].category == "TMP"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
+							$("#TMP").attr("id", "TMP"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
+							$("div[id=TMP"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
+								$(this).text("ê¸°ì˜¨ : " + sItem[i].fcstValue+"â„ƒ"); 
 							});
-						}else if(sItem[i].category == "PTY"){ //Ä«Å×°í¸®°¡ SKYÀÌ¶ó¸é(ÇÏ´Ã»óÅÂ)
-							$("#PTY").attr("id", "PTY"+i+""); //ÆûÅÂ±×¾ÈÀÇ divÅÂ±× Áß id°¡ SKYÀÎ div¿¡  itemsÀÇ ¿ä¼Ò ¹øÈ£ Ãß°¡
-							$("div[id=PTY"+i+"]").each(function(){ //id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
+						}else if(sItem[i].category == "PTY"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
+							$("#PTY").attr("id", "PTY"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
+							$("div[id=PTY"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
 								if(sItem[i].fcstValue == 0){
-									$(this).text("°­¼öÇüÅÂ : ¾øÀ½");
+									$(this).text("ê°•ìˆ˜í˜•íƒœ : ì—†ìŒ");
 								}else if(sItem[i].fcstValue == 1){
-									$(this).text("°­¼öÇüÅÂ : ºñ");
+									$(this).text("ê°•ìˆ˜í˜•íƒœ : ë¹„");
 								}else if(sItem[i].fcstValue == 2){
-									$(this).text("°­¼öÇüÅÂ : ºñ/´«");
+									$(this).text("ê°•ìˆ˜í˜•íƒœ : ë¹„/ëˆˆ");
 								}else if(sItem[i].fcstValue == 3){
-									$(this).text("°­¼öÇüÅÂ : ´«");
+									$(this).text("ê°•ìˆ˜í˜•íƒœ : ëˆˆ");
 								}else{
-									$(this).text("°­¼öÇüÅÂ : ¼Ò³ª±â");
+									$(this).text("ê°•ìˆ˜í˜•íƒœ : ì†Œë‚˜ê¸°");
 								}
 							});
-						}else if(sItem[i].category == "POP"){ //Ä«Å×°í¸®°¡ SKYÀÌ¶ó¸é(ÇÏ´Ã»óÅÂ)
-							$("#POP").attr("id", "POP"+i+""); //ÆûÅÂ±×¾ÈÀÇ divÅÂ±× Áß id°¡ SKYÀÎ div¿¡  itemsÀÇ ¿ä¼Ò ¹øÈ£ Ãß°¡
-							$("div[id=POP"+i+"]").each(function(){ //id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
-								$(this).text("°­¼öÈ®·ü : " + sItem[i].fcstValue+"%"); 
+						}else if(sItem[i].category == "POP"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
+							$("#POP").attr("id", "POP"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
+							$("div[id=POP"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
+								$(this).text("ê°•ìˆ˜í™•ë¥  : " + sItem[i].fcstValue+"%"); 
 							});
-						}else if(sItem[i].category == "REH"){ //Ä«Å×°í¸®°¡ SKYÀÌ¶ó¸é(ÇÏ´Ã»óÅÂ)
+						}else if(sItem[i].category == "REH"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
 							console.log("2..REH");
-							$("#REH").attr("id", "REH"+i+""); //ÆûÅÂ±×¾ÈÀÇ divÅÂ±× Áß id°¡ SKYÀÎ div¿¡  itemsÀÇ ¿ä¼Ò ¹øÈ£ Ãß°¡
-							$("div[id=REH"+i+"]").each(function(){ //id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
-								$(this).text("½Àµµ : " + sItem[i].fcstValue+"%"); 
+							$("#REH").attr("id", "REH"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
+							$("div[id=REH"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
+								$(this).text("ìŠµë„ : " + sItem[i].fcstValue+"%"); 
 							});
 						}
 					}
@@ -271,11 +255,12 @@ $("document").ready(function() {
 			}
 		});
 	}
-/**************************************Á¶È¸¹öÆ° Å¬¸¯ ½Ã ÃÖ´ë 3ÀÏÄ¡±îÁö ´Ü±â¿¹º¸Á¶È¸******************************************/
-	function searchvilageweather(st, ed) {
-		$.ajax({			
+	//ë‹¨ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
+	function searchShortweather(st, ed) {
+		console.log("searchShortweather start");
+		$.ajax({
 			type: 'get',
-			url: '/api/searchvilageweather.do',
+			url: '/api/searchShortweather.do',
 			data:{
 				"start_date" : st,
 				"end_date" : ed
@@ -287,9 +272,51 @@ $("document").ready(function() {
 				
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
+				let objarr = new Array();
+				let scope = parseInt(ed)-parseInt(st) + 1; //ë‚ ì§œ ë²”ìœ„ë§Œí¼ í¼ ìƒì„±ì„ ìœ„í•´ ë°°ì—´ê¸¸ì´ë¥¼ 1ë¡œ ì´ˆê¸°í™”
+				let formHtml = "";
+				let skyAvg = 0;
+				let popAvg = 0;
 		
+				
+				for(var i = 0; i < scope; i++){
+					objarr.push(i)
+				};
+				console.log(objarr.length);
+				
 				if (dataHeader == "00"){
+					console.log("success ==>");
+					console.log(data);
 					
+					//ì´ˆê¸° ì ‘ì† ì½˜í…ì¸ ë‚´ìš© ì´ˆê¸°í™” 
+					formHtml = "";
+					$('.weatherContents').html(formHtml);
+					
+					//ë‹¤ì‹œ í¼ìƒì„±
+					for(let i in objarr){ //ë‚ ì”¨ ë‚´ìš© í¼ ë° ê´€ë ¨ íƒœê·¸ìƒì„±
+						formHtml += "<div class=weatherForm id=weatherForm>";
+						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //ë‚ ì§œ
+						formHtml += "</b></div>"		
+						formHtml += "<div class=sky id=SKY>testtest</div>" //í•˜ëŠ˜
+						formHtml += "<div class=pop id=POP></div>"; //ê°•ìˆ˜í™•ë¥ 
+						formHtml += "<div class=pop id=TMN></div>"; //ìµœì €ê¸°ì˜¨
+						formHtml += "<div class=pop id=TMX></div>"; //ìµœê³ í™•ë¥ 
+
+						formHtml += "</div>";
+					}
+					$('.weatherContents').html(formHtml);
+					
+					//ì‘ë‹µAPI ë°ì´í„°ë¥¼ í¼íƒœê·¸ IDì— ë§¤ì¹˜ì‹œí‚¨ë‹¤
+					for(let i in sItem){
+						if(sItem[i].category == "SKY"){//ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
+							if
+						 console.log(i);
+						}
+								
+					}
+				}else{
+					console.log("fail ==>");
+					console.log(data);
 				}
 			},
 			error: function(e, status, xhr, data) {
@@ -298,14 +325,15 @@ $("document").ready(function() {
 			}
 		});
 	}
-	 /**************************************Áß±â±â¿Â¿¹º¸Á¶È¸ÇÔ¼ö*****************************************/
-	 function searchmidtaweather(st, ed) {
+	
+	//ì¤‘ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
+	function searchMidweather() {
 		$.ajax({
 			type: 'get',
 			url: '/api/searchmidtaweather.do',
 			data:{
-				"startdate" : st,
-				"enddate" : ed
+				"start_date" : st,
+				"endd_ate" : ed
 			},
 			timeout : 30000,
 			contentType: 'application/json',
@@ -330,14 +358,14 @@ $("document").ready(function() {
 			}
 		});
 	}
-	/**************************************Áß±âÀ°»ó¿¹º¸Á¶È¸ÇÔ¼ö*****************************************/
-	 function searchmidlandweather(st, ed) { 
+	//ë‹¨ê¸° ì¤‘ê¸° ëª¨ë‘ í˜¸ì¶œ
+	function searchAllweather() {
 		$.ajax({
 			type: 'get',
-			url: '/api/searchmidlandweather.do',
+			url: '/api/searchmidtaweather.do',
 			data:{
-				"startdate" : st,
-				"enddate" : ed
+				"start_date" : st,
+				"endd_ate" : ed
 			},
 			timeout : 30000,
 			contentType: 'application/json',
@@ -362,7 +390,13 @@ $("document").ready(function() {
 			}
 		});
 	}
-	/***************************************Å¸ÀÌ¸Ó »ı¼º ÇÔ¼ö*******************************************/
+	
+	
+	
+	
+	
+
+	/***************************************íƒ€ì´ë¨¸ ìƒì„± í•¨ìˆ˜*******************************************/
 	 function startTime() {
 		    var today = new Date();
 		    var hr = today.getHours();
@@ -371,7 +405,6 @@ $("document").ready(function() {
 		    ap = (hr < 12) ? "<span>AM</span>" : "<span>PM</span>";
 		    hr = (hr == 0) ? 12 : hr;
 		    hr = (hr > 12) ? hr - 12 : hr;
-		    //Add a zero in front of numbers<10
 		    hr = checkTime(hr);
 		    min = checkTime(min);
 		    sec = checkTime(sec);

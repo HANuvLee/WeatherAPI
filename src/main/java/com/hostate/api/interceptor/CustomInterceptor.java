@@ -15,6 +15,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  *  
  */
 
+import com.mysql.cj.Session;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 
 
@@ -31,6 +32,7 @@ public class CustomInterceptor extends HandlerInterceptorAdapter {
 		 		System.out.println("preHandle =====> " + request.getRequestURI());
 		 		System.out.println("preHandle1");
 	        	HttpSession session = request.getSession();
+	        	System.out.println("preHandle get session =====> " + session.getAttribute("user_id"));
 	        	
 				if (session.getAttribute("user_id") != null && !session.getAttribute("user_id").toString().equals("")) { //세션이 있다면
 					//해당 요청 컨트롤러 수행

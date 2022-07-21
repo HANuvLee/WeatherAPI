@@ -53,12 +53,13 @@ public class LoginController {
 	//로그인 검증
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	public String loginAction(Tb_User_InfoVO loginData, HttpSession session) throws Exception {	
-		
+
 		Tb_User_InfoVO userChk = loginService.userChk(loginData);
 		
 		if(userChk.getUser_id()!=null && !userChk.getUser_id().equals("")) {
+			System.out.println("로그인 검증 이름 -<>" + userChk.getUser_name());
 			session.setAttribute("user_id", userChk.getUser_id());
-			session.setAttribute("user_name", userChk.getCreate_user_name());
+			session.setAttribute("user_name", userChk.getUser_name());
 			return "redirect:/main/mainpage.do";
 		}else {
 			return "redirect:/login/login.do";
