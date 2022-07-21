@@ -5,20 +5,22 @@
 		insert into tb_weather_search_scope_info(
 			user_id,
 		    user_name,
-		    search_time,
 		    start_date,
 		    end_date,
+		    create_date,
 		    create_user_name,
-		    create_table_date
+		    update_date,
+		    update_user_name,
 		    )
 		values(
 			#{user_id},
 			#{user_name}, 
-			now(),
 			#{start_date}, 
 			#{end_date},
+			now(),
 			#{user_name},
-			now()
+			now(),
+			#{user_name}
 			);
 	</insert>
 </mapper>

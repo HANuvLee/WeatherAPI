@@ -7,7 +7,7 @@ public class Tb_User_InfoVO {
 	  private String user_salt;
 	  private String create_date;
 	  private String create_user_name;
-	  private String update_user_date;
+	  private String update_date;
 	  private String update_user_name;
 	  private String user_yn;
 	  
@@ -44,14 +44,14 @@ public class Tb_User_InfoVO {
 	public String getCreate_user_name() {
 		return create_user_name;
 	}
-	public void setCreate_user_name(String create_user_name) {
-		this.create_user_name = create_user_name;
+	public void setCreate_user_name(String create_name) {
+		this.create_user_name = create_name;
 	}
-	public String getUpdate_user_date() {
-		return update_user_date;
+	public String getUpdate_date() {
+		return update_date;
 	}
-	public void setUpdate_user_date(String update_user_date) {
-		this.update_user_date = update_user_date;
+	public void setUpdate_date(String update_date) {
+		this.update_date = update_date;
 	}
 	public String getUpdate_user_name() {
 		return update_user_name;

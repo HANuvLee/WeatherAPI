@@ -24,9 +24,9 @@ import com.hostate.api.commonutil.ApiDateFormat;
 import com.hostate.api.service.LogService;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
-//@RestController : ±âº» ÇÏÀ§ÀÇ ¸Ş¼ÒµåµéÀº ¸ğµÎ @responsebody¸¦ °®´Â´Ù
-//@RequestBody : Å¬¶óÀÌ¾ğÆ® ¿äÃ» xml/jsonÀ» ÀÚ¹Ù °´Ã¼·Î º¯È¯ÇÏ¿© Àü´Ş ¹ŞÀ» ¼ö ÀÖ´Ù.
-//@ResponseBody : ÀÚ¹Ù °´Ã¼¸¦ xml/jsonÀ¸·Î º¯È¯½ÃÄÑ ÀÀ´ä°´Ã¼ÀÇ Body¿¡ ½Ç¾î Àü¼Û°¡´ÉÇÏ´Ù.
+//@RestController : ê¸°ë³¸ í•˜ìœ„ì˜ ë©”ì†Œë“œë“¤ì€ ëª¨ë‘ @responsebodyë¥¼ ê°–ëŠ”ë‹¤
+//@RequestBody : í´ë¼ì´ì–¸íŠ¸ ìš”ì²­ xml/jsonì„ ìë°” ê°ì²´ë¡œ ë³€í™˜í•˜ì—¬ ì „ë‹¬ ë°›ì„ ìˆ˜ ìˆë‹¤.
+//@ResponseBody : ìë°” ê°ì²´ë¥¼ xml/jsonìœ¼ë¡œ ë³€í™˜ì‹œì¼œ ì‘ë‹µê°ì²´ì˜ Bodyì— ì‹¤ì–´ ì „ì†¡ê°€ëŠ¥í•˜ë‹¤.
 
 @RestController
 public class ApiController {
@@ -40,40 +40,40 @@ public class ApiController {
 	/*
 	 * @API LIST ~
 	 * 
-	 * getVilageFcst ´Ü±â¿¹º¸Á¶È¸ getMidTa Áß±â±â¿ÂÁ¶È¸ getMidLandFcst Áß±âÀ°»ó¿¹º¸Á¶È¸
+	 * getVilageFcst ë‹¨ê¸°ì˜ˆë³´ì¡°íšŒ getMidTa ì¤‘ê¸°ê¸°ì˜¨ì¡°íšŒ getMidLandFcst ì¤‘ê¸°ìœ¡ìƒì˜ˆë³´ì¡°íšŒ
 	 */
 
-	// ´Ü±â¿¹º¸
+	// ë‹¨ê¸°ì˜ˆë³´
 	@RequestMapping(value = "/api/firsthvilageweather.do", method = RequestMethod.GET)
 	public String getVilageFcst(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
-		System.out.println("ÃÖÃÊ Á¢¼Ó ´Ü±â¿¹º¸È£Ãâ");	
+		System.out.println("ìµœì´ˆ ì ‘ì† ë‹¨ê¸°ì˜ˆë³´í˜¸ì¶œ");	
 		
 		searchInfo.setUser_name((String)session.getAttribute("user_id"));
 		searchInfo.setUser_name((String)session.getAttribute("user_name"));
 
 		
-		Date today = new Date(); // ¸ŞÀÎÆäÀÌÁö Á¢¼Ó ½Ã°£
-		Locale currentLocale = new Locale("KOREAN", "KOREA"); // ³ª¶ó
+		Date today = new Date(); // ë©”ì¸í˜ì´ì§€ ì ‘ì† ì‹œê°„
+		Locale currentLocale = new Locale("KOREAN", "KOREA"); // ë‚˜ë¼
 		SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale);
-		StringBuilder hhmm = new StringBuilder(formatter.format(today)); //¿äÃ»ÇÑ ½Ã°£ÀÇ ½Ã¿Í ºĞÀ» ±¸ÇÑ´Ù.
+		StringBuilder hhmm = new StringBuilder(formatter.format(today)); //ìš”ì²­í•œ ì‹œê°„ì˜ ì‹œì™€ ë¶„ì„ êµ¬í•œë‹¤.
 		
-		StringBuilder startDate = new StringBuilder(searchInfo.getStart_date()+hhmm); //yyyymmddhhmm ÇüÅÂ
+		StringBuilder startDate = new StringBuilder(searchInfo.getStart_date()+hhmm); //yyyymmddhhmm í˜•íƒœ
 		System.out.println(startDate);
 		
-		//¸ŞÀÎÆäÀÌÁö Á¢¼Ó ½Ã ¿äÃ» ÆÄ¸®¹ÌÅÍ ÇüÅÂ¸¦ ¸ÂÃß±â À§ÇÑÆ÷¸ä ¸Ş¼­µå ½ÇÇà, mm´ÜÀ§´Â ¿äÃ» ºÒ°¡
+		//ë©”ì¸í˜ì´ì§€ ì ‘ì† ì‹œ ìš”ì²­ íŒŒë¦¬ë¯¸í„° í˜•íƒœë¥¼ ë§ì¶”ê¸° ìœ„í•œí¬ë©§ ë©”ì„œë“œ ì‹¤í–‰, mmë‹¨ìœ„ëŠ” ìš”ì²­ ë¶ˆê°€
 		apiDateFormat.baseTimeFormat(startDate);
 
-		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // httpsÀÔ·Â ½Ã JavaÀÇ ½Å·ÚÇÏ´ÂÀÎÁõ¼­
-																								// ¸ñ·Ï(keystore)¿¡ »ç¿ëÇÏ°íÀÚ
-																								// ÇÏ´Â ÀÎÁõ±â°üÀÌ µî·ÏµÇ¾î ÀÖÁö ¾Ê¾Æ
-																								// Á¢±ÙÀÌ Â÷´ÜµÇ´ÂÇö»ó¹ß»ı.
+		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // httpsì…ë ¥ ì‹œ Javaì˜ ì‹ ë¢°í•˜ëŠ”ì¸ì¦ì„œ
+																								// ëª©ë¡(keystore)ì— ì‚¬ìš©í•˜ê³ ì
+																								// í•˜ëŠ” ì¸ì¦ê¸°ê´€ì´ ë“±ë¡ë˜ì–´ ìˆì§€ ì•Šì•„
+																								// ì ‘ê·¼ì´ ì°¨ë‹¨ë˜ëŠ”í˜„ìƒë°œìƒ.
 
-				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //ÀÎÁõÅ°
-				+ "&pageNo=1" //ÆäÀÌÁö¹øÈ£
-				+ "&numOfRows=36" //°á°ú ¼ö , default : 24½Ã°£ 3½Ã°£ ´ÜÀ§·Î ¼³Á¤
+				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //ì¸ì¦í‚¤
+				+ "&pageNo=1" //í˜ì´ì§€ë²ˆí˜¸
+				+ "&numOfRows=36" //ê²°ê³¼ ìˆ˜ , default : 24ì‹œê°„ 3ì‹œê°„ ë‹¨ìœ„ë¡œ ì„¤ì •
 				+ "&dataType=JSON" // XML, JSON
-				+ "&base_date=" + startDate.substring(0, 8) // ¹ßÇ¥ÀÏÀÚ
-				+ "&base_time=" + startDate.substring(8) // ¹ßÇ¥½Ã°¢
+				+ "&base_date=" + startDate.substring(0, 8) // ë°œí‘œì¼ì
+				+ "&base_time=" + startDate.substring(8) // ë°œí‘œì‹œê°
 				+ "&nx=60" 
 				+ "&ny=127";
 
@@ -88,36 +88,36 @@ public class ApiController {
 	
 	@RequestMapping(value = "/api/searchvilageweather.do", method = RequestMethod.GET)
 	public String searchvilageweather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
-		System.out.println("Á¶È¸´Ü±â¿¹º¸È£Ãâ");	
+		System.out.println("ì¡°íšŒë‹¨ê¸°ì˜ˆë³´í˜¸ì¶œ");	
 		
 		searchInfo.setUser_name((String)session.getAttribute("user_id"));
 		searchInfo.setUser_name((String)session.getAttribute("user_name"));
 		
-		int chk = logService.searchWeatherLogInsert(searchInfo); //Á¶È¸±â·ÏÀúÀå
+		int chk = logService.searchWeatherLogInsert(searchInfo); //ì¡°íšŒê¸°ë¡ì €ì¥
 		
 		if(chk == 1) {
-			Date today = new Date(); // ¸ŞÀÎÆäÀÌÁö Á¢¼Ó ½Ã°£
-			Locale currentLocale = new Locale("KOREAN", "KOREA"); // ³ª¶ó
+			Date today = new Date(); // ë©”ì¸í˜ì´ì§€ ì ‘ì† ì‹œê°„
+			Locale currentLocale = new Locale("KOREAN", "KOREA"); // ë‚˜ë¼
 			SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale);
-			StringBuilder hhmm = new StringBuilder(formatter.format(today)); //¿äÃ»ÇÑ ½Ã°£ÀÇ ½Ã¿Í ºĞÀ» ±¸ÇÑ´Ù.
+			StringBuilder hhmm = new StringBuilder(formatter.format(today)); //ìš”ì²­í•œ ì‹œê°„ì˜ ì‹œì™€ ë¶„ì„ êµ¬í•œë‹¤.
 			
-			StringBuilder startDate = new StringBuilder(searchInfo.getStart_date()+hhmm); //yyyymmddhhmm ÇüÅÂ
+			StringBuilder startDate = new StringBuilder(searchInfo.getStart_date()+hhmm); //yyyymmddhhmm í˜•íƒœ
 			System.out.println(startDate);
 			
-			//¸ŞÀÎÆäÀÌÁö Á¢¼Ó ½Ã ¿äÃ» ÆÄ¸®¹ÌÅÍ ÇüÅÂ¸¦ ¸ÂÃß±â À§ÇÑÆ÷¸ä ¸Ş¼­µå ½ÇÇà, mm´ÜÀ§´Â ¿äÃ» ºÒ°¡
+			//ë©”ì¸í˜ì´ì§€ ì ‘ì† ì‹œ ìš”ì²­ íŒŒë¦¬ë¯¸í„° í˜•íƒœë¥¼ ë§ì¶”ê¸° ìœ„í•œí¬ë©§ ë©”ì„œë“œ ì‹¤í–‰, mmë‹¨ìœ„ëŠ” ìš”ì²­ ë¶ˆê°€
 			apiDateFormat.baseTimeFormat(startDate);
 	
-			String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // httpsÀÔ·Â ½Ã JavaÀÇ ½Å·ÚÇÏ´ÂÀÎÁõ¼­
-																									// ¸ñ·Ï(keystore)¿¡ »ç¿ëÇÏ°íÀÚ
-																									// ÇÏ´Â ÀÎÁõ±â°üÀÌ µî·ÏµÇ¾î ÀÖÁö ¾Ê¾Æ
-																									// Á¢±ÙÀÌ Â÷´ÜµÇ´ÂÇö»ó¹ß»ı.
+			String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // httpsì…ë ¥ ì‹œ Javaì˜ ì‹ ë¢°í•˜ëŠ”ì¸ì¦ì„œ
+																									// ëª©ë¡(keystore)ì— ì‚¬ìš©í•˜ê³ ì
+																									// í•˜ëŠ” ì¸ì¦ê¸°ê´€ì´ ë“±ë¡ë˜ì–´ ìˆì§€ ì•Šì•„
+																									// ì ‘ê·¼ì´ ì°¨ë‹¨ë˜ëŠ”í˜„ìƒë°œìƒ.
 	
-					+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //ÀÎÁõÅ°
-					+ "&pageNo=1" //ÆäÀÌÁö¹øÈ£
-					+ "&numOfRows=834" //°á°ú ¼ö , default : 3ÀÏ·Î ¼³Á¤ (±İÀÏ, ³»ÀÏ, ¸ğ·¹)
+					+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //ì¸ì¦í‚¤
+					+ "&pageNo=1" //í˜ì´ì§€ë²ˆí˜¸
+					+ "&numOfRows=834" //ê²°ê³¼ ìˆ˜ , default : 3ì¼ë¡œ ì„¤ì • (ê¸ˆì¼, ë‚´ì¼, ëª¨ë ˆ)
 					+ "&dataType=JSON" // XML, JSON
-					+ "&base_date=" + startDate.substring(0, 8) // ¹ßÇ¥ÀÏÀÚ
-					+ "&base_time=" + startDate.substring(8) // ¹ßÇ¥½Ã°¢
+					+ "&base_date=" + startDate.substring(0, 8) // ë°œí‘œì¼ì
+					+ "&base_time=" + startDate.substring(8) // ë°œí‘œì‹œê°
 					+ "&nx=60" 
 					+ "&ny=127";
 	
@@ -127,37 +127,37 @@ public class ApiController {
 			jsonObj.put("result", resultMap);
 			return jsonObj.toString();
 		}else {
-			 return "´Ü±â¿¹º¸Á¶È¸ È£Ãâ ½ÇÆĞ!!";
+			 return "ë‹¨ê¸°ì˜ˆë³´ì¡°íšŒ í˜¸ì¶œ ì‹¤íŒ¨!!";
 		}
 
 	}
 	
 	
 
-	// Áß±â±â¿Â¿¹º¸
+	// ì¤‘ê¸°ê¸°ì˜¨ì˜ˆë³´
 	@RequestMapping(value = "/api/searchmidtaweather.do", method = RequestMethod.GET)
 	public String restApiSearchMidTaWeather(HttpSession session, String startdate, String enddate) throws Exception {
-		System.out.println("Áß±â±â¿Â¿¹º¸");
+		System.out.println("ì¤‘ê¸°ê¸°ì˜¨ì˜ˆë³´");
 		System.out.println(startdate);
 		System.out.println(enddate);
 
-		Date today = new Date(); // ¸ŞÀÎÆäÀÌÁö Á¢¼Ó ½Ã°£
-		Locale currentLocale = new Locale("KOREAN", "KOREA"); // ³ª¶ó
+		Date today = new Date(); // ë©”ì¸í˜ì´ì§€ ì ‘ì† ì‹œê°„
+		Locale currentLocale = new Locale("KOREAN", "KOREA"); // ë‚˜ë¼
 		SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
 		StringBuilder baseTime = new StringBuilder(formatter.format(today));
 
 		StringBuilder tmfc = new StringBuilder(startdate + baseTime);
-		apiDateFormat.tmFcDateFormat(tmfc); // api ¹ßÇ¥½Ã°¢ ÆÄ¸®¹ÌÅÍ ÇüÅÂ¸¦ ¸ÂÃß±â À§ÇÑ Æ÷¸ä (0600 or 1800)
-		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa" // httpsÀÔ·Â ½Ã JavaÀÇ ½Å·ÚÇÏ´Â ÀÎÁõ¼­
-																					// ¸ñ·Ï(keystore)¿¡ »ç¿ëÇÏ°íÀÚ ÇÏ´Â ÀÎÁõ±â°üÀÌ
-																					// µî·ÏµÇ¾î ÀÖÁö ¾Ê¾Æ Á¢±ÙÀÌ Â÷´ÜµÇ´Â Çö»ó.
+		apiDateFormat.tmFcDateFormat(tmfc); // api ë°œí‘œì‹œê° íŒŒë¦¬ë¯¸í„° í˜•íƒœë¥¼ ë§ì¶”ê¸° ìœ„í•œ í¬ë©§ (0600 or 1800)
+		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa" // httpsì…ë ¥ ì‹œ Javaì˜ ì‹ ë¢°í•˜ëŠ” ì¸ì¦ì„œ
+																					// ëª©ë¡(keystore)ì— ì‚¬ìš©í•˜ê³ ì í•˜ëŠ” ì¸ì¦ê¸°ê´€ì´
+																					// ë“±ë¡ë˜ì–´ ìˆì§€ ì•Šì•„ ì ‘ê·¼ì´ ì°¨ë‹¨ë˜ëŠ” í˜„ìƒ.
 
-				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // ÀÏ¹İÀÎÁõÅ°
-				+ "&pageNo=1" // ÆäÀÌÁö¹øÈ£
-				+ "&numOfRows=10" // ÆäÀÌÁö rows
+				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // ì¼ë°˜ì¸ì¦í‚¤
+				+ "&pageNo=1" // í˜ì´ì§€ë²ˆí˜¸
+				+ "&numOfRows=10" // í˜ì´ì§€ rows
 				+ "&dataType=JSON" // JSON, XNL
-				+ "&regId=11B10101" // ¿¹º¸±¸¿ªÄÚµå ±âº»°ª ¼­¿ï
-				+ "&tmFc=" + tmfc; // ¹ßÇ¥½Ã°¢
+				+ "&regId=11B10101" // ì˜ˆë³´êµ¬ì—­ì½”ë“œ ê¸°ë³¸ê°’ ì„œìš¸
+				+ "&tmFc=" + tmfc; // ë°œí‘œì‹œê°
 
 		HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
 		System.out.println("# RESULT : " + resultMap);
@@ -167,20 +167,20 @@ public class ApiController {
 		return jsonObj.toString();
 	}
 	
-		// Áß±âÀ°»ó¿¹º¸
+		// ì¤‘ê¸°ìœ¡ìƒì˜ˆë³´
 		@RequestMapping(value = "/api/searchmidlandweather.do", method = RequestMethod.GET)
 		public String restApiSearchMidLandWeather(HttpSession session, String startdate, String enddate) throws Exception {
-			System.out.println("Áß±âÀ°»ó¿¹º¸");
+			System.out.println("ì¤‘ê¸°ìœ¡ìƒì˜ˆë³´");
 			System.out.println(startdate);
 			System.out.println(enddate);
 
-			Date today = new Date(); // ¸ŞÀÎÆäÀÌÁö Á¢¼Ó ½Ã°£
-			Locale currentLocale = new Locale("KOREAN", "KOREA"); // ³ª¶ó
+			Date today = new Date(); // ë©”ì¸í˜ì´ì§€ ì ‘ì† ì‹œê°„
+			Locale currentLocale = new Locale("KOREAN", "KOREA"); // ë‚˜ë¼
 			SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
 			StringBuilder baseTime = new StringBuilder(formatter.format(today));
 
 			StringBuilder tmfc = new StringBuilder(startdate + baseTime);
-			apiDateFormat.tmFcDateFormat(tmfc); // api ¹ßÇ¥½Ã°¢ ÆÄ¸®¹ÌÅÍ ÇüÅÂ¸¦ ¸ÂÃß±â À§ÇÑ Æ÷¸ä (0600 or 1800)
+			apiDateFormat.tmFcDateFormat(tmfc); // api ë°œí‘œì‹œê° íŒŒë¦¬ë¯¸í„° í˜•íƒœë¥¼ ë§ì¶”ê¸° ìœ„í•œ í¬ë©§ (0600 or 1800)
 			String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
 				+"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
 				+"&pageNo=1"
@@ -189,7 +189,7 @@ public class ApiController {
 				+"&regId=11B10101"
 				+"&tmFc=" + tmfc;
 
-			HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
+			HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", ""); //apiìš”ì²­ì£¼ì†Œ, ì¸ì½”ë”©ë°©ì‹, ìš”ì²­ë°©ì‹
 			System.out.println("# RESULT : " + resultMap);
 			JSONObject jsonObj = new JSONObject();
 			jsonObj.put("result", resultMap);
@@ -197,14 +197,14 @@ public class ApiController {
 			return jsonObj.toString();
 		}
 	
-
+	//json ë°ì´í„° getí•¨ìˆ˜
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)throws Exception {
 		boolean isPost = false;
 
-		if ("post".equals(type)) { //post¹æ½Ä
+		if ("post".equals(type)) { //postë°©ì‹ì´ë©´
 			isPost = true;
-		} else { //get¹æ½Ä
-			url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr;
+		} else { //getë°©ì‹ì´ë©´
+			url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr; //jsonStrê°’ì´ ì¡´ì¬í•œë‹¤ë©´ ìš”ì²­ë¬¸ìì—´ì— request= +jsonStr+ ì‚½ì…
 			System.out.println("getDataFromJson url ==>" + url);
 		}
 
@@ -212,25 +212,36 @@ public class ApiController {
 	}
 
 	public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter,String contentType) throws Exception {
+		
+		
+		URL apiURL = new URL(url); //URLí´ë˜ìŠ¤ ìƒì„± íŒŒë¼ë¯¸í„° urlì´ ì§€ì •í•˜ëŠ” ìì›ì— ëŒ€í•œ URLê°ì²´ë¥¼ ìƒì„± í›„ apiURLì— ì €ì¥
 
-		URL apiURL = new URL(url);
-
-		HttpURLConnection conn = null;
+		HttpURLConnection conn = null; //ì§ì ‘ê°ì²´ìƒì„± ë¶ˆê°€(ìƒì„±ìê°€ protectedë¡œ ì„ ì–¸),  URLConnectionì„ êµ¬í˜„í•œ í´ë˜ìŠ¤ , java.net í´ë˜ìŠ¤ì—ì„œ ì œê³µí•˜ëŠ” URL ìš”ì²­ì„ ìœ„í•œ í´ë˜ìŠ¤
 		BufferedReader br = null;
 		BufferedWriter bw = null;
 
-		HashMap<String, Object> resultMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultMap = new HashMap<String, Object>(); //ìš”ì²­ ê²°ê³¼ê°’ì„ ë¦¬í„´í•  ë§µ ê°ì²´ ìƒì„±
 
 		try {
-			conn = (HttpURLConnection) apiURL.openConnection();
-			conn.setConnectTimeout(5000);
-			conn.setReadTimeout(5000);
-			conn.setDoOutput(true);
+			/*
+			 * URLConnection í´ë˜ìŠ¤ì™€ ë§ˆì°¬ê°€ì§€ë¡œ ìƒì„±ìê°€ protectedë¡œ ì„ ì–¸ë˜ì–´ ì§ì ‘ HttpURLConnection ê°ì²´ë¥¼ ìƒì„±í•  ìˆ˜ ì—†ë‹¤.Â  
+			 * í•˜ì§€ë§Œ http URLì„ ì‚¬ìš©í•˜ëŠ” URLê°ì²´ì˜ openConnection()ë©”ì„œë“œê°€ ë¦¬í„´í•˜ëŠ” URLConnectionê°ì²´(ë¦¬í„´ê°’)ëŠ” HttpURLConnectionì˜ ì¸ìŠ¤í„´ìŠ¤ê°€ ë  ìˆ˜ ìˆë‹¤.
+			 * URL u = new URL("http://www.naver.com"); 
+			 * HttpURLConnection http = (HttpURLConnection) u.openConnection();
+			 * 
+			 */
+			conn = (HttpURLConnection) apiURL.openConnection(); //ë¦¬í„´ëœ URLConnectionì„ HttpURLConnectionìœ¼ë¡œ ìºìŠ¤íŒ…í•˜ì—¬ ì‚¬ìš©.
+			conn.setConnectTimeout(5000); // íƒ€ì„ì•„ì›ƒ ì„¤ì •  -  TimeOut ì‹œê°„ (ì„œë²„ ì ‘ì†ì‹œ ì—°ê²° ì†Œìš” ì‹œê°„) 
+			conn.setReadTimeout(5000);    // ë¦¬ë“œíƒ€ì„ì•„ì›ƒ ì„¤ì •  - ë°ì´í„° êµí™˜ ì‹œê°„ (ì£¼ê³ ë°›ì„ ë•Œ) 
+			conn.setDoOutput(true);  //setDoOutput(true)POSTë° PUTìš”ì²­ì— ì‚¬ìš©ë©ë‹ˆë‹¤ . ê·¸ë ‡ë‹¤ë©´ ìš”ì²­ falseì„ ì‚¬ìš©í•˜ê¸°ìœ„í•œ ê²ƒì…ë‹ˆë‹¤ GET.
 
-			if (isPost) {
-				conn.setRequestMethod("POST");
-				conn.setRequestProperty("Content-Type", contentType);
-				conn.setRequestProperty("Accept", "*/*");
+			if (isPost) { // ë§Œì•½ postë¼ë©´
+				conn.setRequestMethod("POST"); //ìš”ì²­ë°©ì‹ ì„ íƒ
+				conn.setRequestProperty("Content-Type", contentType); //íƒ€ì…ì„¤ì •(text/html) í˜•ì‹ìœ¼ë¡œ ì „ì†¡(Request Body ì „ë‹¬ ì‹œ application/jsonë¡œ ì„œë²„ì— ì „ë‹¬.)
+				conn.setRequestProperty("Accept", "*/*"); //ì„œë²„ Response Dataë¥¼ JSON í˜•ì‹ì˜ íƒ€ì…ìœ¼ë¡œ ìš”ì²­. Accept í—¤ë”ëŠ” í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì„œë²„ë¡œ ìš”ì²­ ì‹œ ìš”ì²­ë©”ì‹œì§€ì— ë‹´ê¸°ëŠ” í—¤ë”. 
+														  //Acceptí—¤ë”ëŠ” ìì‹ ì—ê²Œ ì´ëŸ¬í•œ ë°ì´í„° íƒ€ì…ë§Œ í—ˆìš©í•˜ê² ë‹¤ëŠ” ëœ»ì…ë‹ˆë‹¤. 
+														  //ë¸Œë¼ìš°ì €ê°€ ìš”ì²­ ë©”ì‹œì§€ì˜ Acceptí—¤ë” ê°’ì„ application/jsonìœ¼ë¡œ ì„¤ì • ì‹œ 
+														  //ì›¹ì„œë²„ì—ê²Œ ë‚˜ëŠ” json ë°ì´í„°ë§Œ ì²˜ë¦¬ê°€ ê¸°ëŠ¥í•˜ë‹ˆ jsonë°ì´í„° í˜•ì‹ìœ¼ë¡œ ì‘ë‹µ
 			} else {
 				conn.setRequestMethod("GET");
 			}

@@ -3,11 +3,13 @@ package com.hostate.api.vo;
 public class Tb_weather_search_scope_info {
 	private String user_id;
 	private String user_name; 
-	private String search_time;
 	private String start_date;
 	private String end_date;
+	private String create_date;
 	private String create_user_name;
-	private String create_table_date;
+	private String update_date;
+	private String update_user_name;
+	
 	
 	public String getUser_id() {
 		return user_id;
@@ -20,12 +22,6 @@ public class Tb_weather_search_scope_info {
 	}
 	public void setUser_name(String user_name) {
 		this.user_name = user_name;
-	}
-	public String getSearch_time() {
-		return search_time;
-	}
-	public void setSearch_time(String search_time) {
-		this.search_time = search_time;
 	}
 	public String getStart_date() {
 		return start_date;
@@ -45,10 +41,22 @@ public class Tb_weather_search_scope_info {
 	public void setCreate_user_name(String create_user_name) {
 		this.create_user_name = create_user_name;
 	}
-	public String getCreate_table_date() {
-		return create_table_date;
+	public String getCreate_date() {
+		return create_date;
 	}
-	public void setCreate_table_date(String create_table_date) {
-		this.create_table_date = create_table_date;
+	public void setCreate_date(String create_date) {
+		this.create_date = create_date;
+	}
+	public String getUpdate_user_name() {
+		return update_user_name;
+	}
+	public void setUpdate_user_name(String update_user_name) {
+		this.update_user_name = update_user_name;
+	}
+	public String getUpdate_date() {
+		return update_date;
+	}
+	public void setUpdate_date(String update_date) {
+		this.update_date = update_date;
 	}
 }

@@ -114,7 +114,7 @@ $("document").ready(function() {
 			if(num < 0){
 				alert("시작날짜와 끝날짜를 확인하세요.");
 			}else if(num == 0){
-				alert("최소 1일 이상 조회해 주세요.");
+				alert("최소 다음날부터 조회 가능합니다.");
 			}else{
 				alert("조회합니다.");
 				searchvilageweather(start_date, end_date);
@@ -143,7 +143,7 @@ $("document").ready(function() {
 	    return year + "-" + month + "-" + day;
 	}
 
-	/**************************************조회버튼 클릭 함수******************************************
+/**************************************조회버튼 클릭 함수******************************************
 	function serachClick() {
 		var st = $("#startdate").val();
 		var ed = $("#enddate").val();
@@ -238,13 +238,13 @@ $("document").ready(function() {
 								if(sItem[i].fcstValue == 0){
 									$(this).text("강수형태 : 없음");
 								}else if(sItem[i].fcstValue == 1){
-									$(this).text("날씨 : 비");
+									$(this).text("강수형태 : 비");
 								}else if(sItem[i].fcstValue == 2){
-									$(this).text("날씨 : 비/눈");
+									$(this).text("강수형태 : 비/눈");
 								}else if(sItem[i].fcstValue == 3){
-									$(this).text("날씨 : 눈");
+									$(this).text("강수형태 : 눈");
 								}else{
-									$(this).text("날씨 : 소나기");
+									$(this).text("강수형태 : 소나기");
 								}
 							});
 						}else if(sItem[i].category == "POP"){ //카테고리가 SKY이라면(하늘상태)
