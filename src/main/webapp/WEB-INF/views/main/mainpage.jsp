@@ -92,6 +92,7 @@ $("document").ready(function() {
 		var toDay = getToday(); //yyyymmdd 형식
 		var toDay2 = getToday2(); //yyyy-mm-dd형식
 		var maxdd = parseInt(toDay) + 7; // 금일 + 7
+		var toDayNum = parseInt(toDay);
 		
 		maxdd = String(maxdd);
 		
@@ -108,16 +109,20 @@ $("document").ready(function() {
 		$("#searcWeatherBtn").click(function() {
 			var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식
 			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식
-			var num = end_date - start_date
+			var num = end_date - start_date //정수형으로 변한 두 날짜의 값의 차이를 구한다.
 			
-			//조회시작날짜와 끝날짜 검증
-			if(num < 0){
-				alert("시작날짜와 끝날짜를 확인하세요.");
-			}else if(num == 0){
-				alert("최소 다음날부터 조회 가능합니다.");
+			if(start_date > end_date){
+				alert("plz chk your date state !!");
+				return false;
+			}else if(start_date-toDayNum < 3 && end_date-toDayNum < 3){
+				alert("short!");
+				searchShortweather(String(start_date), String(end_date)); //단기예보만 호출
+			}else if(start_date-toDayNum > 2 && end_date-toDayNum > 2){
+				alert("middle!");
+				searchMidweather(String(start_date), String(end_date)); //중기예보만호출
 			}else{
-				alert("조회합니다.");
-				searchvilageweather(start_date, end_date);
+				alert("All!");
+				searchAllweather(String(start_date), String(end_date)) //모두호출
 			}
 	    });
 	};
@@ -163,9 +168,9 @@ $("document").ready(function() {
 		}
 	}*/
 	
-/**************************************최초 접속 시 3시간 단위의 단기예보조회******************************************/
+/**************************************최초 접속 시 호출******************************************/
 	function firstvilageweather() {
-		var toDay = getToday();
+		let toDay = getToday();
 		$.ajax({			
 			type: 'get',
 			url: '/api/firsthvilageweather.do',
@@ -180,84 +185,129 @@ $("document").ready(function() {
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
 				let formHtml = "";
+				let scope = parseInt(ed)-parseInt(st) +1; //시작날짜와 끝날짜 범뮈에 맞춰 폼태그갯수를 만들 배열의 크기를을 초기화한다.
 				let objarr = new Array();
 				
-				for(let i in sItem){
-					
+				for(let i = 0; i<scope; i++){
+					objarr.push(i);
 				}
-
-				for(var i = 0; i < 3; i++){
-					objarr.push(i)
-				};
-					
-				if (dataHeader == "00"){
+				
+				let skyAvg = 0;
+				let sn = 0;
+				let sky = 0;
+				
+				let popAvg = 0;
+				const maxTmp = 0;
+				const minTmp = 0;
+				
+			
+				if(dataHeader == "00"){ //최초 접속 시 api 데이터 전달이 성공된다면
 					console.log("success ==>");
 					console.log(data);
 					
 					let formHtml = "";
 					for(let i in objarr){ //날씨 내용 폼 및 관련 태그생성
 						formHtml += "<div class=weatherForm id=weatherForm>";
-						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //날씨사진
-						formHtml += "</b></div>"
-						formHtml += "<div class=sky id=TMP></div>" //기온
-						formHtml += "<div class=sky id=SKY>testtest</div>" //하늘
-						formHtml += "<div class=pty id=PTY></div>" //강수형태
-						formHtml += "<div class=pop id=POP></div>"; //강수확률
-						formHtml += "<div class=reh id=REH></div>"; //습도
-						formHtml += "<div class=reh id=VVV></div>"; //습도
+						formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>"; //날짜
+						formHtml += "</span></span>";
+						formHtml += "<div class=SKY, id=SKY>SKY</div>";//하늘
+						formHtml += "<div class=POP, id=POP>POP</div>"; //강수확률
+						formHtml += "<div class=TMN, id=TMN>TMN</div>"; //최저기온
+						formHtml += "<div class=TMX, id=TMX>TMX</div>"; //최고확률
 						formHtml += "</div>";
 					}
 					$('.weatherContents').html(formHtml);
 					
-					//응답API 데이터를 폼태그 ID에 매치시켜 
 					for(let i in sItem){
-						if(sItem[i].category == "SKY"){ //카테고리가 SKY이라면(하늘상태)
-							$("#SKY").attr("id", "SKY"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
-							$("#fcstTime").attr("id", "fcstTime"+i+"");
-							
-							$("div[id=SKY"+i+"]").each(function(){//id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-								if(sItem[i].fcstValue == 1){
-									$(this).text("날씨 : 맑음");
-								}else if(sItem[i].fcstValue == 3){
-									$(this).text("날씨 : 구름많음");
-								}else if(sItem[i].fcstValue == 4){
-									$(this).text("날씨 : 흐림");
-								}
-							});
-							$("b[id=fcstTime"+i+"]").each(function(){//id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-								$(this).text(sItem[i].fcstTime); //시간 업데이트
-							});
-						}else if(sItem[i].category == "TMP"){ //카테고리가 SKY이라면(하늘상태)
-							$("#TMP").attr("id", "TMP"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
-							$("div[id=TMP"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-								$(this).text("기온 : " + sItem[i].fcstValue+"℃"); 
-							});
-						}else if(sItem[i].category == "PTY"){ //카테고리가 SKY이라면(하늘상태)
-							$("#PTY").attr("id", "PTY"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
-							$("div[id=PTY"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-								if(sItem[i].fcstValue == 0){
-									$(this).text("강수형태 : 없음");
-								}else if(sItem[i].fcstValue == 1){
-									$(this).text("강수형태 : 비");
-								}else if(sItem[i].fcstValue == 2){
-									$(this).text("강수형태 : 비/눈");
-								}else if(sItem[i].fcstValue == 3){
-									$(this).text("강수형태 : 눈");
-								}else{
-									$(this).text("강수형태 : 소나기");
-								}
-							});
-						}else if(sItem[i].category == "POP"){ //카테고리가 SKY이라면(하늘상태)
-							$("#POP").attr("id", "POP"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
-							$("div[id=POP"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-								$(this).text("강수확률 : " + sItem[i].fcstValue+"%"); 
-							});
-						}else if(sItem[i].category == "REH"){ //카테고리가 SKY이라면(하늘상태)
-							console.log("2..REH");
-							$("#REH").attr("id", "REH"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가
-							$("div[id=REH"+i+"]").each(function(){ //id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-								$(this).text("습도 : " + sItem[i].fcstValue+"%"); 
-							});
+						if(sItem[i].category == "SKY" && sItem[i].fcstDate == toDay){
+							skyAvg += parseInt(sItem[i].fcstValue);
+							sn += 1;
+						}
+					}$("#SKY").text(skyAvg/sn);
+					
+					
+						
+						/* $("#SKY").attr("id", "SKY"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가				
+						$("div[id=SKY"+i+"]").each(function(){//id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
+							if(sItem[i].fcstValue == 1){
+								$(this).text("날씨 : 맑음");
+							}else if(sItem[i].fcstValue == 3){
+								$(this).text("날씨 : 구름많음");
+							}else if(sItem[i].fcstValue == 4){
+								$(this).text("날씨 : 흐림");
+							}
+						}); */
+					
+				}else{
+					console.log("fail ==>");
+					console.log(data);
+				}
+			},
+			error: function(e, status, xhr, data) {
+				console.log("error ==>");
+				console.log(e);
+			}
+		});
+	}
+	
+	//단기예보만 호출
+	function searchShortweather(st, ed) {
+		console.log("searchShortweather start");
+		$.ajax({
+			type: 'get',
+			url: '/api/searchShortweather.do',
+			data:{
+				"start_date" : st,
+				"end_date" : ed
+			},
+			async: false,
+			timeout : 30000,
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function(data, status, xhr) {
+				
+				let dataHeader = data.result.response.header.resultCode;
+				let sItem = data.result.response.body.items.item;
+
+				let scope = parseInt(ed)-parseInt(st) +1; //시작날짜와 끝날짜 범뮈에 맞춰 폼태그갯수를 만들 배열의 크기를을 초기화한다.
+				let objarr = new Array();
+				
+				for(let i = 0; i<scope; i++){
+					objarr.push(i);
+				}
+				
+				let formHtml = "";
+				let skyAvg = 0;
+				let popAvg = 0;
+		
+				
+				console.log(objarr.length);
+				
+				if (dataHeader == "00"){
+					console.log("success ==>");
+					console.log(data);
+					
+					//초기 접속 콘텐츠내용 초기화 
+					formHtml = "";
+					$('.weatherContents').html(formHtml);
+					
+					//다시 폼생성
+					for(let i in objarr){ //날씨 내용 폼 및 관련 태그생성
+						formHtml += "<div class=weatherForm id=weatherForm>";
+						formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>" //날짜
+						formHtml += "</span></span>"		
+						formHtml += "<div class=SKY id=SKY>SKY</div>" //하늘
+						formHtml += "<div class=POP id=POP>POP</div>"; //강수확률
+						formHtml += "<div class=TMN id=TMN>TMN</div>"; //최저기온
+						formHtml += "<div class=TMX id=TMX>TMX</div>"; //최고확률
+						formHtml += "</div>";
+					}
+					$('.weatherContents').html(formHtml);
+					
+					//응답API 데이터를 폼태그 ID에 매치시킨다
+					for(let i in sItem){
+						if(sItem[i].category == "SKY"){//카테고리가 SKY이라면(하늘상태)
+						 console.log("해결해결");
 						}
 					}
 				}else{
@@ -271,89 +321,155 @@ $("document").ready(function() {
 			}
 		});
 	}
-/**************************************조회버튼 클릭 시 최대 3일치까지 단기예보조회******************************************/
-	function searchvilageweather(st, ed) {
-		$.ajax({			
-			type: 'get',
-			url: '/api/searchvilageweather.do',
-			data:{
-				"start_date" : st,
-				"end_date" : ed
-			},
-			timeout : 30000,
-			contentType: 'application/json',
-			dataType: 'json',
-			success: function(data, status, xhr) {
-				
-				let dataHeader = data.result.response.header.resultCode;
-				let sItem = data.result.response.body.items.item;
-		
-				if (dataHeader == "00"){
-					
-				}
-			},
-			error: function(e, status, xhr, data) {
-				console.log("error ==>");
-				console.log(e);
-			}
-		});
-	}
-	 /**************************************중기기온예보조회함수*****************************************/
-	 function searchmidtaweather(st, ed) {
+
+	//중기예보만 호출
+	function searchMidweather(st, ed) {
 		$.ajax({
 			type: 'get',
 			url: '/api/searchmidtaweather.do',
 			data:{
-				"startdate" : st,
-				"enddate" : ed
+				"start_date" : st,
+				"end_date" : ed
 			},
+			async: false,
 			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
-			success: function(data, status, xhr) {
-				
-				let dataHeader = data.result.response.header.resultCode;
-				
-				if (dataHeader == "00"){
-					console.log("success ==>");
-					console.log(data);
+			success: function(data1, status, xhr) {
+				let dataHeader1 = data1.result.response.header.resultCode;
+				//--------------중기기온------------//
+				if (dataHeader1 == "00"){
+					console.log("searchmidtaweather success ==>");
+					//--------------중기육상------------//
+					$.ajax({
+						type: 'get',
+						url: '/api/searchmidlandweather.do',
+						data:{
+							"start_date" : st,
+							"end_date" : ed
+						},
+						async: false,
+						timeout : 30000,
+						contentType: 'application/json',
+						dataType: 'json',
+						success: function(data2, status, xhr) {
+							
+							let dataHeader2 = data2.result.response.header.resultCode;
+							
+							if (dataHeader2 == "00"){
+								console.log("searchmidlandweather success ==>");
+								console.log(data1); //중기기온정보데이터
+								console.log(data2); //중기육사예보데이터
+								
+							}else{
+								console.log("fail ==>");
+								console.log(data);
+							}
+						},
+						error: function(e, status, xhr, data) {
+							console.log("error ==>");
+							console.log(e);
+						}
+					});
 					
 					
 				}else{
 					console.log("fail ==>");
-					console.log(data);
+					console.log(data1);
 				}
 			},
 			error: function(e, status, xhr, data) {
 				console.log("error ==>");
 				console.log(e);
-			}
+			}	
 		});
 	}
-	/**************************************중기육상예보조회함수*****************************************/
-	 function searchmidlandweather(st, ed) { 
+	//단기 중기 모두 호출
+	function searchAllweather(st, ed) {
+		//--------------------중기기온예보호출--------------------//
 		$.ajax({
 			type: 'get',
-			url: '/api/searchmidlandweather.do',
+			url: '/api/searchmidtaweather.do',
 			data:{
-				"startdate" : st,
-				"enddate" : ed
+				"start_date" : st,
+				"end_date" : ed
 			},
+			async: false,
 			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
-			success: function(data, status, xhr) {
+			success: function(data1, status, xhr) {
 				
-				let dataHeader = data.result.response.header.resultCode;
+				let dataHeader1 = data1.result.response.header.resultCode;
 				
-				if (dataHeader == "00"){
-					console.log("success ==>");
-					console.log(data);
-					
-					
+				if (dataHeader1 == "00"){
+					console.log("searchmidtaweather success ==>");
+					console.log(data1);	
+					//--------------------단기예보호출--------------------//
+					$.ajax({			
+						type: 'get',
+						url: '/api/searchShortweather.do',
+						data:{
+							"start_date" : st,
+							"end_date" : ed
+						},
+						async: false,
+						timeout : 30000,
+						contentType: 'application/json',
+						dataType: 'json',
+						success: function(data2, status, xhr) {
+							
+							let dataHeader2 = data2.result.response.header.resultCode;
+							if (dataHeader2 == "00"){
+								console.log("searchShortweather success ==>");
+								console.log(data2);
+								//--------------------중기육상예보호출--------------------//
+								$.ajax({
+									type: 'get',
+									url: '/api/searchmidlandweather.do',
+									data:{
+										"start_date" : st,
+										"end_date" : ed
+									},
+									async: false,
+									timeout : 30000,
+									contentType: 'application/json',
+									dataType: 'json',
+									success: function(data3, status, xhr) {
+										
+										let dataHeader3 = data3.result.response.header.resultCode;
+										if (dataHeader3 == "00"){
+											console.log("searchmidlandweather success ==>");
+											console.log(data3);
+
+										}else{
+											console.log("fail ==>");
+											console.log(data3);
+										}
+									},
+									error: function(e, status, xhr, data) {
+										console.log("error ==>");
+										console.log(e);
+									}
+								});
+								
+								
+								
+								
+							}else{
+								console.log("fail ==>");
+								console.log(data2);
+							}
+						},
+						error: function(e, status, xhr, data) {
+							console.log("error ==>");
+							console.log(e);
+						}
+					});
+
 				}else{
 					console.log("fail ==>");
-					console.log(data);
+					console.log(data1);
 				}
 			},
 			error: function(e, status, xhr, data) {
@@ -362,6 +478,8 @@ $("document").ready(function() {
 			}
 		});
 	}
+	
+
 	/***************************************타이머 생성 함수*******************************************/
 	 function startTime() {
 		    var today = new Date();

@@ -58,7 +58,7 @@ public class LoginController {
 		
 		if(userChk.getUser_id()!=null && !userChk.getUser_id().equals("")) {
 			session.setAttribute("user_id", userChk.getUser_id());
-			session.setAttribute("user_name", userChk.getCreate_user_name());
+			session.setAttribute("user_name", userChk.getUser_name());
 			return "redirect:/main/mainpage.do";
 		}else {
 			return "redirect:/login/login.do";

@@ -54,11 +54,11 @@ public class ApiController {
 		
 		Date today = new Date(); // 메인페이지 접속 시간
 		Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-		SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale);
-		StringBuilder hhmm = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
+		StringBuilder time = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
 		
-		StringBuilder startDate = new StringBuilder(searchInfo.getStart_date()+hhmm); //yyyymmddhhmm 형태
-		System.out.println(startDate);
+		System.out.println("time -->" + time);
+		StringBuilder startDate = new StringBuilder(time); //yyyymmddhhmm 형태
 		
 		//메인페이지 접속 시 요청 파리미터 형태를 맞추기 위한포멧 메서드 실행, mm단위는 요청 불가
 		apiDateFormat.baseTimeFormat(startDate);
@@ -70,7 +70,7 @@ public class ApiController {
 
 				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //인증키
 				+ "&pageNo=1" //페이지번호
-				+ "&numOfRows=36" //결과 수 , default : 24시간 3시간 단위로 설정
+				+ "&numOfRows=834" //결과 수 , default : 24시간 3시간 단위로 설정
 				+ "&dataType=JSON" // XML, JSON
 				+ "&base_date=" + startDate.substring(0, 8) // 발표일자
 				+ "&base_time=" + startDate.substring(8) // 발표시각
@@ -86,11 +86,11 @@ public class ApiController {
 
 	}
 	
-	@RequestMapping(value = "/api/searchvilageweather.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/searchShortweather.do", method = RequestMethod.GET)
 	public String searchvilageweather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("조회단기예보호출");	
 		
-		searchInfo.setUser_name((String)session.getAttribute("user_id"));
+		searchInfo.setUser_id((String)session.getAttribute("user_id"));
 		searchInfo.setUser_name((String)session.getAttribute("user_name"));
 		
 		int chk = logService.searchWeatherLogInsert(searchInfo); //조회기록저장
@@ -98,11 +98,11 @@ public class ApiController {
 		if(chk == 1) {
 			Date today = new Date(); // 메인페이지 접속 시간
 			Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-			SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale);
-			StringBuilder hhmm = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
+			StringBuilder time = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
 			
-			StringBuilder startDate = new StringBuilder(searchInfo.getStart_date()+hhmm); //yyyymmddhhmm 형태
-			System.out.println(startDate);
+			System.out.println("time -->" + time);
+			StringBuilder startDate = new StringBuilder(time); //yyyymmddhhmm 형태
 			
 			//메인페이지 접속 시 요청 파리미터 형태를 맞추기 위한포멧 메서드 실행, mm단위는 요청 불가
 			apiDateFormat.baseTimeFormat(startDate);
@@ -136,17 +136,25 @@ public class ApiController {
 
 	// 중기기온예보
 	@RequestMapping(value = "/api/searchmidtaweather.do", method = RequestMethod.GET)
-	public String restApiSearchMidTaWeather(HttpSession session, String startdate, String enddate) throws Exception {
+	public String restApiSearchMidTaWeather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("중기기온예보");
-		System.out.println(startdate);
-		System.out.println(enddate);
-
+		
+		searchInfo.setUser_id((String)session.getAttribute("user_id"));
+		searchInfo.setUser_name((String)session.getAttribute("user_name"));
+		
+		System.out.println("중기기온예보 ID => " + (String)session.getAttribute("user_id"));
+		
+		int chk = logService.searchWeatherLogInsert(searchInfo); //조회기록저장
+		
+		if(chk == 1) {
+			
 		Date today = new Date(); // 메인페이지 접속 시간
 		Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-		SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
-		StringBuilder baseTime = new StringBuilder(formatter.format(today));
-
-		StringBuilder tmfc = new StringBuilder(startdate + baseTime);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
+		StringBuilder baseTime = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
+		
+		System.out.println(baseTime);
+		StringBuilder tmfc = new StringBuilder(baseTime);
 		apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
 		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa" // https입력 시 Java의 신뢰하는 인증서
 																					// 목록(keystore)에 사용하고자 하는 인증기관이
@@ -165,36 +173,51 @@ public class ApiController {
 		jsonObj.put("result", resultMap);
 
 		return jsonObj.toString();
+		}else {
+			return "중기기온예보 호출 실패!";
+		}
 	}
+	
 	
 		// 중기육상예보
 		@RequestMapping(value = "/api/searchmidlandweather.do", method = RequestMethod.GET)
-		public String restApiSearchMidLandWeather(HttpSession session, String startdate, String enddate) throws Exception {
+		public String restApiSearchMidLandWeather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
 			System.out.println("중기육상예보");
-			System.out.println(startdate);
-			System.out.println(enddate);
+			
+			searchInfo.setUser_id((String)session.getAttribute("user_id"));
+			searchInfo.setUser_name((String)session.getAttribute("user_name"));
+			
+			System.out.println("중기육상예보 ID => " + (String)session.getAttribute("user_id"));
+			
+			int chk = logService.searchWeatherLogInsert(searchInfo); 
+			
+			if(chk == 1) {
+				
+				Date today = new Date(); // 메인페이지 접속 시간
+				Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale); //
+				StringBuilder baseTime = new StringBuilder(formatter.format(today));
 
-			Date today = new Date(); // 메인페이지 접속 시간
-			Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-			SimpleDateFormat formatter = new SimpleDateFormat("HHmm", currentLocale); //
-			StringBuilder baseTime = new StringBuilder(formatter.format(today));
-
-			StringBuilder tmfc = new StringBuilder(startdate + baseTime);
-			apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
-			String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
-				+"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
-				+"&pageNo=1"
-				+"&numOfRows=10"
-				+"&dataType=JSON"
-				+"&regId=11B10101"
-				+"&tmFc=" + tmfc;
-
-			HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", ""); //api요청주소, 인코딩방식, 요청방식
-			System.out.println("# RESULT : " + resultMap);
-			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("result", resultMap);
-
-			return jsonObj.toString();
+				System.out.println(baseTime);
+				StringBuilder tmfc = new StringBuilder(baseTime);
+				apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
+				String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
+						+"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
+						+"&pageNo=1"
+						+"&numOfRows=10"
+						+"&dataType=JSON"
+						+"&regId=11B00000"
+						+"&tmFc=" + tmfc;
+				
+				HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", ""); //api요청주소, 인코딩방식, 요청방식
+				System.out.println("# RESULT : " + resultMap);
+				JSONObject jsonObj = new JSONObject();
+				jsonObj.put("result", resultMap);
+				
+				return jsonObj.toString();
+			}else {
+				return "중기육사예보 호출 실패";
+			}
 		}
 	
 	//json 데이터 get함수

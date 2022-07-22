@@ -10,7 +10,7 @@
 		    create_date,
 		    create_user_name,
 		    update_date,
-		    update_user_name,
+		    update_user_name
 		    )
 		values(
 			#{user_id},
