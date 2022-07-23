@@ -185,12 +185,12 @@ $("document").ready(function() {
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
 				let formHtml = "";
-				let scope = parseInt(ed)-parseInt(st) +1; //시작날짜와 끝날짜 범뮈에 맞춰 폼태그갯수를 만들 배열의 크기를을 초기화한다.
+				/* let scope = parseInt(ed)-parseInt(st) +1; //시작날짜와 끝날짜 범뮈에 맞춰 폼태그갯수를 만들 배열의 크기를을 초기화한다. */
 				let objarr = new Array();
 				
-				for(let i = 0; i<scope; i++){
+				/* for(let i = 0; i<scope; i++){
 					objarr.push(i);
-				}
+				} */
 				
 				let skyAvg = 0;
 				let sn = 0;
