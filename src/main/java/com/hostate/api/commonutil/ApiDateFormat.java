@@ -19,10 +19,7 @@ public class ApiDateFormat {
 		System.out.println("TmfcFormat" + tmFc);
 		int hour = Integer.parseInt(tmFc.substring(9,10)); // 현재 시간
 		int day =  Integer.parseInt(tmFc.substring(0,8)) - 1; // 다음날 00시부터 05시59분까지는 전날 18시 업데이트 정보를 불러와야함.
-		System.out.println("TmfcFormat22" + tmFc);
-		System.out.println(hour);
-		System.out.println(day);
-		
+
 		if(tmFc.substring(8,9).equals("0")) { //현재시간이 오전 00시 ~ 09시59분	
 			if(hour>=0 && hour<=5) { //오전 00시 ~ 05시59분까지
 				tmFc.replace(8, 12, "1800");
@@ -45,12 +42,12 @@ public class ApiDateFormat {
 
 	private StringBuilder BaseTimeFormat(StringBuilder startDate) {
 		System.out.println("BaseTimeFormat" + startDate);
-		switch (startDate.substring(8,10)) {	// 단기예보조회는 3시간 단위로 업데이트가 진행 baseTime에 입력가능 시간대 제한
+		switch (startDate.substring(8,10)) {	
 			case "03": case "04": case "05":
-				startDate.replace(8, 12, "0200"); //3시부터 예상되는 날씨정보를 제공
+				startDate.replace(8, 12, "0200");
 				break;
 			case "06": case "07": case "08":
-				startDate.replace(8, 12, "0500"); //6시부터 예상되는 날씨정보를 제공 이하 동일
+				startDate.replace(8, 12, "0500");
 				break;
 			case "09": case "10": case "11":
 				startDate.replace(8, 12, "0800");
@@ -68,7 +65,7 @@ public class ApiDateFormat {
 				startDate.replace(8, 12, "2000");
 				break;
 			case "00": case "01": case "02":
-				int year = Integer.parseInt(startDate.substring(4, 8)) -1; // 금일 시간 -1, 3시간 단위 업데이트로 다음날로 넘어가는 새벽 00시 01시 시간대로는 조회불가, 위에도 동일
+				int year = Integer.parseInt(startDate.substring(4, 8)) -1; // 금일 시간 -1
 				startDate.replace(5, 9,String.valueOf(year));
 				startDate.replace(8, 12, "2300");
 				break;

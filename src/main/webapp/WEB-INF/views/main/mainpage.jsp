@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=EUC-KR"
+    pageEncoding="EUC-KR"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>
 <!DOCTYPE html>
 <html>
@@ -19,10 +20,10 @@
 		<a class="navbar-brand logo">HOSTATE</a>
  		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 	 	 	<c:if test="${sessionScope.user_id == null}">
-	     		 <a class="navbar-brand nav-link active logstate" href="/login/login.do">ë¡œê·¸ì¸</a>
+	     		 <a class="navbar-brand nav-link active logstate" href="/login/login.do">·Î±×ÀÎ</a>
 	     	</c:if>
 	     	<c:if test="${sessionScope.user_id != null}">
-				<a class="navbar-brand nav-link active logstate" href="/login/logout.do" class="logoutbtn">ë¡œê·¸ì•„ì›ƒ</a>
+				<a class="navbar-brand nav-link active logstate" href="/login/logout.do" class="logoutbtn">·Î±×¾Æ¿ô</a>
 			</c:if>
     	</div>
 	</div>
@@ -30,12 +31,12 @@
 	<div class="headerContent">
 		<c:if test="${sessionScope.user_id != null}">
 	 		<span class="headerContentText">
-	 			ì•„ë˜ ê²€ìƒ‰ê¸°ëŠ¥ì„ í†µí•´ ì›í•˜ëŠ” ë‚ ì˜ ë‚ ì”¨ë¥¼ ì¡°íšŒí•´ë³´ì„¸ìš”.
+	 			¾Æ·¡ °Ë»ö±â´ÉÀ» ÅëÇØ ¿øÇÏ´Â ³¯ÀÇ ³¯¾¾¸¦ Á¶È¸ÇØº¸¼¼¿ä.
 	 		</span>
  		</c:if>
  		<c:if test="${sessionScope.user_id == null}">
 	 		<span class="headerContentText">
-	 			ì˜¨ë¼ì¸ìœ¼ë¡œ <a href="/login/login.do">ë¡œê·¸ì¸</a>í•˜ê³ , ë‚ ì”¨ë¥¼ ì¡°íšŒí•´ë³´ì„¸ìš”.
+	 			¿Â¶óÀÎÀ¸·Î <a href="/login/login.do">·Î±×ÀÎ</a>ÇÏ°í, ³¯¾¾¸¦ Á¶È¸ÇØº¸¼¼¿ä.
 	 		</span>
  		</c:if>
  	</div>
@@ -60,7 +61,7 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;
      	<button id="searcWeatherBtn" class="btn btn-light">search</button>  	
    		<div class="guidetext">
-			*ê¸ˆì¼ë¶€í„° ìµœëŒ€ <b>7</b>ì¼ê¹Œì§€ ì¡°íšŒê°€ëŠ¥í•©ë‹ˆë‹¤.
+			*±İÀÏºÎÅÍ ÃÖ´ë <b>7</b>ÀÏ±îÁö Á¶È¸°¡´ÉÇÕ´Ï´Ù.
 		</div>
 	</div>
 	</c:if>
@@ -76,58 +77,59 @@
       		<button type="button" id="searcWeatherBtn" class="btn btn-light" disabled="disabled">search</button>
    		</form>
    		<div class="guidetext">
-			*ê¸ˆì¼ë¶€í„° ìµœëŒ€ <b>7</b>ì¼ê¹Œì§€ ì¡°íšŒê°€ëŠ¥í•©ë‹ˆë‹¤.
+			*±İÀÏºÎÅÍ ÃÖ´ë <b>7</b>ÀÏ±îÁö Á¶È¸°¡´ÉÇÕ´Ï´Ù.
 		</div>
 	</div>
 	</c:if>
 </body>
 <script type="text/javascript" charset="utf-8">
 $("document").ready(function() {
-	startTime(); //ë©”ì¸ í˜ì´ì§€ íƒ€ì´ë¨¸ ìƒì„±
-	setCalendar();//ë‹¬ë ¥ ë²”ìœ„ ì„¤ì •
-	firstvilageweather(); //í˜ì´ì§€ ì ‘ì† ì‹œ api í˜¸ì¶œ
+	startTime(); //¸ŞÀÎ ÆäÀÌÁö Å¸ÀÌ¸Ó »ı¼º
+	setCalendar();//´Ş·Â ¹üÀ§ ¼³Á¤
+	firstvilageweather(); //ÆäÀÌÁö Á¢¼Ó ½Ã 3½Ã°£ ´ÜÀ§ÀÇ È­¸é È£Ãâ
 	
 	function setCalendar() {
-		var toDay = getToday(); //yyyymmdd í˜•ì‹
-		var toDay2 = getToday2(); //yyyy-mm-ddí˜•ì‹
-		var maxdd = parseInt(toDay) + 7; // ê¸ˆì¼ + 7
+		var toDay = getToday(); //yyyymmdd Çü½Ä
+		var toDay2 = getToday2(); //yyyy-mm-ddÇü½Ä
+		var maxdd = parseInt(toDay) + 7; // ±İÀÏ + 7
 		var toDayNum = parseInt(toDay);
 		
 		maxdd = String(maxdd);
 		
-		//ì¡°íšŒì‹œì‘ë‚ ì§œ ì†ì„± ì„¤ì •
+		//Á¶È¸½ÃÀÛ³¯Â¥ ¼Ó¼º ¼³Á¤
 		$("#startdate").attr("value", toDay2);
 		$("#startdate").attr("min", toDay2);
 		$("#startdate").attr("max", toDay2.substr(0,8) + maxdd.substr(6));
-		//ì¡°íšŒëë‚ ì§œ ì†ì„± ì„¤ì •
+		//Á¶È¸³¡³¯Â¥ ¼Ó¼º ¼³Á¤
 		$("#enddate").attr("value", toDay2);
 		$("#enddate").attr("min", toDay2);
 		$("#enddate").attr("max", toDay2.substr(0,8) + maxdd.substr(6));
 		
-		//ì¡°íšŒë²„íŠ¼ í´ë¦­ ì‹œ
+		//Á¶È¸¹öÆ° Å¬¸¯ ½Ã
 		$("#searcWeatherBtn").click(function() {
-			var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"ë¬¸ìë¥¼ ëª¨ë‘ì œê±°í•˜ëŠ” ì •ê·œì‹
-			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"ë¬¸ìë¥¼ ëª¨ë‘ì œê±°í•˜ëŠ” ì •ê·œì‹
-			var num = end_date - start_date //ì •ìˆ˜í˜•ìœ¼ë¡œ ë³€í•œ ë‘ ë‚ ì§œì˜ ê°’ì˜ ì°¨ì´ë¥¼ êµ¬í•œë‹¤.
+			var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"¹®ÀÚ¸¦ ¸ğµÎÁ¦°ÅÇÏ´Â Á¤±Ô½Ä
+			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"¹®ÀÚ¸¦ ¸ğµÎÁ¦°ÅÇÏ´Â Á¤±Ô½Ä
+			var num = end_date - start_date //Á¤¼öÇüÀ¸·Î º¯ÇÑ µÎ ³¯Â¥ÀÇ °ªÀÇ Â÷ÀÌ¸¦ ±¸ÇÑ´Ù.
 			
 			if(start_date > end_date){
 				alert("plz chk your date state !!");
 				return false;
 			}else if(start_date-toDayNum < 3 && end_date-toDayNum < 3){
 				alert("short!");
-				searchShortweather(String(start_date), String(end_date)); // ë‹¨ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
+				searchShortweather(String(start_date), String(end_date)); //´Ü±â¿¹º¸¸¸ È£Ãâ
 			}else if(start_date-toDayNum > 2 && end_date-toDayNum > 2){
 				alert("middle!");
-				searchMidweather(String(start_date), String(end_date)); //ì¤‘ê¸°ì˜ˆë³´ë§Œí˜¸ì¶œ
+				searchMidweather(String(start_date), String(end_date)); //Áß±â¿¹º¸¸¸È£Ãâ
 			}else{
 				alert("All!");
-				searchAllweather(String(start_date), String(end_date)) //ëª¨ë‘ í˜¸ì¶œ
+				searchAllweather(String(start_date), String(end_date)) //¸ğµÎÈ£Ãâ
 			}
 	    });
 	};
 		
-		/* console.log('"${sessionScope.user_id}"'); ì„¸ì…˜ ì•„ì´ë””*/
-
+		/* console.log('"${sessionScope.user_id}"'); ¼¼¼Ç ¾ÆÀÌµğ*/
+	
+/***************************************¿À´Ã³¯Â¥ (YYYYMMDD) »ı¼º ÇÔ¼ö*******************************************/
 	function getToday(){
 	    var date = new Date();
 	    var year = date.getFullYear();
@@ -136,7 +138,7 @@ $("document").ready(function() {
 
 	    return year + month + day;
 	}
-		
+
 	function getToday2(){
 	    var date = new Date();
 	    var year = date.getFullYear();
@@ -144,12 +146,31 @@ $("document").ready(function() {
 	    var day = ("0" + date.getDate()).slice(-2);
 
 	    return year + "-" + month + "-" + day;
-	}	
+	}
+
+/**************************************Á¶È¸¹öÆ° Å¬¸¯ ÇÔ¼ö******************************************
+	function serachClick() {
+		var st = $("#startdate").val();
+		var ed = $("#enddate").val();
+		
+		st = st.replace(/\-/g,"");
+		ed = ed.replace(/\-/g,"");
+		
+		st = parseInt(st);
+		ed = parseInt(ed);
+		
+		if(ed-st < 3){ //Á¶È¸¹üÀ§°¡ 3ÀÏ ¹Ì¸¸ÀÎ°æ¿ì ´Ü±â¿¹º¸¸¸ Á¶È¸ ¼­ºñ½º È£Ãâ
+			searchvilageweather(st, ed);
+		}else{ //¾Æ´Ï¸é ÀüºÎÈ£Ãâ
+			searchvilageweather(st, ed);
+			searchmidtaweather(st, ed);
+			searchmidlandweather(st, ed);
+		}
+	}*/
 	
-	//ìµœì´ˆ ì§„ì… ì‹œ í•¨ìˆ˜ í˜¸ì¶œ
+/**************************************ÃÖÃÊ Á¢¼Ó ½Ã È£Ãâ******************************************/
 	function firstvilageweather() {
-		console.log("firstvilageweather start");
-		var toDay = getToday();
+		let toDay = getToday();
 		$.ajax({			
 			type: 'get',
 			url: '/api/firsthvilageweather.do',
@@ -164,86 +185,59 @@ $("document").ready(function() {
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
 				let formHtml = "";
+				let scope = parseInt(ed)-parseInt(st) +1; //½ÃÀÛ³¯Â¥¿Í ³¡³¯Â¥ ¹ü¹¿¿¡ ¸ÂÃç ÆûÅÂ±×°¹¼ö¸¦ ¸¸µé ¹è¿­ÀÇ Å©±â¸¦À» ÃÊ±âÈ­ÇÑ´Ù.
 				let objarr = new Array();
 				
-				for(let i in sItem){
-					
+				for(let i = 0; i<scope; i++){
+					objarr.push(i);
 				}
-
-				for(var i = 0; i < 3; i++){
-					objarr.push(i)
-				};
-					
-				if (dataHeader == "00"){
+				
+				let skyAvg = 0;
+				let sn = 0;
+				let sky = 0;
+				
+				let popAvg = 0;
+				const maxTmp = 0;
+				const minTmp = 0;
+				
+			
+				if(dataHeader == "00"){ //ÃÖÃÊ Á¢¼Ó ½Ã api µ¥ÀÌÅÍ Àü´ŞÀÌ ¼º°øµÈ´Ù¸é
 					console.log("success ==>");
 					console.log(data);
 					
 					let formHtml = "";
-					for(let i in objarr){ //ë‚ ì”¨ ë‚´ìš© í¼ ë° ê´€ë ¨ íƒœê·¸ìƒì„±
+					for(let i in objarr){ //³¯¾¾ ³»¿ë Æû ¹× °ü·Ã ÅÂ±×»ı¼º
 						formHtml += "<div class=weatherForm id=weatherForm>";
-						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //ë‚ ì”¨ì‚¬ì§„
-						formHtml += "</b></div>"
-						formHtml += "<div class=sky id=TMP></div>" //ê¸°ì˜¨
-						formHtml += "<div class=sky id=SKY>testtest</div>" //í•˜ëŠ˜
-						formHtml += "<div class=pty id=PTY></div>" //ê°•ìˆ˜í˜•íƒœ
-						formHtml += "<div class=pop id=POP></div>"; //ê°•ìˆ˜í™•ë¥ 
-						formHtml += "<div class=reh id=REH></div>"; //ìŠµë„
-						formHtml += "<div class=reh id=VVV></div>"; //ìŠµë„
+						formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>"; //³¯Â¥
+						formHtml += "</span></span>";
+						formHtml += "<div class=SKY, id=SKY>SKY</div>";//ÇÏ´Ã
+						formHtml += "<div class=POP, id=POP>POP</div>"; //°­¼öÈ®·ü
+						formHtml += "<div class=TMN, id=TMN>TMN</div>"; //ÃÖÀú±â¿Â
+						formHtml += "<div class=TMX, id=TMX>TMX</div>"; //ÃÖ°íÈ®·ü
 						formHtml += "</div>";
 					}
 					$('.weatherContents').html(formHtml);
 					
-					//ì‘ë‹µAPI ë°ì´í„°ë¥¼ í¼íƒœê·¸ IDì— ë§¤ì¹˜ì‹œì¼œ 
 					for(let i in sItem){
-						if(sItem[i].category == "SKY"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
-							$("#SKY").attr("id", "SKY"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
-							$("#fcstTime").attr("id", "fcstTime"+i+"");
-							
-							$("div[id=SKY"+i+"]").each(function(){//idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
-								if(sItem[i].fcstValue == 1){
-									$(this).text("ë‚ ì”¨ : ë§‘ìŒ");
-								}else if(sItem[i].fcstValue == 3){
-									$(this).text("ë‚ ì”¨ : êµ¬ë¦„ë§ìŒ");
-								}else if(sItem[i].fcstValue == 4){
-									$(this).text("ë‚ ì”¨ : íë¦¼");
-								}
-							});
-							$("b[id=fcstTime"+i+"]").each(function(){//idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
-								$(this).text(sItem[i].fcstTime); //ì‹œê°„ ì—…ë°ì´íŠ¸
-							});
-						}else if(sItem[i].category == "TMP"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
-							$("#TMP").attr("id", "TMP"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
-							$("div[id=TMP"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
-								$(this).text("ê¸°ì˜¨ : " + sItem[i].fcstValue+"â„ƒ"); 
-							});
-						}else if(sItem[i].category == "PTY"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
-							$("#PTY").attr("id", "PTY"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
-							$("div[id=PTY"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
-								if(sItem[i].fcstValue == 0){
-									$(this).text("ê°•ìˆ˜í˜•íƒœ : ì—†ìŒ");
-								}else if(sItem[i].fcstValue == 1){
-									$(this).text("ê°•ìˆ˜í˜•íƒœ : ë¹„");
-								}else if(sItem[i].fcstValue == 2){
-									$(this).text("ê°•ìˆ˜í˜•íƒœ : ë¹„/ëˆˆ");
-								}else if(sItem[i].fcstValue == 3){
-									$(this).text("ê°•ìˆ˜í˜•íƒœ : ëˆˆ");
-								}else{
-									$(this).text("ê°•ìˆ˜í˜•íƒœ : ì†Œë‚˜ê¸°");
-								}
-							});
-						}else if(sItem[i].category == "POP"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
-							$("#POP").attr("id", "POP"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
-							$("div[id=POP"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
-								$(this).text("ê°•ìˆ˜í™•ë¥  : " + sItem[i].fcstValue+"%"); 
-							});
-						}else if(sItem[i].category == "REH"){ //ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
-							console.log("2..REH");
-							$("#REH").attr("id", "REH"+i+""); //í¼íƒœê·¸ì•ˆì˜ divíƒœê·¸ ì¤‘ idê°€ SKYì¸ divì—  itemsì˜ ìš”ì†Œ ë²ˆí˜¸ ì¶”ê°€
-							$("div[id=REH"+i+"]").each(function(){ //idê°’ì— ìš”ì†Œë²ˆí˜¸ê°€ ì¶”ê°€ëœ í•´ë‹¹ íƒœê·¸ì˜ í…ìŠ¤íŠ¸ê°’ì„ ì—…ë°ì´íŠ¸
-								$(this).text("ìŠµë„ : " + sItem[i].fcstValue+"%"); 
-							});
+						if(sItem[i].category == "SKY" && sItem[i].fcstDate == toDay){
+							skyAvg += parseInt(sItem[i].fcstValue);
+							sn += 1;
 						}
-					}
+					}$("#SKY").text(skyAvg/sn);
+					
+					
+						
+						/* $("#SKY").attr("id", "SKY"+i+""); //ÆûÅÂ±×¾ÈÀÇ divÅÂ±× Áß id°¡ SKYÀÎ div¿¡  itemsÀÇ ¿ä¼Ò ¹øÈ£ Ãß°¡				
+						$("div[id=SKY"+i+"]").each(function(){//id°ª¿¡ ¿ä¼Ò¹øÈ£°¡ Ãß°¡µÈ ÇØ´ç ÅÂ±×ÀÇ ÅØ½ºÆ®°ªÀ» ¾÷µ¥ÀÌÆ®
+							if(sItem[i].fcstValue == 1){
+								$(this).text("³¯¾¾ : ¸¼À½");
+							}else if(sItem[i].fcstValue == 3){
+								$(this).text("³¯¾¾ : ±¸¸§¸¹À½");
+							}else if(sItem[i].fcstValue == 4){
+								$(this).text("³¯¾¾ : Èå¸²");
+							}
+						}); */
+					
 				}else{
 					console.log("fail ==>");
 					console.log(data);
@@ -255,7 +249,8 @@ $("document").ready(function() {
 			}
 		});
 	}
-	//ë‹¨ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
+	
+	//´Ü±â¿¹º¸¸¸ È£Ãâ
 	function searchShortweather(st, ed) {
 		console.log("searchShortweather start");
 		$.ajax({
@@ -265,6 +260,7 @@ $("document").ready(function() {
 				"start_date" : st,
 				"end_date" : ed
 			},
+			async: false,
 			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
@@ -272,47 +268,47 @@ $("document").ready(function() {
 				
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
+
+				let scope = parseInt(ed)-parseInt(st) +1; //½ÃÀÛ³¯Â¥¿Í ³¡³¯Â¥ ¹ü¹¿¿¡ ¸ÂÃç ÆûÅÂ±×°¹¼ö¸¦ ¸¸µé ¹è¿­ÀÇ Å©±â¸¦À» ÃÊ±âÈ­ÇÑ´Ù.
 				let objarr = new Array();
-				let scope = parseInt(ed)-parseInt(st) + 1; //ë‚ ì§œ ë²”ìœ„ë§Œí¼ í¼ ìƒì„±ì„ ìœ„í•´ ë°°ì—´ê¸¸ì´ë¥¼ 1ë¡œ ì´ˆê¸°í™”
+				
+				for(let i = 0; i<scope; i++){
+					objarr.push(i);
+				}
+				
 				let formHtml = "";
 				let skyAvg = 0;
 				let popAvg = 0;
 		
 				
-				for(var i = 0; i < scope; i++){
-					objarr.push(i)
-				};
 				console.log(objarr.length);
 				
 				if (dataHeader == "00"){
 					console.log("success ==>");
 					console.log(data);
 					
-					//ì´ˆê¸° ì ‘ì† ì½˜í…ì¸ ë‚´ìš© ì´ˆê¸°í™” 
+					//ÃÊ±â Á¢¼Ó ÄÜÅÙÃ÷³»¿ë ÃÊ±âÈ­ 
 					formHtml = "";
 					$('.weatherContents').html(formHtml);
 					
-					//ë‹¤ì‹œ í¼ìƒì„±
-					for(let i in objarr){ //ë‚ ì”¨ ë‚´ìš© í¼ ë° ê´€ë ¨ íƒœê·¸ìƒì„±
+					//´Ù½Ã Æû»ı¼º
+					for(let i in objarr){ //³¯¾¾ ³»¿ë Æû ¹× °ü·Ã ÅÂ±×»ı¼º
 						formHtml += "<div class=weatherForm id=weatherForm>";
-						formHtml += "<div class=weatherPng id=weatherPng><b id=fcstTime>" //ë‚ ì§œ
-						formHtml += "</b></div>"		
-						formHtml += "<div class=sky id=SKY>testtest</div>" //í•˜ëŠ˜
-						formHtml += "<div class=pop id=POP></div>"; //ê°•ìˆ˜í™•ë¥ 
-						formHtml += "<div class=pop id=TMN></div>"; //ìµœì €ê¸°ì˜¨
-						formHtml += "<div class=pop id=TMX></div>"; //ìµœê³ í™•ë¥ 
-
+						formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>" //³¯Â¥
+						formHtml += "</span></span>"		
+						formHtml += "<div class=SKY id=SKY>SKY</div>" //ÇÏ´Ã
+						formHtml += "<div class=POP id=POP>POP</div>"; //°­¼öÈ®·ü
+						formHtml += "<div class=TMN id=TMN>TMN</div>"; //ÃÖÀú±â¿Â
+						formHtml += "<div class=TMX id=TMX>TMX</div>"; //ÃÖ°íÈ®·ü
 						formHtml += "</div>";
 					}
 					$('.weatherContents').html(formHtml);
 					
-					//ì‘ë‹µAPI ë°ì´í„°ë¥¼ í¼íƒœê·¸ IDì— ë§¤ì¹˜ì‹œí‚¨ë‹¤
+					//ÀÀ´äAPI µ¥ÀÌÅÍ¸¦ ÆûÅÂ±× ID¿¡ ¸ÅÄ¡½ÃÅ²´Ù
 					for(let i in sItem){
-						if(sItem[i].category == "SKY"){//ì¹´í…Œê³ ë¦¬ê°€ SKYì´ë¼ë©´(í•˜ëŠ˜ìƒíƒœ)
-							if
-						 console.log(i);
+						if(sItem[i].category == "SKY"){//Ä«Å×°í¸®°¡ SKYÀÌ¶ó¸é(ÇÏ´Ã»óÅÂ)
+						 console.log("ÇØ°áÇØ°á");
 						}
-								
 					}
 				}else{
 					console.log("fail ==>");
@@ -325,31 +321,155 @@ $("document").ready(function() {
 			}
 		});
 	}
-	
-	//ì¤‘ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
-	function searchMidweather() {
+
+	//Áß±â¿¹º¸¸¸ È£Ãâ
+	function searchMidweather(st, ed) {
 		$.ajax({
 			type: 'get',
 			url: '/api/searchmidtaweather.do',
 			data:{
 				"start_date" : st,
-				"endd_ate" : ed
+				"end_date" : ed
 			},
+			async: false,
 			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
-			success: function(data, status, xhr) {
-				
-				let dataHeader = data.result.response.header.resultCode;
-				
-				if (dataHeader == "00"){
-					console.log("success ==>");
-					console.log(data);
+			success: function(data1, status, xhr) {
+				let dataHeader1 = data1.result.response.header.resultCode;
+				//--------------Áß±â±â¿Â------------//
+				if (dataHeader1 == "00"){
+					console.log("searchmidtaweather success ==>");
+					//--------------Áß±âÀ°»ó------------//
+					$.ajax({
+						type: 'get',
+						url: '/api/searchmidlandweather.do',
+						data:{
+							"start_date" : st,
+							"end_date" : ed
+						},
+						async: false,
+						timeout : 30000,
+						contentType: 'application/json',
+						dataType: 'json',
+						success: function(data2, status, xhr) {
+							
+							let dataHeader2 = data2.result.response.header.resultCode;
+							
+							if (dataHeader2 == "00"){
+								console.log("searchmidlandweather success ==>");
+								console.log(data1); //Áß±â±â¿ÂÁ¤º¸µ¥ÀÌÅÍ
+								console.log(data2); //Áß±âÀ°»ç¿¹º¸µ¥ÀÌÅÍ
+								
+							}else{
+								console.log("fail ==>");
+								console.log(data);
+							}
+						},
+						error: function(e, status, xhr, data) {
+							console.log("error ==>");
+							console.log(e);
+						}
+					});
 					
 					
 				}else{
 					console.log("fail ==>");
-					console.log(data);
+					console.log(data1);
+				}
+			},
+			error: function(e, status, xhr, data) {
+				console.log("error ==>");
+				console.log(e);
+			}	
+		});
+	}
+	//´Ü±â Áß±â ¸ğµÎ È£Ãâ
+	function searchAllweather(st, ed) {
+		//--------------------Áß±â±â¿Â¿¹º¸È£Ãâ--------------------//
+		$.ajax({
+			type: 'get',
+			url: '/api/searchmidtaweather.do',
+			data:{
+				"start_date" : st,
+				"end_date" : ed
+			},
+			async: false,
+			timeout : 30000,
+			contentType: 'application/json',
+			dataType: 'json',
+			success: function(data1, status, xhr) {
+				
+				let dataHeader1 = data1.result.response.header.resultCode;
+				
+				if (dataHeader1 == "00"){
+					console.log("searchmidtaweather success ==>");
+					console.log(data1);	
+					//--------------------´Ü±â¿¹º¸È£Ãâ--------------------//
+					$.ajax({			
+						type: 'get',
+						url: '/api/searchShortweather.do',
+						data:{
+							"start_date" : st,
+							"end_date" : ed
+						},
+						async: false,
+						timeout : 30000,
+						contentType: 'application/json',
+						dataType: 'json',
+						success: function(data2, status, xhr) {
+							
+							let dataHeader2 = data2.result.response.header.resultCode;
+							if (dataHeader2 == "00"){
+								console.log("searchShortweather success ==>");
+								console.log(data2);
+								//--------------------Áß±âÀ°»ó¿¹º¸È£Ãâ--------------------//
+								$.ajax({
+									type: 'get',
+									url: '/api/searchmidlandweather.do',
+									data:{
+										"start_date" : st,
+										"end_date" : ed
+									},
+									async: false,
+									timeout : 30000,
+									contentType: 'application/json',
+									dataType: 'json',
+									success: function(data3, status, xhr) {
+										
+										let dataHeader3 = data3.result.response.header.resultCode;
+										if (dataHeader3 == "00"){
+											console.log("searchmidlandweather success ==>");
+											console.log(data3);
+
+										}else{
+											console.log("fail ==>");
+											console.log(data3);
+										}
+									},
+									error: function(e, status, xhr, data) {
+										console.log("error ==>");
+										console.log(e);
+									}
+								});
+								
+								
+								
+								
+							}else{
+								console.log("fail ==>");
+								console.log(data2);
+							}
+						},
+						error: function(e, status, xhr, data) {
+							console.log("error ==>");
+							console.log(e);
+						}
+					});
+
+				}else{
+					console.log("fail ==>");
+					console.log(data1);
 				}
 			},
 			error: function(e, status, xhr, data) {
@@ -358,45 +478,9 @@ $("document").ready(function() {
 			}
 		});
 	}
-	//ë‹¨ê¸° ì¤‘ê¸° ëª¨ë‘ í˜¸ì¶œ
-	function searchAllweather() {
-		$.ajax({
-			type: 'get',
-			url: '/api/searchmidtaweather.do',
-			data:{
-				"start_date" : st,
-				"endd_ate" : ed
-			},
-			timeout : 30000,
-			contentType: 'application/json',
-			dataType: 'json',
-			success: function(data, status, xhr) {
-				
-				let dataHeader = data.result.response.header.resultCode;
-				
-				if (dataHeader == "00"){
-					console.log("success ==>");
-					console.log(data);
-					
-					
-				}else{
-					console.log("fail ==>");
-					console.log(data);
-				}
-			},
-			error: function(e, status, xhr, data) {
-				console.log("error ==>");
-				console.log(e);
-			}
-		});
-	}
-	
-	
-	
-	
 	
 
-	/***************************************íƒ€ì´ë¨¸ ìƒì„± í•¨ìˆ˜*******************************************/
+	/***************************************Å¸ÀÌ¸Ó »ı¼º ÇÔ¼ö*******************************************/
 	 function startTime() {
 		    var today = new Date();
 		    var hr = today.getHours();
@@ -405,6 +489,7 @@ $("document").ready(function() {
 		    ap = (hr < 12) ? "<span>AM</span>" : "<span>PM</span>";
 		    hr = (hr == 0) ? 12 : hr;
 		    hr = (hr > 12) ? hr - 12 : hr;
+		    //Add a zero in front of numbers<10
 		    hr = checkTime(hr);
 		    min = checkTime(min);
 		    sec = checkTime(sec);
