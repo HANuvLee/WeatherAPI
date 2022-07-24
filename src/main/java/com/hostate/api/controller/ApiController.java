@@ -70,7 +70,7 @@ public class ApiController {
 
 				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //인증키
 				+ "&pageNo=1" //페이지번호
-				+ "&numOfRows=834" //결과 수 , default : 24시간 3시간 단위로 설정
+				+ "&numOfRows=1000" //결과 수 , default : 24시간 3시간 단위로 설정
 				+ "&dataType=JSON" // XML, JSON
 				+ "&base_date=" + startDate.substring(0, 8) // 발표일자
 				+ "&base_time=" + startDate.substring(8) // 발표시각
