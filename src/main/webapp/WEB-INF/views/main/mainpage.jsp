@@ -86,7 +86,8 @@
 $("document").ready(function() {
 	startTime(); //메인 페이지 타이머 생성
 	setCalendar();//달력 범위 설정
-	firstvilageweather(); //페이지 접속 시 3시간 단위의 화면 호출
+	firstvilageweather(); //페이지 최초 접속 시 API 요청함수
+	
 	
 	function setCalendar() {
 		var toDay = getToday(); //yyyymmdd 형식
@@ -111,6 +112,7 @@ $("document").ready(function() {
 			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식
 			var num = end_date - start_date //정수형으로 변한 두 날짜의 값의 차이를 구한다.
 			
+			//조회날짜 기준에 따른 api호출 리스트
 			if(start_date > end_date){
 				alert("plz chk your date state !!");
 				return false;
@@ -127,120 +129,28 @@ $("document").ready(function() {
 	    });
 	};
 		
-		/* console.log('"${sessionScope.user_id}"'); 세션 아이디*/
-	
-/***************************************오늘날짜 (YYYYMMDD) 생성 함수*******************************************/
-	function getToday(){
-	    var date = new Date();
-	    var year = date.getFullYear();
-	    var month = ("0" + (1 + date.getMonth())).slice(-2);
-	    var day = ("0" + date.getDate()).slice(-2);
-
-	    return year + month + day;
-	}
-
-	function getToday2(){
-	    var date = new Date();
-	    var year = date.getFullYear();
-	    var month = ("0" + (1 + date.getMonth())).slice(-2);
-	    var day = ("0" + date.getDate()).slice(-2);
-
-	    return year + "-" + month + "-" + day;
-	}
-
-/**************************************조회버튼 클릭 함수******************************************
-	function serachClick() {
-		var st = $("#startdate").val();
-		var ed = $("#enddate").val();
-		
-		st = st.replace(/\-/g,"");
-		ed = ed.replace(/\-/g,"");
-		
-		st = parseInt(st);
-		ed = parseInt(ed);
-		
-		if(ed-st < 3){ //조회범위가 3일 미만인경우 단기예보만 조회 서비스 호출
-			searchvilageweather(st, ed);
-		}else{ //아니면 전부호출
-			searchvilageweather(st, ed);
-			searchmidtaweather(st, ed);
-			searchmidlandweather(st, ed);
-		}
-	}*/
-	
-/**************************************최초 접속 시 호출******************************************/
+/**************************************최초 접속 시 호출되는 함수******************************************/
 	function firstvilageweather() {
-		let toDay = getToday();
 		$.ajax({			
 			type: 'get',
 			url: '/api/firsthvilageweather.do',
-			data:{
-				"start_date" : toDay
-			},
 			timeout : 60000,
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data, status, xhr) {
 				
 				let dataHeader = data.result.response.header.resultCode;
-				let sItem = data.result.response.body.items.item;
-				let formHtml = "";
-				let scope = parseInt(ed)-parseInt(st) +1; //시작날짜와 끝날짜 범뮈에 맞춰 폼태그갯수를 만들 배열의 크기를을 초기화한다.
-				let objarr = new Array();
-				
-				for(let i = 0; i<scope; i++){
-					objarr.push(i);
-				}
-				
-				let skyAvg = 0;
-				let sn = 0;
-				let sky = 0;
-				
-				let popAvg = 0;
-				const maxTmp = 0;
-				const minTmp = 0;
-				
-			
-				if(dataHeader == "00"){ //최초 접속 시 api 데이터 전달이 성공된다면
-					console.log("success ==>");
-					console.log(data);
-					
-					let formHtml = "";
-					for(let i in objarr){ //날씨 내용 폼 및 관련 태그생성
-						formHtml += "<div class=weatherForm id=weatherForm>";
-						formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>"; //날짜
-						formHtml += "</span></span>";
-						formHtml += "<div class=SKY, id=SKY>SKY</div>";//하늘
-						formHtml += "<div class=POP, id=POP>POP</div>"; //강수확률
-						formHtml += "<div class=TMN, id=TMN>TMN</div>"; //최저기온
-						formHtml += "<div class=TMX, id=TMX>TMX</div>"; //최고확률
-						formHtml += "</div>";
-					}
-					$('.weatherContents').html(formHtml);
-					
-					for(let i in sItem){
-						if(sItem[i].category == "SKY" && sItem[i].fcstDate == toDay){
-							skyAvg += parseInt(sItem[i].fcstValue);
-							sn += 1;
-						}
-					}$("#SKY").text(skyAvg/sn);
-					
-					
+				console.log(data);
+				let item = data.result.response.body.items.item;
 						
-						/* $("#SKY").attr("id", "SKY"+i+""); //폼태그안의 div태그 중 id가 SKY인 div에  items의 요소 번호 추가				
-						$("div[id=SKY"+i+"]").each(function(){//id값에 요소번호가 추가된 해당 태그의 텍스트값을 업데이트
-							if(sItem[i].fcstValue == 1){
-								$(this).text("날씨 : 맑음");
-							}else if(sItem[i].fcstValue == 3){
-								$(this).text("날씨 : 구름많음");
-							}else if(sItem[i].fcstValue == 4){
-								$(this).text("날씨 : 흐림");
-							}
-						}); */
+				if(dataHeader == "00"){ //최초 접속 시 api 데이터 전달이 성공된다면
+					console.log("firsthvilageweather success ==>");
 					
+					main(item); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출
+
 				}else{
-					console.log("fail ==>");
-					console.log(data);
+					console.log("firsthvilageweather fail ==>");
+					console.log("firsthvilageweather" + item);
 				}
 			},
 			error: function(e, status, xhr, data) {
@@ -269,47 +179,11 @@ $("document").ready(function() {
 				let dataHeader = data.result.response.header.resultCode;
 				let sItem = data.result.response.body.items.item;
 
-				let scope = parseInt(ed)-parseInt(st) +1; //시작날짜와 끝날짜 범뮈에 맞춰 폼태그갯수를 만들 배열의 크기를을 초기화한다.
-				let objarr = new Array();
-				
-				for(let i = 0; i<scope; i++){
-					objarr.push(i);
-				}
-				
-				let formHtml = "";
-				let skyAvg = 0;
-				let popAvg = 0;
-		
-				
-				console.log(objarr.length);
-				
 				if (dataHeader == "00"){
 					console.log("success ==>");
 					console.log(data);
 					
-					//초기 접속 콘텐츠내용 초기화 
-					formHtml = "";
-					$('.weatherContents').html(formHtml);
 					
-					//다시 폼생성
-					for(let i in objarr){ //날씨 내용 폼 및 관련 태그생성
-						formHtml += "<div class=weatherForm id=weatherForm>";
-						formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>" //날짜
-						formHtml += "</span></span>"		
-						formHtml += "<div class=SKY id=SKY>SKY</div>" //하늘
-						formHtml += "<div class=POP id=POP>POP</div>"; //강수확률
-						formHtml += "<div class=TMN id=TMN>TMN</div>"; //최저기온
-						formHtml += "<div class=TMX id=TMX>TMX</div>"; //최고확률
-						formHtml += "</div>";
-					}
-					$('.weatherContents').html(formHtml);
-					
-					//응답API 데이터를 폼태그 ID에 매치시킨다
-					for(let i in sItem){
-						if(sItem[i].category == "SKY"){//카테고리가 SKY이라면(하늘상태)
-						 console.log("해결해결");
-						}
-					}
 				}else{
 					console.log("fail ==>");
 					console.log(data);
@@ -341,38 +215,6 @@ $("document").ready(function() {
 				if (dataHeader1 == "00"){
 					console.log("searchmidtaweather success ==>");
 					//--------------중기육상------------//
-					$.ajax({
-						type: 'get',
-						url: '/api/searchmidlandweather.do',
-						data:{
-							"start_date" : st,
-							"end_date" : ed
-						},
-						async: false,
-						timeout : 30000,
-						contentType: 'application/json',
-						dataType: 'json',
-						success: function(data2, status, xhr) {
-							
-							let dataHeader2 = data2.result.response.header.resultCode;
-							
-							if (dataHeader2 == "00"){
-								console.log("searchmidlandweather success ==>");
-								console.log(data1); //중기기온정보데이터
-								console.log(data2); //중기육사예보데이터
-								
-							}else{
-								console.log("fail ==>");
-								console.log(data);
-							}
-						},
-						error: function(e, status, xhr, data) {
-							console.log("error ==>");
-							console.log(e);
-						}
-					});
-					
-					
 				}else{
 					console.log("fail ==>");
 					console.log(data1);
@@ -400,83 +242,96 @@ $("document").ready(function() {
 			dataType: 'json',
 			success: function(data1, status, xhr) {
 				
-				let dataHeader1 = data1.result.response.header.resultCode;
-				
-				if (dataHeader1 == "00"){
-					console.log("searchmidtaweather success ==>");
-					console.log(data1);	
-					//--------------------단기예보호출--------------------//
-					$.ajax({			
-						type: 'get',
-						url: '/api/searchShortweather.do',
-						data:{
-							"start_date" : st,
-							"end_date" : ed
-						},
-						async: false,
-						timeout : 30000,
-						contentType: 'application/json',
-						dataType: 'json',
-						success: function(data2, status, xhr) {
-							
-							let dataHeader2 = data2.result.response.header.resultCode;
-							if (dataHeader2 == "00"){
-								console.log("searchShortweather success ==>");
-								console.log(data2);
-								//--------------------중기육상예보호출--------------------//
-								$.ajax({
-									type: 'get',
-									url: '/api/searchmidlandweather.do',
-									data:{
-										"start_date" : st,
-										"end_date" : ed
-									},
-									async: false,
-									timeout : 30000,
-									contentType: 'application/json',
-									dataType: 'json',
-									success: function(data3, status, xhr) {
-										
-										let dataHeader3 = data3.result.response.header.resultCode;
-										if (dataHeader3 == "00"){
-											console.log("searchmidlandweather success ==>");
-											console.log(data3);
-
-										}else{
-											console.log("fail ==>");
-											console.log(data3);
-										}
-									},
-									error: function(e, status, xhr, data) {
-										console.log("error ==>");
-										console.log(e);
-									}
-								});
-								
-								
-								
-								
-							}else{
-								console.log("fail ==>");
-								console.log(data2);
-							}
-						},
-						error: function(e, status, xhr, data) {
-							console.log("error ==>");
-							console.log(e);
-						}
-					});
-
-				}else{
-					console.log("fail ==>");
-					console.log(data1);
-				}
 			},
 			error: function(e, status, xhr, data) {
 				console.log("error ==>");
 				console.log(e);
 			}
 		});
+	}
+	/***************************************메인 페이지 생성 함수*******************************************/
+	function main(item) {
+		 console.log("main function Start.");
+		 
+		//조회 시시작날짜와 끝날짜를 구한다.
+		const st = $('#startdate').val();
+		const ed = $('#enddate').val(); 
+		//조회날짜의 범위를 구하기 위한 형변환과 정수로 타입 변환 
+		const startDate = parseInt(st.replace(/\-/g,'')); 
+		const endDate = parseInt(st.replace(/\-/g,''));
+		const scope = endDate - startDate;
+		
+		let sky = [];
+		let pop = [];
+		let tmn = [];
+		let tmx = [];
+		
+		console.log("scope범위" + scope);
+		
+		if(item.length != 0){ //최초 접속 시 api 데이터가 성공적으로 전달될 때
+			console.log("main function success ==>");
+		
+		for(let i in item){
+			if(item[i].category == "SKY" && item[i].fcstDate == String(startDate)){
+				console.log("work 1" + i);
+				console.log("SKY value => " + item[i].fcstValue);
+				sky.push(parseInt(item[i].fcstValue));
+			}else if(item[i].category == "POP" && item[i].fcstDate == String(startDate)){
+				console.log("work 1" + i);
+				console.log("POP value => " + item[i].fcstValue);
+				pop.push(parseInt(item[i].fcstValue));
+			}else if(item[i].category == "tmn" && item[i].fcstDate == String(startDate)){
+				console.log("work 1" + i);
+				console.log("tmn value => " + item[i].fcstValue);
+				tmn.push(parseInt(item[i].fcstValue));
+			}else if(item[i].category == "tmx" && item[i].fcstDate == String(startDate)){
+				console.log("work 1" + i);
+				console.log("tmx value => " + item[i].fcstValue);
+				tmx.push(parseInt(item[i].fcstValue));
+			}
+		}
+		console.log("sky value => " + sky);
+		console.log("sky length value => " + sky.length);
+		console.log("pop value => " + pop);
+		console.log("pop length value => " + pop.length);
+		
+		// sky평균 계산
+		let sum = 0;
+		for(let i of sky){
+			sum += i;
+		}
+        let skyAvg= sum / sky.length;
+		console.log(skyAvg);
+		
+		sum = 0;
+		for(let i of pop){
+			sum += i;
+		}
+		// pop평균 계산
+        let popAvg= sum / pop.length;
+		console.log(popAvg);
+	
+	
+
+			
+			
+			
+		/* 	for(let i = 0; i <= scope; i++){
+				formHtml += "<div class=weatherForm id=weatherForm>";
+				formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>"; //날짜
+				formHtml += "</span></span>";
+				formHtml += "<div class=SKY, id=SKY>SKY</div>";//하늘
+				formHtml += "<div class=POP, id=POP>POP</div>"; //강수확률
+				formHtml += "<div class=TMN, id=TMN>TMN</div>"; //최저기온
+				formHtml += "<div class=TMX, id=TMX>TMX</div>"; //최고기온
+				formHtml += "</div>";	
+			}
+			$('.weatherContents').html(formHtml); */
+				
+		}else{
+			console.log("main function fail");
+			console.log(data);
+		}
 	}
 	
 
@@ -512,7 +367,25 @@ $("document").ready(function() {
 		    }
 		    return i;
 		}
+		
+		/***************************************오늘날짜 (YYYYMMDD) 생성 함수*******************************************/
+		function getToday(){
+		    var date = new Date();
+		    var year = date.getFullYear();
+		    var month = ("0" + (1 + date.getMonth())).slice(-2);
+		    var day = ("0" + date.getDate()).slice(-2);
 
+		    return year + month + day;
+		}
+		/***************************************오늘날짜 (YYYY-MM-DD) 생성 함수*******************************************/
+		function getToday2(){
+		    var date = new Date();
+		    var year = date.getFullYear();
+		    var month = ("0" + (1 + date.getMonth())).slice(-2);
+		    var day = ("0" + date.getDate()).slice(-2);
+
+		    return year + "-" + month + "-" + day;
+		}
 });
 </script>
 </html>
