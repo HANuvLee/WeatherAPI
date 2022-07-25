@@ -44,68 +44,69 @@ public class ApiController {
 	 */
 
 	// 단기예보
-	@RequestMapping(value = "/api/firsthvilageweather.do", method = RequestMethod.GET)
-	public String getVilageFcst(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
-		System.out.println("최초 접속 단기예보호출");	
-		
-		searchInfo.setUser_name((String)session.getAttribute("user_id"));
-		searchInfo.setUser_name((String)session.getAttribute("user_name"));
-		
-		JSONObject jsonObj = logService.getDataFromJson(searchInfo);
-		
-		return jsonObj.toString();
-	
-
-	}
-	
 	@RequestMapping(value = "/api/searchShortweather.do", method = RequestMethod.GET)
-	public String searchvilageweather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
-		System.out.println("조회단기예보호출");	
+	public String getVilageFcst(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
+		System.out.println("단기예보호출");
 		
-		
-		
-		searchInfo.setUser_id((String)session.getAttribute("user_id"));
-		searchInfo.setUser_name((String)session.getAttribute("user_name"));
-		
-		int chk = logService.searchWeatherLogInsert(searchInfo); //조회기록저장
-		
-		if(chk == 1) {
-			Date today = new Date(); // 메인페이지 접속 시간
-			Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale); //시간형태를 포멧
-			StringBuilder time = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
-			
-			System.out.println("time -->" + time);
-			StringBuilder startDate = new StringBuilder(time); //yyyymmddhhmm 형태
-			
-			//메인페이지 접속 시 요청 파리미터 형태를 맞추기 위한포멧 메서드 실행, mm단위는 요청 불가
-			apiDateFormat.baseTimeFormat(startDate);
-	
-			String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // https입력 시 Java의 신뢰하는인증서
-																									// 목록(keystore)에 사용하고자
-																									// 하는 인증기관이 등록되어 있지 않아
-																									// 접근이 차단되는현상발생.
-	
-					+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" //인증키
-					+ "&pageNo=1" //페이지번호
-					+ "&numOfRows=834" //결과 수 , default : 3일로 설정 (금일, 내일, 모레)
-					+ "&dataType=JSON" // XML, JSON
-					+ "&base_date=" + startDate.substring(0, 8) // 발표일자
-					+ "&base_time=0200" // 발표시각
-					+ "&nx=60" 
-					+ "&ny=127";
-	
-			HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
-			System.out.println("# RESULT : " + resultMap);
-			JSONObject jsonObj = new JSONObject();
-			jsonObj.put("result", resultMap);
+		if("".equals(searchInfo.getStart_date()) || searchInfo.getStart_date() == null || "".equals(searchInfo.getEnd_date()) || searchInfo.getStart_date() == null) {
+			JSONObject jsonObj = logService.getDataFromJson(searchInfo);
 			return jsonObj.toString();
-		}else {
-			 return "단기예보조회 호출 실패!!";
-		}
+		}else{
+			System.out.println("searchShortweather 2");
+			searchInfo.setUser_id((String)session.getAttribute("user_id"));
+			searchInfo.setUser_name((String)session.getAttribute("user_name"));
+			
+			logService.searchWeatherLogInsert(searchInfo); //조회기록저장
 
+			JSONObject jsonObj = logService.getDataFromJson(searchInfo);
+			return jsonObj.toString();
+		}
+	
 	}
 	
+	/*
+	 * @RequestMapping(value = "/api/searchShortweather.do", method =
+	 * RequestMethod.GET) public String searchvilageweather(HttpSession session,
+	 * Tb_weather_search_scope_info searchInfo) throws Exception {
+	 * System.out.println("조회단기예보호출");
+	 * 
+	 * 
+	 * 
+	 * searchInfo.setUser_id((String)session.getAttribute("user_id"));
+	 * searchInfo.setUser_name((String)session.getAttribute("user_name"));
+	 * 
+	 * int chk = logService.searchWeatherLogInsert(searchInfo); //조회기록저장
+	 * 
+	 * if(chk == 1) { Date today = new Date(); // 메인페이지 접속 시간 Locale currentLocale =
+	 * new Locale("KOREAN", "KOREA"); // 나라 SimpleDateFormat formatter = new
+	 * SimpleDateFormat("yyyyMMddHHmm", currentLocale); //시간형태를 포멧 StringBuilder
+	 * time = new StringBuilder(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
+	 * 
+	 * System.out.println("time -->" + time); StringBuilder startDate = new
+	 * StringBuilder(time); //yyyymmddhhmm 형태
+	 * 
+	 * //메인페이지 접속 시 요청 파리미터 형태를 맞추기 위한포멧 메서드 실행, mm단위는 요청 불가
+	 * apiDateFormat.baseTimeFormat(startDate);
+	 * 
+	 * String url =
+	 * "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" //
+	 * https입력 시 Java의 신뢰하는인증서 // 목록(keystore)에 사용하고자 // 하는 인증기관이 등록되어 있지 않아 // 접근이
+	 * 차단되는현상발생.
+	 * 
+	 * +
+	 * "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
+	 * //인증키 + "&pageNo=1" //페이지번호 + "&numOfRows=834" //결과 수 , default : 3일로 설정 (금일,
+	 * 내일, 모레) + "&dataType=JSON" // XML, JSON + "&base_date=" +
+	 * startDate.substring(0, 8) // 발표일자 + "&base_time=0200" // 발표시각 + "&nx=60" +
+	 * "&ny=127";
+	 * 
+	 * HashMap<String, Object> resultMap = getDataFromJson(url, "UTF-8", "get", "");
+	 * System.out.println("# RESULT : " + resultMap); JSONObject jsonObj = new
+	 * JSONObject(); jsonObj.put("result", resultMap); return jsonObj.toString();
+	 * }else { return "단기예보조회 호출 실패!!"; }
+	 * 
+	 * }
+	 */
 	
 
 	/*

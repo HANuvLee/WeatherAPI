@@ -133,7 +133,7 @@ $("document").ready(function() {
 	function firstvilageweather() {
 		$.ajax({			
 			type: 'get',
-			url: '/api/firsthvilageweather.do',
+			url: '/api/searchShortweather.do',
 			timeout : 60000,
 			contentType: 'application/json',
 			dataType: 'json',
@@ -187,6 +187,7 @@ $("document").ready(function() {
 				}else{
 					console.log("fail ==>");
 					console.log(data);
+					
 				}
 			},
 			error: function(e, status, xhr, data) {

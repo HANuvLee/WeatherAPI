@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hostate.api.commonutil.ApiDateFormat;
+import com.hostate.api.commonutil.ApiJsonFormat;
 import com.hostate.api.dao.LogDao;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
@@ -27,6 +28,17 @@ public class LogServiceImpl implements LogService {
 
 	@Autowired
 	ApiDateFormat apiDateFormat;
+	
+	@Autowired
+	ApiJsonFormat apiJsonFormat;
+	
+	//날짜데이터변환
+	HashMap<String, Object> resultData = new HashMap<String, Object>();
+	Date today = new Date(); // 메인페이지 접속 시간
+	Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
+	StringBuilder time = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
+	StringBuilder startDate = new StringBuilder(time); // yyyymmddhhmm 형태
 
 	@Override
 	public int searchWeatherLogInsert(Tb_weather_search_scope_info searchInfo) throws Exception {
@@ -36,15 +48,7 @@ public class LogServiceImpl implements LogService {
 
 	@Override
 	public JSONObject getDataFromJson(Tb_weather_search_scope_info searchInfo) throws Exception {
-		// TODO Auto-generated method stub
-		HashMap<String, Object> resultData = new HashMap<String, Object>();
-
-		Date today = new Date(); // 메인페이지 접속 시간
-		Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
-		StringBuilder time = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
-		StringBuilder startDate = new StringBuilder(time); // yyyymmddhhmm 형태
-
+		
 		// 메인페이지 접속 시 요청 파리미터 형태를 맞추기 위한포멧 메서드 실행, mm단위는 요청 불가
 		apiDateFormat.baseTimeFormat(startDate);
 
@@ -62,10 +66,12 @@ public class LogServiceImpl implements LogService {
 
 		resultData = getDataFromJson(url, "UTF-8", "get", "");
 		System.out.println("# RESULT : " + resultData);
-
+		
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("result", resultData);
-
+		
+		jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
+		
 		return jsonObj;
 	}
 
