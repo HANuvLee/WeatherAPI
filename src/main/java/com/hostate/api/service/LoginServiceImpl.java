@@ -32,24 +32,27 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public Tb_User_InfoVO userChk(Tb_User_InfoVO loginData) throws Exception {
-		Tb_User_InfoVO result = new Tb_User_InfoVO();
-		
+	
 		//유저 아이디 값으로 데이터베이스 상의 해당되는 아이디의 salt값 가져오기
 		String userSalt = logindao.getUserSalt(loginData);
-		
-		if (userSalt.equals("") || userSalt == null) {
+	
+		//DB에서 받은 해당 솔트값을 로그인 요청 시 넘어온 LoginData객체에 set
+		loginData.setUser_salt(userSalt);
+	
+		//비밀번호 암호화 진행
+		String encPw = sha512.encrypt(loginData);
+	
+		//암호화된 비밀번호 logindata에 set
+		loginData.setUser_pw(encPw);
+
+		//암호화된 패스워드와 DB상의 패스워드 비교
+		Tb_User_InfoVO chkUser = logindao.chkUser(loginData);
+
+		if(chkUser == null) {
 			System.out.println("계정 정보가 없습니다.");
-			return result;
+			return null;
 		}else {
-			//가져온 솔트를 로그인 요청 시 넘어온 LoginData객체에 set
-			loginData.setUser_salt(userSalt);
-			//비밀번호 암호화 진행
-			String encPw = sha512.encrypt(loginData);
-			loginData.setUser_pw(encPw);
-			//암호화된 패스워드와 DB상의 패스워드 비교
-			Tb_User_InfoVO chkUser = logindao.chkUser(loginData);
-			System.out.println(chkUser.getUser_id());
-			
+			System.out.println("계정 정보가 존재합니다.");
 			return chkUser;
 		}
 	}

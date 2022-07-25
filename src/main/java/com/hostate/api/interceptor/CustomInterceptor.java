@@ -1,3 +1,4 @@
+
 package com.hostate.api.interceptor;
 
 import java.io.IOException;
@@ -25,17 +26,21 @@ public class CustomInterceptor extends HandlerInterceptorAdapter {
 	//컨트롤러 요청 전 수행 되는 메서드 
 	//return true : preHandle 메서드 수행 후 본래 요청한 컨트롤러 수행
 	//return false : 컨트롤러로 요청이 가지 않는다.
-	 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException
-	            {
+	 public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 	        
 		 		System.out.println("preHandle =====> " + request.getRequestURI());
 		 		System.out.println("preHandle1");
 	        	HttpSession session = request.getSession();
 	        	
 				if (session.getAttribute("user_id") != null && !session.getAttribute("user_id").toString().equals("")) { //세션이 있다면
-					//해당 요청 컨트롤러 수행
-					System.out.println("preHandle2");
-					return true;
+					if(request.getRequestURI().equals("/login/login.do")) {
+						response.sendRedirect("/main/mainpage.do");
+						return false;
+					}else {						
+						//해당 요청 컨트롤러 수행
+						System.out.println("preHandle2");
+						return true;
+					}
 				}else{//세션이 없고
 					if(request.getRequestURI().equals("/login/login.do") || (request.getRequestURI().equals("/login/loginAction.do"))) { //로그인 페이지 요청 시 응답
 						System.out.println("preHandle3");

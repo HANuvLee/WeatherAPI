@@ -113,7 +113,7 @@ $("document").ready(function() {
 			var num = end_date - start_date //정수형으로 변한 두 날짜의 값의 차이를 구한다.
 			
 			//조회날짜 기준에 따른 api호출 리스트
-			if(start_date > end_date){
+			if(start_date > end_date){ 
 				alert("plz chk your date state !!");
 				return false;
 			}else if(start_date-toDayNum < 3 && end_date-toDayNum < 3){
@@ -263,8 +263,9 @@ $("document").ready(function() {
 		
 		let sky = [];
 		let pop = [];
-		let tmn = [];
-		let tmx = [];
+		let tmn = 0;
+		let tmx = 0;
+		let fcstdate;
 		
 		console.log("scope범위" + scope);
 		
@@ -273,60 +274,64 @@ $("document").ready(function() {
 		
 		for(let i in item){
 			if(item[i].category == "SKY" && item[i].fcstDate == String(startDate)){
-				console.log("work 1" + i);
-				console.log("SKY value => " + item[i].fcstValue);
 				sky.push(parseInt(item[i].fcstValue));
+				fcstdate = item[i].fcstDate;
 			}else if(item[i].category == "POP" && item[i].fcstDate == String(startDate)){
-				console.log("work 1" + i);
-				console.log("POP value => " + item[i].fcstValue);
 				pop.push(parseInt(item[i].fcstValue));
-			}else if(item[i].category == "tmn" && item[i].fcstDate == String(startDate)){
-				console.log("work 1" + i);
-				console.log("tmn value => " + item[i].fcstValue);
-				tmn.push(parseInt(item[i].fcstValue));
-			}else if(item[i].category == "tmx" && item[i].fcstDate == String(startDate)){
-				console.log("work 1" + i);
-				console.log("tmx value => " + item[i].fcstValue);
-				tmx.push(parseInt(item[i].fcstValue));
+			}else if(item[i].category == "TMN" && item[i].fcstDate == String(startDate)){
+				tmn = parseInt(item[i].fcstValue);
+			}else if(item[i].category == "TMX" && item[i].fcstDate == String(startDate)){
+				tmx = parseInt(item[i].fcstValue);
 			}
 		}
-		console.log("sky value => " + sky);
-		console.log("sky length value => " + sky.length);
-		console.log("pop value => " + pop);
-		console.log("pop length value => " + pop.length);
-		
-		// sky평균 계산
+		//sky평균 계산
 		let sum = 0;
 		for(let i of sky){
 			sum += i;
 		}
-        let skyAvg= sum / sky.length;
-		console.log(skyAvg);
+		let skyAvg= sum / sky.length;
+		//반올림
+		skyAvg = Math.round(skyAvg); 
+		if(skyAvg == 1){
+			skyAvg = "맑음";
+		}else if(skyAvg == 3){
+			skyAvg = "구름많음";
+		}else if(skyAvg == 4){
+			skyAvg = "흐림";
+		}
 		
-		sum = 0;
+		//pop평균계산
+		sum = 0; //다른 카테고리 평균값을 구하기 위해 sum초기화
 		for(let i of pop){
 			sum += i;
 		}
-		// pop평균 계산
         let popAvg= sum / pop.length;
-		console.log(popAvg);
-	
-	
+		//반올림
+		popAvg = Math.round(popAvg); 
+		
+		//날짜 변환
+		let mm = fcstdate.substr(4);
+		let dd =".";
+		let position = 2;
+		let output = [mm.slice(0, position), dd, mm.slice(position)].join('');
 
-			
-			
-			
-		/* 	for(let i = 0; i <= scope; i++){
-				formHtml += "<div class=weatherForm id=weatherForm>";
-				formHtml += "<span id=fcstTime><span class=weatherPng id=weatherPng>"; //날짜
-				formHtml += "</span></span>";
-				formHtml += "<div class=SKY, id=SKY>SKY</div>";//하늘
-				formHtml += "<div class=POP, id=POP>POP</div>"; //강수확률
-				formHtml += "<div class=TMN, id=TMN>TMN</div>"; //최저기온
-				formHtml += "<div class=TMX, id=TMX>TMX</div>"; //최고기온
-				formHtml += "</div>";	
-			}
-			$('.weatherContents').html(formHtml); */
+		
+		let formHtml = "";
+		
+	   	for(let i = 0; i <= scope; i++){
+			formHtml += "<div class=weatherForm id=weatherForm>";
+			formHtml += "<span id=fcstTime>";
+			formHtml += output;
+			formHtml += "</span>";
+			formHtml += "<span class=weatherPng id=weatherPng>"; //날짜
+			formHtml += "</span>";
+			formHtml += "<div class=SKY, id=SKY>날씨 :"+skyAvg+"</div>";//하늘
+			formHtml += "<div class=POP, id=POP>강수확률 :"+popAvg+"%</div>"; //강수확률
+			formHtml += "<div class=TMN, id=TMN>최저기온 :"+tmn+"</div>"; //최저기온
+			formHtml += "<div class=TMX, id=TMX>최고기온 :"+tmx+"</div>"; //최고기온
+			formHtml += "</div>";	
+	    }
+		$('.weatherContents').html(formHtml); 
 				
 		}else{
 			console.log("main function fail");

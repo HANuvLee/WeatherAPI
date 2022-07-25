@@ -34,10 +34,39 @@ $(function(){
 		
 		if(user_id == ''){
 			alert("아이디를 입력해주세요.");
+			return false;
 		}else if(user_pw == ''){
 			alert("비밀번호를 입력해 주세요.");
+			return false;
 		}else{
-			$("#loginAction").submit();
+			$.ajax({
+				type: 'POST',
+				url: '/login/loginAction.do',
+				data:{
+					"user_id" : user_id,
+					"user_pw" : user_pw
+				},
+				/* contentType: 'application/json',
+				dataType: 'json', */
+				success: function(data, status, xhr) {
+					if(data.result == "success"){ //유저정보가 존재
+						if(data.url == null || data.url == ""){ //요청주소가 빈값이거나 없다면
+							alert("주소요청에 실패했습니다.");
+							location.href = "/"; //스크립트에서 컨트롤러 요청 (최상위 주소)
+							
+						}else{							
+							location.href = data.url; //스크립트에서 컨트롤러 요청
+						}
+					}else{
+						alert("로그인에 실패했습니다.");
+						return false;
+					}
+					
+				},
+				error: function(e, status, xhr, data) {
+					console.log(data);
+				}
+			});
 		}
 	});
 });

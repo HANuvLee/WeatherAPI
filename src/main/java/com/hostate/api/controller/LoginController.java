@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.hostate.api.service.EncryptService;
 import com.hostate.api.service.LoginService;
@@ -52,16 +54,22 @@ public class LoginController {
 	
 	//로그인 검증
 	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
-	public String loginAction(Tb_User_InfoVO loginData, HttpSession session) throws Exception {	
+	@ResponseBody
+	public HashMap<String, String> loginAction(Tb_User_InfoVO loginData, HttpSession session, ModelAndView mv) throws Exception {	
 		
 		Tb_User_InfoVO userChk = loginService.userChk(loginData);
+		//로그인 검증여부 결과값을 담기 위한 result 생성
+		HashMap<String, String> result = new HashMap<String, String>(); 
 		
-		if(userChk.getUser_id()!=null && !userChk.getUser_id().equals("")) {
+		if(userChk != null) {
 			session.setAttribute("user_id", userChk.getUser_id());
 			session.setAttribute("user_name", userChk.getUser_name());
-			return "redirect:/main/mainpage.do";
-		}else {
-			return "redirect:/login/login.do";
+			result.put("result", "success");
+			result.put("url", "/"); //최상위 요청주소
+			return result;
+		}else{
+			result.put("result", "fail");
+			return result;
 		}
 	}
 	
