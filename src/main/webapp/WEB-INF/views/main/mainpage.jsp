@@ -133,25 +133,16 @@ $("document").ready(function() {
 	function firstvilageweather() {
 		$.ajax({			
 			type: 'get',
-			url: '/api/firsthvilageweather.do',
-			timeout : 60000,
+			url: '/api/searchShortweather.do',
+			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data, status, xhr) {
-				
-				let dataHeader = data.result.response.header.resultCode;
-				console.log(data);
-				let item = data.result.response.body.items.item;
-						
-				if(dataHeader == "00"){ //최초 접속 시 api 데이터 전달이 성공된다면
-					console.log("firsthvilageweather success ==>");
 					
-					main(item); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출
-
-				}else{
-					console.log("firsthvilageweather fail ==>");
-					console.log("firsthvilageweather" + item);
-				}
+				console.log("firsthvilageweather success ==>");
+				console.log(data);
+					
+				main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출	
 			},
 			error: function(e, status, xhr, data) {
 				console.log("error ==>");
@@ -160,7 +151,7 @@ $("document").ready(function() {
 		});
 	}
 	
-	//단기예보만 호출
+/**************************************단기예보 호출 함수******************************************/
 	function searchShortweather(st, ed) {
 		console.log("searchShortweather start");
 		$.ajax({
@@ -176,18 +167,9 @@ $("document").ready(function() {
 			dataType: 'json',
 			success: function(data, status, xhr) {
 				
-				let dataHeader = data.result.response.header.resultCode;
-				let sItem = data.result.response.body.items.item;
+				console.log(data);
+				main(data); 
 
-				if (dataHeader == "00"){
-					console.log("success ==>");
-					console.log(data);
-					
-					
-				}else{
-					console.log("fail ==>");
-					console.log(data);
-				}
 			},
 			error: function(e, status, xhr, data) {
 				console.log("error ==>");
@@ -250,7 +232,7 @@ $("document").ready(function() {
 		});
 	}
 	/***************************************메인 페이지 생성 함수*******************************************/
-	function main(item) {
+	function main(data) {
 		 console.log("main function Start.");
 		 
 		//조회 시시작날짜와 끝날짜를 구한다.
@@ -259,79 +241,28 @@ $("document").ready(function() {
 		//조회날짜의 범위를 구하기 위한 형변환과 정수로 타입 변환 
 		const startDate = parseInt(st.replace(/\-/g,'')); 
 		const endDate = parseInt(st.replace(/\-/g,''));
-		const scope = endDate - startDate;
-		
-		let sky = [];
-		let pop = [];
-		let tmn = 0;
-		let tmx = 0;
-		let fcstdate;
-		
-		console.log("scope범위" + scope);
-		
-		if(item.length != 0){ //최초 접속 시 api 데이터가 성공적으로 전달될 때
-			console.log("main function success ==>");
-		
-		for(let i in item){
-			if(item[i].category == "SKY" && item[i].fcstDate == String(startDate)){
-				sky.push(parseInt(item[i].fcstValue));
-				fcstdate = item[i].fcstDate;
-			}else if(item[i].category == "POP" && item[i].fcstDate == String(startDate)){
-				pop.push(parseInt(item[i].fcstValue));
-			}else if(item[i].category == "TMN" && item[i].fcstDate == String(startDate)){
-				tmn = parseInt(item[i].fcstValue);
-			}else if(item[i].category == "TMX" && item[i].fcstDate == String(startDate)){
-				tmx = parseInt(item[i].fcstValue);
-			}
-		}
-		//sky평균 계산
-		let sum = 0;
-		for(let i of sky){
-			sum += i;
-		}
-		let skyAvg= sum / sky.length;
-		//반올림
-		skyAvg = Math.round(skyAvg); 
-		if(skyAvg == 1){
-			skyAvg = "맑음";
-		}else if(skyAvg == 3){
-			skyAvg = "구름많음";
-		}else if(skyAvg == 4){
-			skyAvg = "흐림";
-		}
-		
-		//pop평균계산
-		sum = 0; //다른 카테고리 평균값을 구하기 위해 sum초기화
-		for(let i of pop){
-			sum += i;
-		}
-        let popAvg= sum / pop.length;
-		//반올림
-		popAvg = Math.round(popAvg); 
-		
-		//날짜 변환
-		let mm = fcstdate.substr(4);
-		let dd =".";
-		let position = 2;
-		let output = [mm.slice(0, position), dd, mm.slice(position)].join('');
 
+		if(data.length != 0){ //최초 접속 시 api 데이터가 성공적으로 전달될 때
+			console.log("main function success ==>");
+			console.log(data.length);
+			console.log(data);
 		
-		let formHtml = "";
+			for(let i = 0; i<data.item.length; i++){
+				console.log("item ===> " + data.item[i]);
+			}
+			
+			let formHtml = "";
 		
-	   	for(let i = 0; i <= scope; i++){
-			formHtml += "<div class=weatherForm id=weatherForm>";
-			formHtml += "<span id=fcstTime>";
-			formHtml += output;
-			formHtml += "</span>";
-			formHtml += "<span class=weatherPng id=weatherPng>"; //날짜
-			formHtml += "</span>";
-			formHtml += "<div class=SKY, id=SKY>날씨 :"+skyAvg+"</div>";//하늘
-			formHtml += "<div class=POP, id=POP>강수확률 :"+popAvg+"%</div>"; //강수확률
-			formHtml += "<div class=TMN, id=TMN>최저기온 :"+tmn+"</div>"; //최저기온
-			formHtml += "<div class=TMX, id=TMX>최고기온 :"+tmx+"</div>"; //최고기온
-			formHtml += "</div>";	
-	    }
-		$('.weatherContents').html(formHtml); 
+		   	for(let i = 0; i <= endDate - startDate; i++){
+				formHtml += "<div class=weatherForm id=weatherForm>";
+				formHtml += "<span id=fcstTime>"+data.item[i].date+"</span>";
+				formHtml += "<span class=weatherPng id=weatherPng></span>";
+				formHtml += "<div class=SKY, id=SKY>날씨 : "+data.item[i].sky+" </div>";//하늘
+				formHtml += "<div class=POP, id=POP>강수확률 : "+data.item[i].pop+"</div>"; //강수확률
+				formHtml += "<div class=TMN, id=TMN>최저기온 : "+data.item[i].tmn+" </div>"; //최저기온
+				formHtml += "<div class=TMX, id=TMX>최고기온 : "+data.item[i].tmx+" </div>"; //최고기온
+				formHtml += "</div>";	 
+	  		  }$('.weatherContents').html(formHtml); 
 				
 		}else{
 			console.log("main function fail");
