@@ -42,6 +42,7 @@ public class LogServiceImpl implements LogService {
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
 	StringBuilder time = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
 	StringBuilder startDate = new StringBuilder(time); // yyyymmddhhmm 형태
+	StringBuilder baseTime = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
 
 
 	@Override
@@ -62,11 +63,12 @@ public class LogServiceImpl implements LogService {
 		String time = new String(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
 		String startDate = new String(time); //yyyymmddhhmm 형태
 		
-		System.out.println(startDate);
+		System.out.println("getFirstApi startDate =>" + startDate);
 		
 		//최초접속이므로 조회시작날짜와 끝날짜를 오늘로 맞춰준다.
 		searchInfo.setStart_date(startDate);
 		searchInfo.setEnd_date(startDate);
+		
 		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // https입력 시 Java의 신뢰하는인증서
 
 				// 목록(keystore)에 사용하고자
@@ -76,7 +78,7 @@ public class LogServiceImpl implements LogService {
 					+ "&pageNo=1" //페이지번호
 					+ "&numOfRows=254" //결과 수 , default : 하루치 데이터 단위로 설정
 					+ "&dataType=JSON" // XML, JSON
-					+ "&base_date=" + searchInfo.getStart_date() // 발표일자
+					+ "&base_date=" + startDate // 발표일자
 					+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
 					+ "&nx=60" + "&ny=127";
 					
@@ -110,7 +112,7 @@ public class LogServiceImpl implements LogService {
 				+ "&pageNo=1" //페이지번호
 				+ "&numOfRows=1000" //결과 수 , default : 하루치 데이터 단위로 설정
 				+ "&dataType=JSON" // XML, JSON
-				+ "&base_date=" + searchInfo.getStart_date() // 발표일자
+				+ "&base_date=" + startDate.substring(0,9) // 발표일자
 				+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
 				+ "&nx=60" + "&ny=127";
 
@@ -123,6 +125,59 @@ public class LogServiceImpl implements LogService {
 
 		return jsonObj;
 	}
+	
+	//중기예보조회 서비스
+	@Override
+	public JSONObject getMidWeather(Tb_weather_search_scope_info searchInfo) throws Exception {	
+		//중기기온예보조회 api 데이터를 담을 HashMap 생성
+		HashMap<String, Object> resultData1 = new HashMap<String, Object>();
+		//중기육상예보조회api 데이터를 담을 HashMap 생성
+		HashMap<String, Object> resultData2 = new HashMap<String, Object>();
+		
+		System.out.println("LogServiceImpl getMidWeather START");
+		System.out.println("getMidWeather startDate => " + startDate);
+		System.out.println("getMidWeather baseTime => "+  baseTime);
+		StringBuilder tmfc = new StringBuilder(baseTime);
+		
+		apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
+		System.out.println("getMidWeather tmfc => "+  tmfc);
+		
+		//중기기온조회 요청URL
+		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"
+
+				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
+				// 일반인증키
+				+ "&pageNo=1" // 페이지번호
+				+ "&numOfRows=10" // 페이지 rows
+				+ "&dataType=JSON" // JSON, XNL
+				+ "&regId=11B10101" // 예보구역코드 기본값 서울
+				+ "&tmFc=" + tmfc; // 발표시각
+		//중기육상예보조회 요청URL
+		String url2 = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
+				  +"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
+				  +"&pageNo=1"
+				  +"&numOfRows=10" 
+				  +"&dataType=JSON" 
+				  +"&regId=11B00000" 
+				  +"&tmFc="+ tmfc;
+
+		resultData1 = getDataFromJson(url, "UTF-8", "get", "");
+		resultData2 = getDataFromJson(url2, "UTF-8", "get", "");
+		
+		System.out.println("# RESULT : " + resultData1);
+		System.out.println("# RESULT : " + resultData2);
+		
+		JSONObject jsonObj = new JSONObject();
+		JSONObject jsonObj2 = new JSONObject();
+		
+		jsonObj.put("result", resultData1);
+		jsonObj2.put("result", resultData2);
+		
+		jsonObj = apiJsonFormat.midWeather(jsonObj,jsonObj2, searchInfo);
+		
+		return null;
+	}
+	
 
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)
 			throws Exception {

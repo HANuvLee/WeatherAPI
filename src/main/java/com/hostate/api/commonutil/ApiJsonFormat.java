@@ -9,34 +9,25 @@ import java.util.Locale.Category;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
 @Component
 public class ApiJsonFormat {
-
+	
+	@Autowired
+	JsonParsing jsonParsing;
+	
+	//단기예보 json 데이터 가공
 	public JSONObject shortWeather(JSONObject jsonObj, Tb_weather_search_scope_info searchInfo) {
 
-		
-		// 날짜별 프론트에 보여질 JSON형태의 Hashmap값들을 담을 리스트, HashMap key:String / Value:Object
+		// 날짜별 프론트에 보여질 JSON형태의 값들을 담을 리스트, HashMap key:String / Value:String
 		ArrayList<HashMap<String, String>> item = new ArrayList<HashMap<String, String>>();
-
-		System.out.println("JSONObject ApiJsonFormat class shortWeather start");
-		System.out.println("JSONObject ApiJsonFormat class shortWeather start_date" + searchInfo.getStart_date());
-		System.out.println("JSONObject ApiJsonFormat class shortWeather end_date" + searchInfo.getEnd_date());
-		//result가져오기
-		JSONObject parse_result = (JSONObject)jsonObj.get("result");
-		// response 가져오기
-		JSONObject parse_response = (JSONObject)parse_result.get("response");
-		// response로부터 body 찾아오기
-		JSONObject parse_body = (JSONObject) parse_response.get("body");
-		// body 로 부터 items 받아오기
-		JSONObject parse_items = (JSONObject) parse_body.get("items");
-		// items로 부터 item을 받아옵니다. item : 뒤에 [ 로 시작하므로 jsonarray입니다.
-		JSONArray parse_item = (JSONArray) parse_items.get("item");
 		
-
+		JSONArray parse_item = jsonParsing.parse(jsonObj);
+	
 		// 조회날짜 추출
 		String startDate = searchInfo.getStart_date();
 		String endDate = searchInfo.getEnd_date();
@@ -57,7 +48,6 @@ public class ApiJsonFormat {
 		
 		//시작날짜부터 끝날짜 범위만큼 반복
 		for (int i = 0; i <= ed - st; i++) {
-			System.out.println("Top For" + i);
 			//하늘 및 강수확률의 전체값을 나누기 위한 제수
 			int num = 0;
 			//하늘값의 전체 합
@@ -115,9 +105,57 @@ public class ApiJsonFormat {
 			}
 		}
 		
-		jsonObj.put("item", item);
+		JSONArray data = new JSONArray();
+	      for(int i = 0; i < item.size(); i++) {
+	    	  data.put(item.get(i));
+	      }
+	      
+	    JSONObject obj = new JSONObject();
+	    obj.put("Data Names:", data);
+	    
+	    return obj;
+	}
+
+	//중기기온 & 육상예보조회
+	public JSONObject midWeather(JSONObject jsonObj, JSONObject jsonObj2, Tb_weather_search_scope_info searchInfo) {
+	
+		// 날짜별 프론트에 보여질 JSON형태의 값들을 담을 리스트, HashMap key:String / Value:String
+		ArrayList<HashMap<String, String>> item = new ArrayList<HashMap<String, String>>();
 		
-		return jsonObj;
+		//중기기온조회파싱
+		JSONArray parse_item = jsonParsing.parse(jsonObj);
+		//중기육상조회파싱
+		JSONArray parse_item2 = jsonParsing.parse(jsonObj2);
+		
+		// 조회날짜 추출
+		String startDate = searchInfo.getStart_date();
+		String endDate = searchInfo.getEnd_date();
+		
+		// 조회날짜를 int타입으로 형변환, 반복문 사용 시 조회범위를 구하기 위함
+		int st = Integer.parseInt(startDate);
+		int ed = Integer.parseInt(endDate);
+		
+		String[] date = new String[ed - st + 1];
+		//3일 이후 최저온도를 담을 배열
+		int[] tamin = new int[ed - st + 1];
+		//3일 이후 최고온도를 담을 배열
+		int[] tamax = new int[ed - st + 1];
+		//3일 이후 강수확률
+		int[] rnst = new int[ed - st + 1];
+		//3일 이후 날씨
+		int[] wf = new int[ed - st + 1];
+		
+		for(int i = 0; i <= ed-st; i++) {
+			for(int j = 0; j<parse_item.length(); j++) {
+				JSONObject value = (JSONObject) parse_item.get(j);
+				System.out.println(value);
+			}
+		}
+				
+
+		
+		
+		return null;
 	}
 
 }
