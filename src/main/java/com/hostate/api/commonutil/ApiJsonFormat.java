@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import java.util.Locale.Category;
+
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -14,13 +17,18 @@ import com.hostate.api.vo.Tb_weather_search_scope_info;
 public class ApiJsonFormat {
 
 	public JSONObject shortWeather(JSONObject jsonObj, Tb_weather_search_scope_info searchInfo) {
+
 		
 		// 날짜별 프론트에 보여질 JSON형태의 Hashmap값들을 담을 리스트, HashMap key:String / Value:Object
 		ArrayList<HashMap<String, String>> item = new ArrayList<HashMap<String, String>>();
-		// result가져오기
-		JSONObject parse_result = (JSONObject) jsonObj.get("result");
+
+		System.out.println("JSONObject ApiJsonFormat class shortWeather start");
+		System.out.println("JSONObject ApiJsonFormat class shortWeather start_date" + searchInfo.getStart_date());
+		System.out.println("JSONObject ApiJsonFormat class shortWeather end_date" + searchInfo.getEnd_date());
+		//result가져오기
+		JSONObject parse_result = (JSONObject)jsonObj.get("result");
 		// response 가져오기
-		JSONObject parse_response = (JSONObject) parse_result.get("response");
+		JSONObject parse_response = (JSONObject)parse_result.get("response");
 		// response로부터 body 찾아오기
 		JSONObject parse_body = (JSONObject) parse_response.get("body");
 		// body 로 부터 items 받아오기
@@ -28,6 +36,7 @@ public class ApiJsonFormat {
 		// items로 부터 item을 받아옵니다. item : 뒤에 [ 로 시작하므로 jsonarray입니다.
 		JSONArray parse_item = (JSONArray) parse_items.get("item");
 		
+
 		// 조회날짜 추출
 		String startDate = searchInfo.getStart_date();
 		String endDate = searchInfo.getEnd_date();
@@ -110,4 +119,5 @@ public class ApiJsonFormat {
 		
 		return jsonObj;
 	}
+
 }

@@ -170,6 +170,17 @@ $("document").ready(function() {
 				console.log(data);
 				main(data); 
 
+				if (dataHeader == "00"){
+					console.log("success ==>");
+					console.log(data);
+					
+					
+				}else{
+					console.log("fail ==>");
+					console.log(data);
+					
+				}
+
 			},
 			error: function(e, status, xhr, data) {
 				console.log("error ==>");

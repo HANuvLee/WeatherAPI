@@ -47,11 +47,9 @@ public class ApiController {
 	@RequestMapping(value = "/api/searchShortweather.do", method = RequestMethod.GET)
 	public String getVilageFcst(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("단기예보호출");	
-		
+
 		if("".equals(searchInfo.getStart_date()) || searchInfo.getStart_date() == null || "".equals(searchInfo.getEnd_date()) || searchInfo.getStart_date() == null) {
-			System.out.println("최초 접속 단기에보호출");
-			JSONObject jsonObj = logService.getFirstApi(searchInfo);
-			
+			JSONObject jsonObj = logService.getShorWeather(searchInfo);
 			return jsonObj.toString();
 		}else{
 			System.out.println("searchShortweather 2");
@@ -65,6 +63,7 @@ public class ApiController {
 			return jsonObj.toString();
 		}
 	}
+}
 	/*
 	 * @RequestMapping(value = "/api/searchShortweather.do", method =
 	 * RequestMethod.GET) public String searchvilageweather(HttpSession session,
@@ -189,4 +188,4 @@ public class ApiController {
 	 * return jsonObj.toString(); }else { return "중기육사예보 호출 실패"; } }
 	 * 
 	 */
-}
+

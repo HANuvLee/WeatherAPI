@@ -32,7 +32,18 @@ public class LogServiceImpl implements LogService {
 	@Autowired
 	ApiJsonFormat apiJsonFormat;
 	
+
 	//조회 이력저장 서비스
+
+	//날짜데이터변환
+	HashMap<String, Object> resultData = new HashMap<String, Object>();
+	Date today = new Date(); // 메인페이지 접속 시간
+	Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
+	StringBuilder time = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
+	StringBuilder startDate = new StringBuilder(time); // yyyymmddhhmm 형태
+
+
 	@Override
 	public int searchWeatherLogInsert(Tb_weather_search_scope_info searchInfo) throws Exception {
 
@@ -56,29 +67,30 @@ public class LogServiceImpl implements LogService {
 		//최초접속이므로 조회시작날짜와 끝날짜를 오늘로 맞춰준다.
 		searchInfo.setStart_date(startDate);
 		searchInfo.setEnd_date(startDate);
+		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // https입력 시 Java의 신뢰하는인증서
 
-		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" //https입력 시 Java의 신뢰하는인증서
-																								// 목록(keystore)에 사용하고자
-																								// 하는 인증기관이 등록되어 있지 않아
-																								// 접근이 차단되는현상발생.
-				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // 인증키
-				+ "&pageNo=1" //페이지번호
-				+ "&numOfRows=254" //결과 수 , default : 하루치 데이터 단위로 설정
-				+ "&dataType=JSON" // XML, JSON
-				+ "&base_date=" + searchInfo.getStart_date() // 발표일자
-				+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
-				+ "&nx=60" + "&ny=127";
+				// 목록(keystore)에 사용하고자
+				// 하는 인증기관이 등록되어 있지 않아
+				// 접근이 차단되는현상발생.
+					+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // 인증키
+					+ "&pageNo=1" //페이지번호
+					+ "&numOfRows=254" //결과 수 , default : 하루치 데이터 단위로 설정
+					+ "&dataType=JSON" // XML, JSON
+					+ "&base_date=" + searchInfo.getStart_date() // 발표일자
+					+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
+					+ "&nx=60" + "&ny=127";
+					
+					resultData = getDataFromJson(url, "UTF-8", "get", "");
+					System.out.println("# RESULT : " + resultData);
+					
+					JSONObject jsonObj = new JSONObject();
+					jsonObj.put("result", resultData);
+					
+					jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
+					
+					return jsonObj;
+		}
 
-		resultData = getDataFromJson(url, "UTF-8", "get", "");
-		System.out.println("# RESULT : " + resultData);
-		JSONObject jsonObj = new JSONObject();
-		jsonObj.put("result", resultData);
-		
-		jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
-		
-		return jsonObj;
-
-	}
 	
 	//단기예보조회 서비스
 	@Override
