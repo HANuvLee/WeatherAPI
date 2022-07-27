@@ -1,5 +1,10 @@
 package com.hostate.api.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -34,38 +39,57 @@ public class ApiController {
 
 	// 단기예보
 	@RequestMapping(value = "/api/searchShortweather.do", method = RequestMethod.GET)
-	public String getVilageFcst(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
+	public String searchShortWeather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("단기예보호출");
-
+		
 		if ("".equals(searchInfo.getStart_date()) || searchInfo.getStart_date() == null || "".equals(searchInfo.getEnd_date()) || searchInfo.getStart_date() == null) {
 			JSONObject jsonObj = logService.getFirstApi(searchInfo);
 			return jsonObj.toString();
-		} else {
+		}else {
 			System.out.println("searchShortweather 2");
 			searchInfo.setUser_id((String) session.getAttribute("user_id"));
 			searchInfo.setUser_name((String) session.getAttribute("user_name"));
+			
+			//조회기록저장
+			logService.searchWeatherLogInsert(searchInfo);
+			
 
-			logService.searchWeatherLogInsert(searchInfo); // 조회기록저장
-
-			JSONObject jsonObj = logService.getShorWeather(searchInfo);
-
+			JSONObject jsonObj = logService.getShortWeather(searchInfo);
+		
 			return jsonObj.toString();
 		}
 	}
 
 	//중기예보
 	@RequestMapping(value = "/api/searchmidtaweather.do", method = RequestMethod.GET)
-	public String restApiSearchMidTaWeather(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
+	public String searchMidWeahter(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("중기기온예보");
 		
 		//조회이력시 DB에 이력저장을 위한 사용자아이디와 이름을 set
 		searchInfo.setUser_id((String) session.getAttribute("user_id"));
 		searchInfo.setUser_name((String) session.getAttribute("user_name"));
-
-		logService.searchWeatherLogInsert(searchInfo); // 조회기록저장
+		
+		// 조회기록저장
+		logService.searchWeatherLogInsert(searchInfo);
 
 		JSONObject jsonObj = logService.getMidWeather(searchInfo);
 		
+		return jsonObj.toString();
+	}
+	
+	//단기예보 + 중기예보
+	@RequestMapping(value = "/api/searchAllweather.do", method = RequestMethod.GET)
+	public String searchAllWeahter(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
+		System.out.println("모든예보호출");
+
+		searchInfo.setUser_id((String) session.getAttribute("user_id"));
+		searchInfo.setUser_name((String) session.getAttribute("user_name"));
+		
+		//조회기록저장
+		logService.searchWeatherLogInsert(searchInfo);
+		
+		JSONObject jsonObj = logService.getAllWeather(searchInfo);
+
 		return jsonObj.toString();
 	}
 

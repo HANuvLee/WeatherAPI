@@ -7,8 +7,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -32,20 +35,22 @@ public class LogServiceImpl implements LogService {
 	
 	@Autowired
 	ApiJsonFormat apiJsonFormat;
-
 	
+	@Autowired
+	DatesBetweenTwoDates datesBetween;
 
-	//조회 이력저장 서비스
-
-	//날짜데이터변환
-	HashMap<String, Object> resultData = new HashMap<String, Object>();
+	//날짜 데이터변환
 	Date today = new Date(); // 메인페이지 접속 시간
 	Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmm", currentLocale);
-	StringBuilder time = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
-	StringBuilder startDate = new StringBuilder(time); // yyyymmddhhmm 형태
-	StringBuilder baseTime = new StringBuilder(formatter.format(today)); // 요청한 시간의 시와 분을 구한다.
-
+	// 요청한 시간의 시와 분을 구한다.(단기예보조회 시 사용)
+	StringBuilder startDate = new StringBuilder(formatter.format(today));
+	// 요청한 시간의 시와 분을 구한다.(중기예보조회 시 사용)
+	StringBuilder baseTime = new StringBuilder(formatter.format(today));
+	// 중기조회 시 발표시각 세팅
+	StringBuilder tmfc = new StringBuilder(baseTime);
+	//(단기+중기예보조회 시 사용), 오늘날짜로부터 2틀후인 날을 가져온다.
+	String next = formatter.format((new Date(today.getTime() + ( (60 * 60 * 24 * 1000) * 2 ))));
 
 	@Override
 	public int searchWeatherLogInsert(Tb_weather_search_scope_info searchInfo) throws Exception {
@@ -58,53 +63,46 @@ public class LogServiceImpl implements LogService {
 	public JSONObject getFirstApi(Tb_weather_search_scope_info searchInfo) throws Exception {
 		//api 데이터를 담을 HashMap 생성
 		HashMap<String, Object> resultData = new HashMap<String, Object>();
-
-		Date today = new Date(); //메인페이지 접속 시간
-		Locale currentLocale = new Locale("KOREAN", "KOREA"); //나라
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", currentLocale);
-		String time = new String(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
-		String startDate = new String(time); //yyyymmddhhmm 형태
 		
-		System.out.println("getFirstApi startDate =>" + startDate);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd", currentLocale);
+		String startDate = new String(formatter.format(today)); //요청한 시간의 시와 분을 구한다.
 		
 		//최초접속이므로 조회시작날짜와 끝날짜를 오늘로 맞춰준다.
 		searchInfo.setStart_date(startDate);
 		searchInfo.setEnd_date(startDate);
 		
 		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" // https입력 시 Java의 신뢰하는인증서
-
-				// 목록(keystore)에 사용하고자
-				// 하는 인증기관이 등록되어 있지 않아
-				// 접근이 차단되는현상발생.
-					+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // 인증키
-					+ "&pageNo=1" //페이지번호
-					+ "&numOfRows=254" //결과 수 , default : 하루치 데이터 단위로 설정
-					+ "&dataType=JSON" // XML, JSON
-					+ "&base_date=" + startDate // 발표일자
-					+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
-					+ "&nx=60" + "&ny=127";
-					
-					resultData = getDataFromJson(url, "UTF-8", "get", "");
-					System.out.println("# RESULT : " + resultData);
-					
-					JSONObject jsonObj = new JSONObject();
-					jsonObj.put("result", resultData);
-					
-					jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
-					
-					return jsonObj;
+																							  // 목록(keystore)에 사용하고자
+																							  // 하는 인증기관이 등록되어 있지 않아
+																							  // 접근이 차단되는현상발생.
+				+ "?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D" // 인증키
+				+ "&pageNo=1" //페이지번호
+				+ "&numOfRows=254" //결과 수 , default : 하루치 데이터 단위로 설정
+				+ "&dataType=JSON" // XML, JSON
+				+ "&base_date=" + startDate.substring(0,8) // 발표일자
+				+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
+				+ "&nx=60" + "&ny=127";
+			
+			resultData = getDataFromJson(url, "UTF-8", "get", "");
+			System.out.println("# RESULT : " + resultData);
+			
+			JSONObject jsonObj = new JSONObject();
+			jsonObj.put("result", resultData);
+			
+			jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
+			
+			return jsonObj;
 		}
 
 	
 	//단기예보조회 서비스
 	@Override
-	public JSONObject getShorWeather(Tb_weather_search_scope_info searchInfo) throws Exception {
+	public JSONObject getShortWeather(Tb_weather_search_scope_info searchInfo) throws Exception {
 		
 		//api 데이터를 담을 HashMap 생성
 		HashMap<String, Object> resultData = new HashMap<String, Object>();
 		
 		System.out.println("LogServiceImpl getShorWeather START");
-		//메인페이지 접속 시 요청 파리미터 형태를 맞추기 위한포멧 메서드 실행, mm단위는 요청 불가
 
 		String url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst" //https입력 시 Java의 신뢰하는인증서
 																								// 목록(keystore)에 사용하고자
@@ -136,14 +134,8 @@ public class LogServiceImpl implements LogService {
 		//중기육상예보조회api 데이터를 담을 HashMap 생성
 		HashMap<String, Object> resultData2 = new HashMap<String, Object>();
 		
-		System.out.println("LogServiceImpl getMidWeather START");
-		System.out.println("getMidWeather startDate => " + startDate);
-		System.out.println("getMidWeather baseTime => "+  baseTime);
-		StringBuilder tmfc = new StringBuilder(baseTime);
-		
 		apiDateFormat.tmFcDateFormat(tmfc); // api 발표시각 파리미터 형태를 맞추기 위한 포멧 (0600 or 1800)
-		System.out.println("getMidWeather tmfc => "+  tmfc);
-		
+
 		//중기기온조회 요청URL
 		String url = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidTa"
 
@@ -154,6 +146,7 @@ public class LogServiceImpl implements LogService {
 				+ "&dataType=JSON" // JSON, XNL
 				+ "&regId=11B10101" // 예보구역코드 기본값 서울
 				+ "&tmFc=" + tmfc; // 발표시각
+		
 		//중기육상예보조회 요청URL
 		String url2 = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
 				  +"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
@@ -175,9 +168,31 @@ public class LogServiceImpl implements LogService {
 		jsonObj.put("result", resultData1);
 		jsonObj2.put("result", resultData2);
 		
-		jsonObj = apiJsonFormat.midWeather(jsonObj,jsonObj2, searchInfo);
+		jsonObj = apiJsonFormat.midWeather(jsonObj,jsonObj2,searchInfo);
 		
 		return jsonObj;
+	}
+	
+	@Override
+	public JSONObject getAllWeather(Tb_weather_search_scope_info searchInfo) throws Exception {
+		System.out.println("getAllWeather serviceimple start");
+	    System.out.println(startDate);
+	    System.out.println(next);
+	    System.out.println(searchInfo.getStart_date());
+	    System.out.println(searchInfo.getEnd_date());
+	    
+	    List<LocalDate> shortDateScope = datesBetween.getBetweenDate(startDate, next);
+	    
+	    for(int i=0; i<shortDateScope.size(); i++) {
+	    	System.out.println(shortDateScope.get(i).getClass());
+	    	System.out.println(shortDateScope.get(i).toString());
+	    	System.out.println(shortDateScope.get(i).toString().getClass());
+	    	System.out.println(shortDateScope.get(i).toString().replaceAll("[^0-9]",""));
+	    	System.out.println(searchInfo.getStart_date().equals(shortDateScope.get(i).toString().replaceAll("[^0-9]","")));
+	    }
+	  
+	    
+		return null;
 	}
 	
 

@@ -11,8 +11,10 @@ public interface LogService {
 
 	JSONObject getFirstApi(Tb_weather_search_scope_info searchInfo)  throws Exception;
 
-	JSONObject getShorWeather(Tb_weather_search_scope_info searchInfo) throws Exception;
+	JSONObject getShortWeather(Tb_weather_search_scope_info searchInfo) throws Exception;
 
-	JSONObject getMidWeather(Tb_weather_search_scope_info searchInfo) throws Exception ;
+	JSONObject getMidWeather(Tb_weather_search_scope_info searchInfo) throws Exception;
+	
+	JSONObject getAllWeather(Tb_weather_search_scope_info searchInfo) throws Exception;
 
 }

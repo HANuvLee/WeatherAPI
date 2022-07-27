@@ -15,9 +15,23 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatesBetweenTwoDates {
 	
+	//중기예보 호출 함수
 	public List<LocalDate> getBetweenDate(String startDate, String endDate) {
 		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		
+		LocalDate start = LocalDate.parse(startDate, formatter);
+		LocalDate end = LocalDate.parse(endDate, formatter);
+		
+		List<LocalDate> betweenDate = getDatesBetweenTwoDates(start, end);
+		
+		return betweenDate;
+	}
+	
+	//전체예보 호출 함수
+	public List<LocalDate> getBetweenDate(StringBuilder startDate, String endDate) {
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
 		
 		LocalDate start = LocalDate.parse(startDate, formatter);
 		LocalDate end = LocalDate.parse(endDate, formatter);

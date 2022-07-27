@@ -204,10 +204,9 @@ $("document").ready(function() {
 	}
 	//단기 중기 모두 호출
 	function searchAllweather(st, ed) {
-		//--------------------중기기온예보호출--------------------//
 		$.ajax({
 			type: 'get',
-			url: '/api/searchmidtaweather.do',
+			url: '/api/searchAllweather.do',
 			data:{
 				"start_date" : st,
 				"end_date" : ed
@@ -217,6 +216,9 @@ $("document").ready(function() {
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data1, status, xhr) {
+				
+				console.log(data);
+				main(data); 
 				
 			},
 			error: function(e, status, xhr, data) {
