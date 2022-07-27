@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hostate.api.commonutil.ApiDateFormat;
 import com.hostate.api.commonutil.ApiJsonFormat;
+import com.hostate.api.commonutil.DatesBetweenTwoDates;
 import com.hostate.api.dao.LogDao;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
@@ -31,6 +32,7 @@ public class LogServiceImpl implements LogService {
 	
 	@Autowired
 	ApiJsonFormat apiJsonFormat;
+
 	
 
 	//조회 이력저장 서비스
@@ -112,7 +114,7 @@ public class LogServiceImpl implements LogService {
 				+ "&pageNo=1" //페이지번호
 				+ "&numOfRows=1000" //결과 수 , default : 하루치 데이터 단위로 설정
 				+ "&dataType=JSON" // XML, JSON
-				+ "&base_date=" + startDate.substring(0,9) // 발표일자
+				+ "&base_date=" + startDate.substring(0,8) // 발표일자
 				+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
 				+ "&nx=60" + "&ny=127";
 
@@ -175,7 +177,7 @@ public class LogServiceImpl implements LogService {
 		
 		jsonObj = apiJsonFormat.midWeather(jsonObj,jsonObj2, searchInfo);
 		
-		return null;
+		return jsonObj;
 	}
 	
 

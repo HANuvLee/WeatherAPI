@@ -166,20 +166,8 @@ $("document").ready(function() {
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data, status, xhr) {
-				
 				console.log(data);
 				main(data); 
-
-				if (dataHeader == "00"){
-					console.log("success ==>");
-					console.log(data);
-					
-					
-				}else{
-					console.log("fail ==>");
-					console.log(data);
-					
-				}
 
 			},
 			error: function(e, status, xhr, data) {
@@ -202,16 +190,11 @@ $("document").ready(function() {
 			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
-			success: function(data1, status, xhr) {
-				let dataHeader1 = data1.result.response.header.resultCode;
-				//--------------중기기온------------//
-				if (dataHeader1 == "00"){
-					console.log("searchmidtaweather success ==>");
-					//--------------중기육상------------//
-				}else{
-					console.log("fail ==>");
-					console.log(data1);
-				}
+			success: function(data, status, xhr) {
+				
+				console.log(data);
+				main(data); 
+				
 			},
 			error: function(e, status, xhr, data) {
 				console.log("error ==>");
@@ -255,16 +238,11 @@ $("document").ready(function() {
 
 		if(data.length != 0){ //최초 접속 시 api 데이터가 성공적으로 전달될 때
 			console.log("main function success ==>");
-			console.log(data.length);
 			console.log(data);
-		
-			for(let i = 0; i<data.item.length; i++){
-				console.log("item ===> " + data.item[i]);
-			}
 			
 			let formHtml = "";
 		
-		   	for(let i = 0; i <= endDate - startDate; i++){
+		   	/* for(let i = 0; i <= endDate - startDate; i++){
 				formHtml += "<div class=weatherForm id=weatherForm>";
 				formHtml += "<span id=fcstTime>"+data.item[i].date+"</span>";
 				formHtml += "<span class=weatherPng id=weatherPng></span>";
@@ -273,7 +251,7 @@ $("document").ready(function() {
 				formHtml += "<div class=TMN, id=TMN>최저기온 : "+data.item[i].tmn+" </div>"; //최저기온
 				formHtml += "<div class=TMX, id=TMX>최고기온 : "+data.item[i].tmx+" </div>"; //최고기온
 				formHtml += "</div>";	 
-	  		  }$('.weatherContents').html(formHtml); 
+	  		  }$('.weatherContents').html(formHtml);  */
 				
 		}else{
 			console.log("main function fail");
