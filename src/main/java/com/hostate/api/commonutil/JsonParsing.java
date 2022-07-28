@@ -22,4 +22,10 @@ public class JsonParsing {
 		return parse_item;
 	}
 
+	public JSONArray parse2(JSONObject jsonObj) {
+		//result가져오기
+		JSONArray parse_item = (JSONArray)jsonObj.get("list");		
+		return parse_item;
+	}
+
 }

@@ -87,15 +87,17 @@ $("document").ready(function() {
 	startTime(); //메인 페이지 타이머 생성
 	setCalendar();//달력 범위 설정
 	firstvilageweather(); //페이지 최초 접속 시 API 요청함수
-	
-	
+
 	function setCalendar() {
 		var toDay = getToday(); //yyyymmdd 형식
 		var toDay2 = getToday2(); //yyyy-mm-dd형식
 		var maxdd = parseInt(toDay) + 7; // 금일 + 7
 		var toDayNum = parseInt(toDay);
 		
-		maxdd = String(maxdd);
+		//현재날짜
+		var now = new Date();
+		
+		
 		
 		//조회시작날짜 속성 설정
 		$("#startdate").attr("value", toDay2);
@@ -106,11 +108,12 @@ $("document").ready(function() {
 		$("#enddate").attr("min", toDay2);
 		$("#enddate").attr("max", toDay2.substr(0,8) + maxdd.substr(6));
 		
+		console.log("이게 뭐시다냐 ==> "  + toDay2.substr(0,8) + maxdd.substr(6));
+		
 		//조회버튼 클릭 시
 		$("#searcWeatherBtn").click(function() {
 			var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식
 			var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식
-			var num = end_date - start_date //정수형으로 변한 두 날짜의 값의 차이를 구한다.
 			
 			//조회날짜 기준에 따른 api호출 리스트
 			if(start_date > end_date){ 
@@ -134,7 +137,6 @@ $("document").ready(function() {
 		$.ajax({			
 			type: 'get',
 			url: '/api/searchShortweather.do',
-			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data, status, xhr) {
@@ -161,8 +163,6 @@ $("document").ready(function() {
 				"start_date" : st,
 				"end_date" : ed
 			},
-			async: false,
-			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data, status, xhr) {
@@ -177,7 +177,7 @@ $("document").ready(function() {
 		});
 	}
 
-	//중기예보만 호출
+	/**************************************중기예보 호출 함수******************************************/
 	function searchMidweather(st, ed) {
 		$.ajax({
 			type: 'get',
@@ -186,8 +186,6 @@ $("document").ready(function() {
 				"start_date" : st,
 				"end_date" : ed
 			},
-			async: false,
-			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
 			success: function(data, status, xhr) {
@@ -202,7 +200,7 @@ $("document").ready(function() {
 			}	
 		});
 	}
-	//단기 중기 모두 호출
+	/**************************************단기&중기예보 호출 함수******************************************/
 	function searchAllweather(st, ed) {
 		$.ajax({
 			type: 'get',
@@ -211,11 +209,9 @@ $("document").ready(function() {
 				"start_date" : st,
 				"end_date" : ed
 			},
-			async: false,
-			timeout : 30000,
 			contentType: 'application/json',
 			dataType: 'json',
-			success: function(data1, status, xhr) {
+			success: function(data, status, xhr) {
 				
 				console.log(data);
 				main(data); 
@@ -230,30 +226,37 @@ $("document").ready(function() {
 	/***************************************메인 페이지 생성 함수*******************************************/
 	function main(data) {
 		 console.log("main function Start.");
-		 
-		//조회 시시작날짜와 끝날짜를 구한다.
-		const st = $('#startdate').val();
-		const ed = $('#enddate').val(); 
-		//조회날짜의 범위를 구하기 위한 형변환과 정수로 타입 변환 
-		const startDate = parseInt(st.replace(/\-/g,'')); 
-		const endDate = parseInt(st.replace(/\-/g,''));
 
 		if(data.length != 0){ //최초 접속 시 api 데이터가 성공적으로 전달될 때
 			console.log("main function success ==>");
 			console.log(data);
+			console.log("data length ==> " + data.list.length);
 			
 			let formHtml = "";
 		
-		   	/* for(let i = 0; i <= endDate - startDate; i++){
+		    for(let i = 0; i < data.list.length; i++){
 				formHtml += "<div class=weatherForm id=weatherForm>";
-				formHtml += "<span id=fcstTime>"+data.item[i].date+"</span>";
-				formHtml += "<span class=weatherPng id=weatherPng></span>";
-				formHtml += "<div class=SKY, id=SKY>날씨 : "+data.item[i].sky+" </div>";//하늘
-				formHtml += "<div class=POP, id=POP>강수확률 : "+data.item[i].pop+"</div>"; //강수확률
-				formHtml += "<div class=TMN, id=TMN>최저기온 : "+data.item[i].tmn+" </div>"; //최저기온
-				formHtml += "<div class=TMX, id=TMX>최고기온 : "+data.item[i].tmx+" </div>"; //최고기온
-				formHtml += "</div>";	 
-	  		  }$('.weatherContents').html(formHtml);  */
+				formHtml += "<span id=fcstTime>"+data.list[i].date+"</span>";
+				if(data.list[i].sky == 1){
+					formHtml += "<div><img src='/resources/images/weather1.png' id=weatherPng"+data.list[i].sky+"></div>";
+					formHtml += "<div class=SKY, id=SKY>날씨 : 맑음</div>";//하늘					
+				}
+				if(data.list[i].sky == 2){
+					formHtml += "<div><img src='/resources/images/weather2.png' id=weatherPng"+data.list[i].sky+"></div>";
+					formHtml += "<div class=SKY, id=SKY>날씨 : 구름조금</div>";//하늘					
+				}if(data.list[i].sky == 3){
+					formHtml += "<div><img src=/resources/images/weather3.png id=weatherPng"+data.list[i].sky+"></div>";
+					formHtml += "<div class=SKY, id=SKY>날씨 : 구름많음</div>";//하늘					
+				}
+				if(data.list[i].sky == 4){
+					formHtml += "<div><img src=/resources/images/weather4.png id=weatherPng"+data.list[i].sky+"></div>";
+					formHtml += "<div class=SKY, id=SKY>날씨 : 흐림</div>";//하늘					
+				}
+				formHtml += "<div class=POP, id=POP>강수확률 : "+data.list[i].pop+"%</div>"; //강수확률
+				formHtml += "<div class=TMN, id=TMN>최저기온 : "+data.list[i].tmn+"℃</div>"; //최저기온
+				formHtml += "<div class=TMX, id=TMX>최고기온 : "+data.list[i].tmx+"℃</div>"; //최고기온
+				formHtml += "</div>";
+		    }$('.weatherContents').html(formHtml);
 				
 		}else{
 			console.log("main function fail");

@@ -48,9 +48,9 @@ public class ApiJsonFormat {
 		// 하루치 강수확률을 담을 배열
 		int[] pop = new int[betweenDate.size()];
 		// 최저온도
-		double[] tmn = new double[betweenDate.size()];
+		int[] tmn = new int[betweenDate.size()];
 		// 최고온도
-		double[] tmx = new double[betweenDate.size()];
+		int[] tmx = new int[betweenDate.size()];
 		
 		//시작날짜부터 끝날짜범위만큼 반복
 		for (int i = 0; i < betweenDate.size(); i++) {
@@ -74,12 +74,14 @@ public class ApiJsonFormat {
 				//JSON데이터 중 카테고리가 최저온도이고 날짜가 조회시작날짜부터 끝날짜까지의 하루치씩 TMN값을 구하여 더한다
 				if (value.get("category").equals("TMN") && value.get("fcstDate").equals(betweenDate.get(i).toString().replaceAll("[^0-9]",""))) {
 					//tmn배열에 대입
-					tmn[i] = Double.parseDouble((String) value.get("fcstValue"));
+					double tmnVal = Double.parseDouble((String) value.get("fcstValue"));
+					tmn[i] =  (int) Math.round(tmnVal);
 				}
 				//JSON데이터 중 카테고리가 최고온도이고 날짜가 조회시작날짜부터 끝날짜까지의 하루치씩 TMX값을 구하여 더한다
 				if (value.get("category").equals("TMX") && value.get("fcstDate").equals(betweenDate.get(i).toString().replaceAll("[^0-9]",""))) {
 					//tmx배열에 대입
-					tmx[i] = Double.parseDouble((String) value.get("fcstValue"));
+					double tmxVal = Double.parseDouble((String) value.get("fcstValue"));
+					tmx[i] =  (int) Math.round(tmxVal);
 				}
 			}
 			//sky의 평균값을 구한 후 소수점을 정수로 반올림 후 배열에 대입
@@ -93,11 +95,11 @@ public class ApiJsonFormat {
 			// Date키값에 시작날짜부터 끝날짜까지 담는다.
 			HashMap<String, String> map = new HashMap<String, String>();
 			//date키값과 날짜를 담는다
-			map.put("date", (betweenDate.get(i).toString().replaceAll("[^0-9]","")));
+			map.put("date", (betweenDate.get(i).toString().substring(5).replaceAll("[^0-9]",".")));
 			//sky키값  하루치sky평균값 + 강수형태 평균값
-			map.put("sky", Integer.toString(sky[i]));
+			map.put("sky", String.valueOf(sky[i]));
 			//pop키값  하루치 강수확률 평균값
-			map.put("pop", Integer.toString(pop[i]));
+			map.put("pop", String.valueOf(pop[i]));
 			//tmn키값과 하루 최저온도
 			map.put("tmn", String.valueOf(tmn[i]));
 			//tmn키값과 하루 최고온도
@@ -105,6 +107,7 @@ public class ApiJsonFormat {
 			//리스트에 담아준다.
 			item.add(map);
 		}
+		System.out.println("================================단기예보 가공데이터================================");
 		for (int i = 0; i < item.size(); i++) {
 			for (Entry<String, String> elem : item.get(i).entrySet()) {
 				System.out.println(String.format("key : %s, value : %s", elem.getKey(), elem.getValue()));
@@ -117,7 +120,7 @@ public class ApiJsonFormat {
 	      }
 	      
 	    JSONObject obj = new JSONObject();
-	    obj.put("Data Names:", data);
+	    obj.put("list", data);
 	    
 	    return obj;
 	}
@@ -137,10 +140,10 @@ public class ApiJsonFormat {
 		String startDate = searchInfo.getStart_date();
 		String endDate = searchInfo.getEnd_date();
 		
-		//시작날짜와 끝날짜 사이의 날짜 값들을 리스트에 담는다.
+		//시작날짜와 끝날짜 사이의 날짜 값들을 리스트에 담는다. for문 반목 시 해당 리스트 사이즈 이용 
 		List<LocalDate>betweenDate = datesBetween.getBetweenDate(startDate, endDate);
 	
-		//금일날짜와 중기예보조회시 조회시작날짜의 차이를 구하는 함수
+		//금일날짜와 중기예보조회시 조회시작날짜의 차이를 구하는 함수(중기요청데이터의 형식에 맞추기 위함)
 		int diffDays = datesBetween.getDiffDays(startDate, endDate);
 		int diffDays2 = datesBetween.getDiffDays(startDate, endDate);
 						
@@ -167,7 +170,6 @@ public class ApiJsonFormat {
 		for(int i = 0; i < betweenDate.size(); i++) {
 			diffDays2 += 1; //금일로부터 3후 데이타 조회를 위한 변수선언 반복하며 1씩증가
 			int num = 0;
-			System.out.println("date => " + betweenDate.get(i));
 			//강수확률 합계
 			double rnstSum = 0;
 			double wfSum = 0;
@@ -213,7 +215,7 @@ public class ApiJsonFormat {
 			// Date키값에 시작날짜부터 끝날짜까지 담는다.
 			HashMap<String, String> map = new HashMap<String, String>();
 			//date키값과 날짜를 담는다
-			map.put("date", (betweenDate.get(i).toString().replaceAll("[^0-9]","")));
+			map.put("date", (betweenDate.get(i).toString().substring(5).replaceAll("[^0-9]",".")));
 			//sky키값  하루치sky평균값 + 강수형태 평균값
 			map.put("sky", Integer.toString(wf[i]));
 			//pop키값  하루치 강수확률 평균값
@@ -226,13 +228,20 @@ public class ApiJsonFormat {
 			item.add(map);
 		}
 		
+		System.out.println("================================중기예보 가공데이터================================");
+		for (int i = 0; i < item.size(); i++) {
+			for (Entry<String, String> elem : item.get(i).entrySet()) {
+				System.out.println(String.format("key : %s, value : %s", elem.getKey(), elem.getValue()));
+			}
+		}
+		
 		JSONArray data = new JSONArray();
 	      for(int i = 0; i < item.size(); i++) {
 	    	  data.put(item.get(i));
 	      }
 	      
 	    JSONObject obj = new JSONObject();
-	    obj.put("Data Names:", data);
+	    obj.put("list", data);
 		
 		return obj;
 	}

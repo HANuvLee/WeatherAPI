@@ -71,32 +71,66 @@ a{
 	position:relative;
 	width: 100%;
 	height:605px;
-	text-align: center;
 	display: flex;
 	justify-content: center;
 }
 
 .weatherForm{
-	background-color: red;
+	background-color: #333333;
 	width: 25%;
 	height: 150px;
-	margin: auto;
+	margin: auto 5px;
 	border-radius:5px;
 }
+.weatherForm > span{
+	width: 100%;
+	margin: 5px auto;
+	text-align: center;
+	color: #f2f2f2
+}
+
 .weatherForm > div{
 	width: 100%;
-	margin: 0px auto;
+	margin: 5px auto;
+	text-align: center;
+	color: #f2f2f2
 }
-.weatherPng{
-    height:25%;
-	margin: 0px auto;
+#weatherPng1{
+    max-height: 125px;
+	max-width: 125px;
+	float:left;
+	padding: 4%;
 }
-.todayWeather{
+#weatherPng2{
+	max-height: 125px;
+	max-width: 125px;
+	float:left;
+	padding-left: 3%
+}
+#weatherPng3{
+    max-height: 125px;
+	max-width: 125px;
+	float:left;
+	padding-left: 3%;
+}
+#weatherPng4{
+    max-height: 125px;
+	max-width: 125px;
+	float:left;
+	margin-top: 5%;
+}
+#todayWeather{
 	background-color: green;
 	width: 100%;
 	height: 320px;
 	position: absolute;
 	margin-top: 125px;
+}
+
+#fcstTime{
+	font-weight: 1000;
+    font-size: larger;
+	padding-left: 15%;
 }
 
 /*≈∏¿Ã∏” css**********************************************************************************/

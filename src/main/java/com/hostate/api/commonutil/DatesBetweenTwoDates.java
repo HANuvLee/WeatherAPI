@@ -57,15 +57,10 @@ public class DatesBetweenTwoDates {
 		Date now = new Date();
 		Date start = new SimpleDateFormat("yyyyMMdd").parse(startDate);
 		Date end = new SimpleDateFormat("yyyyMMdd").parse(endDate);
-		
-		System.out.println("getDiffDays now => " + now);
-		System.out.println("getDiffDays start = > " + start);
-		System.out.println("getDiffDays end = > " + end);
 
 		long diffSec = (start.getTime() - now.getTime()) / 1000; //초 차이
 		long diffDays = (diffSec / (24*60*60)); //일자수 차이
 		
-		System.out.println("getDiffDays diffDays = > " + diffDays);
 		//primitive long 타입, int로 cast
 		int diffDaysInt = (int) diffDays;
 			
