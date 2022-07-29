@@ -17,4 +17,6 @@ public interface LogService {
 	
 	JSONObject getAllWeather(Tb_weather_search_scope_info searchInfo) throws Exception;
 
+	Tb_weather_search_scope_info getSearchInfoList() throws Exception;
+
 }

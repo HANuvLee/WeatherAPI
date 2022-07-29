@@ -324,6 +324,17 @@ public class LogServiceImpl implements LogService {
 		return toTalObj;
 	}
 	
+	@Override //조회이력데이터 select함수
+	public Tb_weather_search_scope_info getSearchInfoList() throws Exception {
+		// TODO Auto-generated method stub
+		
+		return null;
+	}
+	
+	
+	
+	
+	
 
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)
 			throws Exception {

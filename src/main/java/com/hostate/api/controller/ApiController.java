@@ -53,7 +53,6 @@ public class ApiController {
 			//조회기록저장
 			logService.searchWeatherLogInsert(searchInfo);
 			
-
 			JSONObject jsonObj = logService.getShortWeather(searchInfo);
 		
 			return jsonObj.toString();
