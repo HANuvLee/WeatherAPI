@@ -23,4 +23,13 @@
 			#{user_name}
 			);
 	</insert>
+	<select id="selectSearchInfo" resultType="com.hostate.api.vo.Tb_weather_search_scope_info">
+		select ROW_NUMBER() OVER(ORDER BY no DESC) AS no,
+		 user_id, 
+		 user_name,
+		 start_date,
+		 end_date,
+		 create_date
+		from tb_weather_search_scope_info
+	</select>
 </mapper>

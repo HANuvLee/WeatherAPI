@@ -250,6 +250,7 @@ public class LogServiceImpl implements LogService {
 			
 		  //중기육상예보조회 요청URL
 		  String url3 = "http://apis.data.go.kr/1360000/MidFcstInfoService/getMidLandFcst"
+				  
 					  +"?serviceKey=4gFSoB%2B%2FlIzZcu1j3H9L1dYh4fTkBHtKn%2B0B6%2FYpI5El6YZcTUH%2B1O1QGxkjXnTFCtzlvGGRuK6gTFl73mL1sQ%3D%3D"
 					  +"&pageNo=1"
 					  +"&numOfRows=10" 
@@ -324,18 +325,77 @@ public class LogServiceImpl implements LogService {
 		return toTalObj;
 	}
 	
-	@Override //조회이력데이터 select함수
-	public Tb_weather_search_scope_info getSearchInfoList() throws Exception {
-		// TODO Auto-generated method stub
+	@Override
+	public JSONObject getSearchInfo() throws Exception {
+		//DB에서 조회이력테이블을 select한 값을 담은 list
+		List<Tb_weather_search_scope_info> getList = logdao.getSearchInfo();
+		//날짜 형식을 가공하여 getList의 값을 담을 list
+		List<Tb_weather_search_scope_info> newList = new ArrayList<Tb_weather_search_scope_info>();
+		//jsonArray형식으로 변환할 ArrayList 선언
+		List<HashMap<String, String>> resultData = new ArrayList<HashMap<String,String>>();
+				
+		for(int i=0; i<getList.size(); i++) {
+			Tb_weather_search_scope_info data = new Tb_weather_search_scope_info();
+			
+			data.setNo(getList.get(i).getNo());
+			data.setUser_id(getList.get(i).getUser_id());
+			data.setUser_name(getList.get(i).getUser_name());
 		
-		return null;
+			if(!getList.get(i).getStart_date().equals("") || getList.get(i).getStart_date() != null) {
+				String startDate = getList.get(i).getStart_date();
+				startDate = startDate.substring(0,4) + "." + startDate.substring(4,6) + "." + startDate.substring(6,8);
+				System.out.println("startDate ==> " + startDate);
+				data.setStart_date(startDate);
+			}else {
+				//값이 비어있을 때 쓸 문자를 추가, 대응책필요
+			}
+			if(!getList.get(i).getEnd_date().equals("") || getList.get(i).getEnd_date() != null) {
+				String endDate = getList.get(i).getEnd_date();
+				endDate = endDate.substring(0,4) + "." + endDate.substring(4,6) + "." + endDate.substring(6,8);
+				System.out.println("endDate ==> " + endDate);
+				data.setEnd_date(endDate);
+			}else {
+				//값이 비어있을 때 쓸 문자를 추가, 대응책필요
+			}
+			if(!getList.get(i).getCreate_date().equals("") || getList.get(i).getCreate_date() != null) {
+				String createDate = getList.get(i).getCreate_date();
+				createDate = createDate.substring(0, 10).replaceAll("-",".");
+				System.out.println("createDate ==> " + createDate);
+				data.setCreate_date(createDate);
+			}else {
+				//값이 비어있을 때 쓸 문자를 추가, 대응책필요
+			}
+			
+			newList.add(data);	
+		}
+		
+		for(int i=0; i<newList.size(); i++) {
+			HashMap<String, String> param = new HashMap<String, String>();
+			
+			param.put("no", newList.get(i).getNo());
+			param.put("id", newList.get(i).getUser_id());
+			param.put("name", newList.get(i).getUser_name());
+			param.put("stDate", newList.get(i).getStart_date());
+			param.put("edDate", newList.get(i).getEnd_date());
+			param.put("crDate", newList.get(i).getCreate_date());
+			
+			resultData.add(param);
+		}
+		
+		JSONArray data = new JSONArray();
+	    for(int i = 0; i < resultData.size(); i++) {
+	    	data.put(resultData.get(i));
+	    }
+		
+	    //jsonArray를 jsonObject에 담아 컨트롤러로 보내준다.
+	    JSONObject result = new JSONObject();
+	    result.put("list", data);
+		
+	    System.out.println(result);
+	    
+		return result;
 	}
 	
-	
-	
-	
-	
-
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)
 			throws Exception {
 		boolean isPost = false;
@@ -414,4 +474,7 @@ public class LogServiceImpl implements LogService {
 		}
 		return resultMap;
 	}
+
+
+
 }

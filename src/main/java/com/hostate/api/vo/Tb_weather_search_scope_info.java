@@ -1,6 +1,7 @@
 package com.hostate.api.vo;
 
 public class Tb_weather_search_scope_info {
+	private String no;
 	private String user_id;
 	private String user_name; 
 	private String start_date;
@@ -10,7 +11,12 @@ public class Tb_weather_search_scope_info {
 	private String update_date;
 	private String update_user_name;
 	
-	
+	public String getNo() {
+		return no;
+	}
+	public void setNo(String no) {
+		this.no = no;
+	}
 	public String getUser_id() {
 		return user_id;
 	}
@@ -59,4 +65,5 @@ public class Tb_weather_search_scope_info {
 	public void setUpdate_date(String update_date) {
 		this.update_date = update_date;
 	}
+	
 }

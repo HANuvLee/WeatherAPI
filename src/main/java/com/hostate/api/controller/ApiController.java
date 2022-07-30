@@ -1,10 +1,5 @@
 package com.hostate.api.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;

@@ -117,7 +117,7 @@
 	        myGrid.setList({
 	        	method : "get",
 	        	ajaxUrl : "/main/selectSearchList.do",
-	        	onLoad:function(){
+	        	onLoad:function(data){
 	        		
 	        	},
 	            onError:function(){
@@ -199,8 +199,7 @@
 							dataType : 'json',
 							success : function(data, status, xhr) {
 	
-								console
-										.log("firsthvilageweather success ==>");
+								console.log("firsthvilageweather success ==>");
 								console.log(data);
 	
 								main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출	
@@ -251,6 +250,7 @@
 	
 						console.log(data);
 						main(data);
+						
 	
 					},
 					error : function(e, status, xhr, data) {

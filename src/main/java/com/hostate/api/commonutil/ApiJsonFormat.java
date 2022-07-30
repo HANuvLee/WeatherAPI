@@ -33,7 +33,7 @@ public class ApiJsonFormat {
 
 		// 날짜별 프론트에 보여질 JSON형태의 값들을 담을 리스트, HashMap key:String / Value:String
 		ArrayList<HashMap<String, String>> item = new ArrayList<HashMap<String, String>>();
-		
+		//파라미터로 받은 JSON객체의 배열로 되어있는 item값들을 담는 변수
 		JSONArray parse_item = jsonParsing.parse(jsonObj);
 	
 		// 조회날짜 추출
@@ -113,12 +113,12 @@ public class ApiJsonFormat {
 				System.out.println(String.format("key : %s, value : %s", elem.getKey(), elem.getValue()));
 			}
 		}
-		
+		//평균값으로 계산된 키의 값들을 담은 새 리스트를 jsonArray에 담아준다.
 		JSONArray data = new JSONArray();
 	      for(int i = 0; i < item.size(); i++) {
 	    	  data.put(item.get(i));
 	      }
-	      
+	    //jsonArray를 jsonObject에 담아 컨트롤러로 보내준다.
 	    JSONObject obj = new JSONObject();
 	    obj.put("list", data);
 	    

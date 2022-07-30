@@ -1,15 +1,18 @@
 package com.hostate.api.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hostate.api.service.LogService;
-import com.hostate.api.vo.Tb_weather_search_scope_info;
 
 @Controller
 public class MainPageController {
@@ -26,14 +29,18 @@ public class MainPageController {
 		return "/main/mainpage";
 	}
 		
-	//axgrid의 조회이력저장테이블 조회 ajax 매핑 컨트롤러
+	
+	//axgrid의 ajax 호출 시 매핑 컨트롤러
 	@RequestMapping(value = "/main/selectSearchList.do", method = RequestMethod.GET)
-	public String selectSearchTb(HttpServletRequest res, Tb_weather_search_scope_info info) throws Exception {
+	@ResponseBody
+	public String selectSearchTb(HttpServletRequest res) throws Exception { 
 		System.out.println("조회서비스를 호출하셨습니다.");
-		
-		info = logservice.getSearchInfoList();
-		
-		return "/main/mainpage";
+		  
+		JSONObject list = logservice.getSearchInfo(); 
+	
+	
+	return list.toString(); 
 	}
+	 
 
 }

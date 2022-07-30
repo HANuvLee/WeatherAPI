@@ -1,5 +1,7 @@
 package com.hostate.api.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,5 +17,11 @@ public class LogDaoImpl implements LogDao {
 	public int searchWeatherLogInsert(Tb_weather_search_scope_info searchInfo) throws Exception {
 		
 		return sqlSession.insert("searchWeatherLogInsert", searchInfo);
+	}
+
+	@Override
+	public List<Tb_weather_search_scope_info> getSearchInfo() throws Exception {
+		
+		return sqlSession.selectList("selectSearchInfo");
 	}
 }
