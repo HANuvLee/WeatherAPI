@@ -31,21 +31,20 @@ public class ApiJsonFormat {
 	//단기예보 json 데이터 가공
 	public JSONObject shortWeather(JSONObject jsonObj, Tb_weather_search_scope_info searchInfo) {
 
-		// 날짜별 프론트에 보여질 JSON형태의 값들을 담을 리스트, HashMap key:String / Value:String
+		//날짜별로 프론트에 보여질 JSON형태의 값들을 담을 리스트, HashMap key:String / Value:String
 		ArrayList<HashMap<String, String>> item = new ArrayList<HashMap<String, String>>();
-		//파라미터로 받은 JSON객체의 배열로 되어있는 item값들을 담는 변수
+		//파라미터로 받은 JSON객체의 item값들을 추출하는 서비스
 		JSONArray parse_item = jsonParsing.parse(jsonObj);
-	
-		// 조회날짜 추출
+		//조회날짜 추출
 		String startDate = searchInfo.getStart_date();
 		String endDate = searchInfo.getEnd_date();
 
-		//조회범위 list값 : 조회시작날짜부터 끝날짜까지 , list크기: 조회범위
+		//조회범위 list값 : 조회시작날짜부터 끝날짜를 파라미터로 보낸다, list크기 == 조회범위
 		List<LocalDate>betweenDate = datesBetween.getBetweenDate(startDate, endDate);
 
-		// 하루치 날씨 상태값을 담을 배열
+		// 날씨 상태값을 담을 배열
 		int[] sky = new int[betweenDate.size()];
-		// 하루치 강수확률을 담을 배열
+		// 강수확률을 담을 배열
 		int[] pop = new int[betweenDate.size()];
 		// 최저온도
 		int[] tmn = new int[betweenDate.size()];
@@ -89,14 +88,13 @@ public class ApiJsonFormat {
 			//pop의 평균값을 구한 후 소수점을 정수로 반올림 후 배열에 대입
 			pop[i] = (int) Math.round(popSum / num);
 		}
-		
-		// 날짜별 데이터를 담는 hashmap HashMap<String, Object>
+	
 		for (int i = 0; i <betweenDate.size(); i++) {
-			// Date키값에 시작날짜부터 끝날짜까지 담는다.
+			//날짜별 데이터를 담는 hashmap HashMap<String, String>
 			HashMap<String, String> map = new HashMap<String, String>();
 			//date키값과 날짜를 담는다
 			map.put("date", (betweenDate.get(i).toString().substring(5).replaceAll("[^0-9]",".")));
-			//sky키값  하루치sky평균값 + 강수형태 평균값
+			//sky키값  하루치sky평균값
 			map.put("sky", String.valueOf(sky[i]));
 			//pop키값  하루치 강수확률 평균값
 			map.put("pop", String.valueOf(pop[i]));
@@ -113,7 +111,7 @@ public class ApiJsonFormat {
 				System.out.println(String.format("key : %s, value : %s", elem.getKey(), elem.getValue()));
 			}
 		}
-		//평균값으로 계산된 키의 값들을 담은 새 리스트를 jsonArray에 담아준다.
+		//키와 값을 담은 리스트를 jsonArray에 담아준다.
 		JSONArray data = new JSONArray();
 	      for(int i = 0; i < item.size(); i++) {
 	    	  data.put(item.get(i));
@@ -130,35 +128,33 @@ public class ApiJsonFormat {
 	
 		// 날짜별 프론트에 보여질 JSON형태의 값들을 담을 리스트, HashMap key:String / Value:String
 		ArrayList<HashMap<String, String>> item = new ArrayList<HashMap<String, String>>();
-		
 		//중기기온조회파싱
 		JSONArray parse_item = jsonParsing.parse(jsonObj);
 		//중기육상조회파싱
 		JSONArray parse_item2 = jsonParsing.parse(jsonObj2);
-		
 		//조회날짜 추출
 		String startDate = searchInfo.getStart_date();
 		String endDate = searchInfo.getEnd_date();
 		
-		//시작날짜와 끝날짜 사이의 날짜 값들을 리스트에 담는다. for문 반목 시 해당 리스트 사이즈 이용 
+		//조회범위 list값 : 조회시작날짜부터 끝날짜를 파라미터로 보낸다, list크기 == 조회범위
 		List<LocalDate>betweenDate = datesBetween.getBetweenDate(startDate, endDate);
 	
-		//금일날짜와 중기예보조회시 조회시작날짜의 차이를 구하는 함수(중기요청데이터의 형식에 맞추기 위함)
+		//중기예보조회시 금일날짜와 조회시작날짜의 차이를 구하는 함수(중기요청데이터의 형식에 맞추기 위함)
 		int diffDays = datesBetween.getDiffDays(startDate, endDate);
 		int diffDays2 = datesBetween.getDiffDays(startDate, endDate);
 						
-		//3일 이후 최저온도를 담을 배열
+		//3일 이후 최저온도들을 담을 배열
 		String[] tamin = new String[betweenDate.size()];
-		//3일 이후 최고온도를 담을 배열
+		//3일 이후 최고온도들을 담을 배열
 		String[] tamax = new String[betweenDate.size()];
-		//3일 이후 강수확률
+		//3일 이후의 강수확률들을 담을 배열
 		int[] rnst = new int[betweenDate.size()];
-		//3일 이후 날씨
+		//3일 이후 날씨상태를 담을 배열
 		int[] wf = new int[betweenDate.size()];
 		
-		//중기기온조회의 데이터값을 추출한 후 배열에 담아준다. (최대온도, 최소온도)
+		//중기기온조회 데이터값을 추출한 후 배열에 담아준다. (최대온도, 최소온도)
 		for(int i = 0; i < betweenDate.size(); i++) {
-			diffDays += 1;
+			diffDays += 1; //금일로부터 3일 후의 데이터 조회를 위한 변수선언 반복하며 1씩증가
 			for(int j = 0; j<parse_item.length(); j++) {
 				JSONObject value = (JSONObject) parse_item.get(j);
 				tamax[i] = String.valueOf(value.get("taMax"+diffDays+"")); 
@@ -166,23 +162,26 @@ public class ApiJsonFormat {
 			}
 		}
 		
-		//중기육상조회의 데이터값을 추출한 후 배열에 담아준다. (강수확률, 날씨상태)
+		//중기육상조회 데이터값을 추출한 후 배열에 담아준다. (강수확률, 날씨상태)
 		for(int i = 0; i < betweenDate.size(); i++) {
-			diffDays2 += 1; //금일로부터 3후 데이타 조회를 위한 변수선언 반복하며 1씩증가
+			diffDays2 += 1; //금일로부터 3일 후의 데이터 조회를 위한 변수선언 반복하며 1씩증가
+			//날씨상태 및 강수확률의 전체값을 나누기 위한 제수
 			int num = 0;
 			//강수확률 합계
 			double rnstSum = 0;
 			double wfSum = 0;
 			for(int j = 0; j<parse_item2.length(); j++) {
 				JSONObject value = (JSONObject) parse_item2.get(j);
+				//오전 강수확률
 				if(value.has("rnSt"+diffDays2+"Am")) {
 					rnstSum += (int) value.get("rnSt"+diffDays2+"Am");
 					num += 1;
 				}
+				//오후 강수확률
 				if(value.has("rnSt"+diffDays2+"Pm")) {
 					rnstSum += (int) value.get("rnSt"+diffDays2+"Pm");
 				}
-				//금일부터 diffDays 이후 오전 날씨상태
+				//오전 날씨상태
 				if(value.has("wf"+diffDays2+"Am")) {
 					num += 1;
 					if(value.get("wf"+diffDays2+"Am").toString().contains("맑")) {
@@ -193,7 +192,7 @@ public class ApiJsonFormat {
 						wfSum += 4;
 					}
 				}
-				//금일부터 diffDays 이후 오후 날씨상태
+				//오후 날씨상태
 				if(value.has("wf"+diffDays2+"Pm")) {
 					if(value.get("wf"+diffDays2+"Pm").toString().contains("맑")) {
 						wfSum += 1;
@@ -209,10 +208,9 @@ public class ApiJsonFormat {
 			//기상상태 평균값 가공 후 배열에 대입
 			wf[i] = (int) Math.round(wfSum / num);
 		}
-		
-		// 날짜별 데이터를 담는 hashmap HashMap<String, Object>
+	
 		for (int i = 0; i <betweenDate.size(); i++) {
-			// Date키값에 시작날짜부터 끝날짜까지 담는다.
+			//날짜별 데이터를 담는 hashmap HashMap<String, String>
 			HashMap<String, String> map = new HashMap<String, String>();
 			//date키값과 날짜를 담는다
 			map.put("date", (betweenDate.get(i).toString().substring(5).replaceAll("[^0-9]",".")));

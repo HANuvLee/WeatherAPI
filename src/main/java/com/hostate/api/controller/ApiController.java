@@ -40,7 +40,7 @@ public class ApiController {
 		if ("".equals(searchInfo.getStart_date()) || searchInfo.getStart_date() == null || "".equals(searchInfo.getEnd_date()) || searchInfo.getStart_date() == null) {
 			JSONObject jsonObj = logService.getFirstApi(searchInfo);
 			return jsonObj.toString();
-		}else {
+		}else{
 			System.out.println("searchShortweather 2");
 			searchInfo.setUser_id((String) session.getAttribute("user_id"));
 			searchInfo.setUser_name((String) session.getAttribute("user_name"));

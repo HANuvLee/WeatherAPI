@@ -1,14 +1,6 @@
 package com.hostate.api.controller;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,9 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.hostate.api.service.EncryptService;
 import com.hostate.api.service.LoginService;
-import com.hostate.api.vo.LoginData;
 import com.hostate.api.vo.Tb_User_InfoVO;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+
 
 /**
  * Handles requests for the application home page.
@@ -53,8 +44,8 @@ public class LoginController {
 	}
 	
 	//로그인 검증
-	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	@ResponseBody
+	@RequestMapping(value = "/login/loginAction.do", method = RequestMethod.POST)
 	public HashMap<String, String> loginAction(Tb_User_InfoVO loginData, HttpSession session, ModelAndView mv) throws Exception {	
 		
 		Tb_User_InfoVO userChk = loginService.userChk(loginData);
@@ -77,6 +68,6 @@ public class LoginController {
 	@RequestMapping(value = "/login/logout.do", method = RequestMethod.GET)
 	public String logout(HttpSession session) throws Exception {
 		session.invalidate();
-		return "redirect:/main/mainpage.do";
+		return "redirect:/login/login.do";
 	}
 }

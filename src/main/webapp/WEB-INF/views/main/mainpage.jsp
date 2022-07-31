@@ -20,7 +20,6 @@
 <body>
 	<nav class="parentheader">
 		<div class="container-fluid header">
-
 			<a class="navbar-brand logo">HOSTATE</a>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<c:if test="${sessionScope.user_id == null}">
@@ -116,9 +115,10 @@
 	        
 	        myGrid.setList({
 	        	method : "get",
+	        	dataType : "json",
 	        	ajaxUrl : "/main/selectSearchList.do",
 	        	onLoad:function(data){
-	        		
+	        		console.log("mygriddata ===> " + data.list);
 	        	},
 	            onError:function(){
 	            	
@@ -175,7 +175,7 @@
 	
 				 	//조회날짜 기준에 따른 api호출 리스트
 					if (start_date > end_date) {
-						alert("plz chk your date state !!");
+						alert("시작날짜와 끝날짜를 확인하세요.");
 						return false;
 					} else if (stDiffDay < 3 && edDiffDay < 3) {
 						alert("short!");
@@ -201,7 +201,6 @@
 	
 								console.log("firsthvilageweather success ==>");
 								console.log(data);
-	
 								main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출	
 							},
 							error : function(e, status, xhr, data) {
@@ -226,6 +225,8 @@
 					success : function(data, status, xhr) {
 						console.log(data);
 						main(data);
+						console.log("searchShortweather success ==>");
+						setTimeout(fnObj.pageStart, 1);
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -249,7 +250,9 @@
 					success : function(data, status, xhr) {
 	
 						console.log(data);
+						console.log("searchMidweather success ==>");
 						main(data);
+						setTimeout(fnObj.pageStart, 1);
 						
 	
 					},
@@ -273,7 +276,9 @@
 					success : function(data, status, xhr) {
 	
 						console.log(data);
+						console.log("searchAllweather success ==>");
 						main(data);
+						setTimeout(fnObj.pageStart, 1);
 	
 					},
 					error : function(e, status, xhr, data) {

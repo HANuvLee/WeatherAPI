@@ -53,7 +53,6 @@ $(function(){
 						if(data.url == null || data.url == ""){ //요청주소가 빈값이거나 없다면
 							alert("주소요청에 실패했습니다.");
 							location.href = "/"; //스크립트에서 컨트롤러 요청 (최상위 주소)
-							
 						}else{							
 							location.href = data.url; //스크립트에서 컨트롤러 요청
 						}

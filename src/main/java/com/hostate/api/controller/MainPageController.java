@@ -1,8 +1,5 @@
 package com.hostate.api.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
@@ -31,15 +28,15 @@ public class MainPageController {
 		
 	
 	//axgrid의 ajax 호출 시 매핑 컨트롤러
-	@RequestMapping(value = "/main/selectSearchList.do", method = RequestMethod.GET)
 	@ResponseBody
+	@RequestMapping(value = "/main/selectSearchList.do", method = RequestMethod.GET)
 	public String selectSearchTb(HttpServletRequest res) throws Exception { 
 		System.out.println("조회서비스를 호출하셨습니다.");
 		  
 		JSONObject list = logservice.getSearchInfo(); 
-	
-	
-	return list.toString(); 
+		list.put("result","ok");
+		System.out.println("dasdas => " + list);
+		return list.toString(); 
 	}
 	 
 

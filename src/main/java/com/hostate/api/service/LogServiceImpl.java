@@ -106,7 +106,7 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public JSONObject getShortWeather(Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("getShortWeather serviceimple start");
-		//api 데이터를 담을 HashMap 생성
+		//api데이터를 담을 HashMap 선언
 		HashMap<String, Object> resultData = new HashMap<String, Object>();
 		
 		System.out.println("LogServiceImpl getShorWeather START");
@@ -122,12 +122,13 @@ public class LogServiceImpl implements LogService {
 				+ "&base_date=" + startDate.substring(0,8) // 발표일자
 				+ "&base_time=0200" //발표시각 0200인 이유는 tmx와 tmn (오늘 최고최저기온값을 가져온다.)
 				+ "&nx=60" + "&ny=127";
-
+		//위의 url정보로 api로부터 단기예보 데이터를 전달받는다.
 		resultData = getDataFromJson(url, "UTF-8", "get", "");
 		System.out.println("# RESULT : " + resultData);
 		JSONObject jsonObj = new JSONObject();
 		jsonObj.put("result", resultData);
 		
+		//전달받은 단기예보 데이터를 가공하는 서비스 호출
 		jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
 
 		return jsonObj;
@@ -163,7 +164,7 @@ public class LogServiceImpl implements LogService {
 				  +"&dataType=JSON" 
 				  +"&regId=11B00000" 
 				  +"&tmFc="+ tmfc;
-
+		//위의 url정보로 api로부터 단기예보 데이터를 전달받는다.
 		resultData1 = getDataFromJson(url, "UTF-8", "get", "");
 		resultData2 = getDataFromJson(url2, "UTF-8", "get", "");
 		
@@ -176,6 +177,7 @@ public class LogServiceImpl implements LogService {
 		jsonObj.put("result", resultData1);
 		jsonObj2.put("result", resultData2);
 		
+		//전달받은 중기예보 데이터를 가공하는 서비스 호출
 		jsonObj = apiJsonFormat.midWeather(jsonObj,jsonObj2,searchInfo);
 		
 		return jsonObj;
@@ -192,9 +194,9 @@ public class LogServiceImpl implements LogService {
 		//api 데이터를 담을 HashMap 생성(중기육상예보)
 		HashMap<String, Object> resultData3 = new HashMap<String, Object>();
 		
-		//단기 끝날짜
+		//오늘날짜로부터 단기끝날짜
 		String sWeatherEnd = formatter.format((new Date(today.getTime() + ( (60 * 60 * 24 * 1000) * 2 ))));
-		//중기 시작날짜
+		//오늘날짜로부터 중기시작날짜
 		String mWeatherStart = formatter.format((new Date(today.getTime() + ( (60 * 60 * 24 * 1000) * 3))));
 		//요청시 받은 시작날짜
 		String orgStDate = searchInfo.getStart_date();
@@ -207,17 +209,17 @@ public class LogServiceImpl implements LogService {
 	    //중기예보 조회 시 파람미터로 들어갈 끝날짜
 	    String midEdDate = searchInfo.getEnd_date();
 
-	    //금일로부터 단기 조회 날쩌범위의 날짜 get 
+	    //금일로부터 단기조회날짜 범위의 날짜들(오늘포함 3일)을 리스트에 담는다 
 	    List<LocalDate> shortDateScope = datesBetween.getBetweenDate(startDate, sWeatherEnd);
-	    //금일로부터 중기 조회 날쩌범위의 날짜 get
 	  
 	    for(int i=0; i<shortDateScope.size(); i++) {
+	    	//오늘포함 3일이내의 날짜들이 리스트에 존재하고 요청으로 들어온 조회시작날짜가 리스트중에 있다면
 	    	if(orgStDate.equals(shortDateScope.get(i).toString().replaceAll("[^0-9]",""))) {
-	    		//오늘포함 3일 이내의 날짜들이 리스트에 존재하고  요청으로 들어온 조회시작날짜가 리스트중에 있다면 그 값을 단기예보시작날짜변수에 대입
+	    		 //그 값을 단기예보시작날짜변수에 대입
 	    		shortStDate = shortDateScope.get(i).toString().replaceAll("[^0-9]","");
 	    		break;
 	    	}
-	    } //리스트의 마지막 요소는 단기 조회시 마지막날이 포함되어 단기예보조회 시 필요한 끝날자변수에 대입
+	    } //단기중기 모두 조회시 리스트의 마지막번째 요소는 단기예보조회 시 끝날자변수에 대입
 	      int lastIdx = shortDateScope.size() - 1;
 	      shortEdDate = shortDateScope.get(lastIdx).toString().replaceAll("[^0-9]","");
 	      
@@ -273,29 +275,29 @@ public class LogServiceImpl implements LogService {
 		  JSONObject jsonObj2 = new JSONObject();
 		  JSONObject jsonObj3 = new JSONObject();
 		  
-		  //단기예보 응답 데이터 JsonObject에 대입
+		  //단기예보 응답 데이터를 JsonObject에 대입
 		  jsonObj.put("result", resultData);
-		  //중기예보 응답 데이터 JsonObject에 대입
+		  //중기예보 응답 데이터를 JsonObject에 대입
 		  jsonObj2.put("result", resultData2);
 		  jsonObj3.put("result", resultData3);
 		  
-		  //단기예보 조회 전 시작날짜와 끝날자 set
+		  //단기예보 데이터 가공 전 시작날짜와 끝날자 set
 		  searchInfo.setStart_date(shortStDate);
 		  searchInfo.setEnd_date(shortEdDate);
 		  //단기에보 데이터 가공
 		  jsonObj = apiJsonFormat.shortWeather(jsonObj, searchInfo);
 		  
-		  //중기예보 조회 전 시작날짜와 끝날자 다시 set
+		  //중기예보 데이터 가공 전 시작날짜와 끝날자 다시 set
 		  searchInfo.setStart_date(midStDate);
 		  searchInfo.setEnd_date(midEdDate);
 		  //중기예보 데이터 가공
 		  jsonObj2 = apiJsonFormat.midWeather(jsonObj2,jsonObj3,searchInfo);
 		  	  
-		  //가공된 Json데이터들을 하나의 Json객채에 다시 담기 위해 Jsonarray로 파싱
+		  //가공된 Json데이터들을 하나의 Json객채에 담아 프론트에 응답해주기 위해 Jsonarray로 파싱
 		  JSONArray parse_item = jsonParsing.parse2(jsonObj);
 		  JSONArray parse_item2 = jsonParsing.parse2(jsonObj2);
 		  
-		  //파싱된 Jsonarray의 데이터들을 타입이JSON Object인 리스트에 담아준다.
+		  //파싱된 Jsonarray의 데이터들을 타입이 JSON Object인 리스트에 담아준다.
 		  List<JSONObject> list = new ArrayList<JSONObject>();
 		  int len = parse_item.length();
 		  int len2 = parse_item2.length();
@@ -306,21 +308,16 @@ public class LogServiceImpl implements LogService {
 		  for (int i = 0; i<len2; i++) {
 			  list.add((JSONObject) parse_item2.get(i));
 		  }
-		  for(int i = 0; i<list.size(); i++) {
-			  System.out.println("list" +i+"번째" +list.get(i));
-		  }
+		
 		  //리스트 안의 json데이터들을 JsonArray에 대입
 		  JSONArray data = new JSONArray();
 	      for(int i = 0; i < list.size(); i++) {
 	    	  data.put(list.get(i));
 	      }
-	      System.out.println("JsonArray data ==> " + data);
 	      
 	      //JsonArray를 JsonObj에 대입
 	      JSONObject toTalObj = new JSONObject();
 	      toTalObj.put("list", data);
-	      
-	      System.out.println("toTalObj == > " + toTalObj);
 		
 		return toTalObj;
 	}
@@ -340,7 +337,7 @@ public class LogServiceImpl implements LogService {
 			data.setNo(getList.get(i).getNo());
 			data.setUser_id(getList.get(i).getUser_id());
 			data.setUser_name(getList.get(i).getUser_name());
-		
+			//DB데이터의 날짜형식을 포멧시키기 위한 조건절
 			if(!getList.get(i).getStart_date().equals("") || getList.get(i).getStart_date() != null) {
 				String startDate = getList.get(i).getStart_date();
 				startDate = startDate.substring(0,4) + "." + startDate.substring(4,6) + "." + startDate.substring(6,8);
@@ -367,11 +364,12 @@ public class LogServiceImpl implements LogService {
 			}
 			
 			newList.add(data);	
+
 		}
 		
 		for(int i=0; i<newList.size(); i++) {
 			HashMap<String, String> param = new HashMap<String, String>();
-			
+			//프론트로 보낼 json형식의 키와 값을 설정해준다 
 			param.put("no", newList.get(i).getNo());
 			param.put("id", newList.get(i).getUser_id());
 			param.put("name", newList.get(i).getUser_name());

@@ -51,12 +51,11 @@ public class DatesBetweenTwoDates {
 		.collect(Collectors.toList());
 	}
 	
-	//금일에서 조회시작날짜의 차이를 구하는 함수 
+	//금일부터 조회시작날짜의 차이를 구하는 함수 
 	public int getDiffDays(String startDate, String endDate) throws ParseException {
 		
 		Date now = new Date();
 		Date start = new SimpleDateFormat("yyyyMMdd").parse(startDate);
-		Date end = new SimpleDateFormat("yyyyMMdd").parse(endDate);
 
 		long diffSec = (start.getTime() - now.getTime()) / 1000; //초 차이
 		long diffDays = (diffSec / (24*60*60)); //일자수 차이

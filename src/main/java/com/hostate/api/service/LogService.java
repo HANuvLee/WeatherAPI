@@ -1,8 +1,5 @@
 package com.hostate.api.service;
 
-
-import java.util.List;
-
 import org.json.JSONObject;
 
 import com.hostate.api.vo.Tb_weather_search_scope_info;
