@@ -26,6 +26,7 @@ import com.hostate.api.commonutil.ApiJsonFormat;
 import com.hostate.api.commonutil.DatesBetweenTwoDates;
 import com.hostate.api.commonutil.JsonParsing;
 import com.hostate.api.dao.LogDao;
+import com.hostate.api.vo.PageVo;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 import com.mysql.cj.xdevapi.JsonArray;
 
@@ -213,14 +214,15 @@ public class LogServiceImpl implements LogService {
 	    List<LocalDate> shortDateScope = datesBetween.getBetweenDate(startDate, sWeatherEnd);
 	  
 	    for(int i=0; i<shortDateScope.size(); i++) {
-	    	//오늘포함 3일이내의 날짜들이 리스트에 존재하고 요청으로 들어온 조회시작날짜가 리스트중에 있다면
+	    	//오늘포함 3일이내의 날짜들이 리스트에 존재하며 요청으로 들어온 조회시작날짜가 리스트중에 있다면
 	    	if(orgStDate.equals(shortDateScope.get(i).toString().replaceAll("[^0-9]",""))) {
 	    		 //그 값을 단기예보시작날짜변수에 대입
 	    		shortStDate = shortDateScope.get(i).toString().replaceAll("[^0-9]","");
 	    		break;
 	    	}
-	    } //단기중기 모두 조회시 리스트의 마지막번째 요소는 단기예보조회 시 끝날자변수에 대입
+	    } //단기중기 모두 조회시 shorDateScope리스트의 마지막번째 요소는 단기예보조회 시 끝날자변수이기에 단기조회 끝날짜 변수에 대입
 	      int lastIdx = shortDateScope.size() - 1;
+	      //끝날짜 형태를 포맷 후 대입
 	      shortEdDate = shortDateScope.get(lastIdx).toString().replaceAll("[^0-9]","");
 	      
 	      //중기예보 발표일자 형태 format
@@ -294,38 +296,39 @@ public class LogServiceImpl implements LogService {
 		  jsonObj2 = apiJsonFormat.midWeather(jsonObj2,jsonObj3,searchInfo);
 		  	  
 		  //가공된 Json데이터들을 하나의 Json객채에 담아 프론트에 응답해주기 위해 Jsonarray로 파싱
-		  JSONArray parse_item = jsonParsing.parse2(jsonObj);
-		  JSONArray parse_item2 = jsonParsing.parse2(jsonObj2);
+		  JSONArray parseItem = jsonParsing.parse2(jsonObj);
+		  JSONArray parseItem2 = jsonParsing.parse2(jsonObj2);
 		  
-		  //파싱된 Jsonarray의 데이터들을 타입이 JSON Object인 리스트에 담아준다.
+		  //Jsonarray로 파싱된 데이터들을 타입이 jsonObject인 리스트에 담아준다.
 		  List<JSONObject> list = new ArrayList<JSONObject>();
-		  int len = parse_item.length();
-		  int len2 = parse_item2.length();
+		  int len = parseItem.length();
+		  int len2 = parseItem2.length();
 		  
 		  for (int i = 0; i<len; i++) {
-			  list.add((JSONObject) parse_item.get(i));
+			  list.add((JSONObject) parseItem.get(i));
 		  }
 		  for (int i = 0; i<len2; i++) {
-			  list.add((JSONObject) parse_item2.get(i));
+			  list.add((JSONObject) parseItem2.get(i));
 		  }
 		
-		  //리스트 안의 json데이터들을 JsonArray에 대입
+		  //리스트 안의 json데이터들을 JsonArray로 감싸쭌다.
 		  JSONArray data = new JSONArray();
 	      for(int i = 0; i < list.size(); i++) {
 	    	  data.put(list.get(i));
 	      }
 	      
-	      //JsonArray를 JsonObj에 대입
+	      //JsonArray를 JsonObj로 다시한번 감싸준다.
 	      JSONObject toTalObj = new JSONObject();
 	      toTalObj.put("list", data);
 		
 		return toTalObj;
 	}
 	
+	//프론트 grid테이블 값을 새로 업데이트 해주기 위한 서비스
 	@Override
-	public JSONObject getSearchInfo() throws Exception {
+	public List<HashMap<String, String>> getSearchInfo(PageVo pageVo) throws Exception {
 		//DB에서 조회이력테이블을 select한 값을 담은 list
-		List<Tb_weather_search_scope_info> getList = logdao.getSearchInfo();
+		List<Tb_weather_search_scope_info> getList = logdao.getSearchInfo(pageVo);
 		//날짜 형식을 가공하여 getList의 값을 담을 list
 		List<Tb_weather_search_scope_info> newList = new ArrayList<Tb_weather_search_scope_info>();
 		//jsonArray형식으로 변환할 ArrayList 선언
@@ -334,39 +337,29 @@ public class LogServiceImpl implements LogService {
 		for(int i=0; i<getList.size(); i++) {
 			Tb_weather_search_scope_info data = new Tb_weather_search_scope_info();
 			
+			//조회이력저장테이블로부터 받은 데이터들을 순서대로 data 객체에 set해준 후 리스에 추가해준다.
 			data.setNo(getList.get(i).getNo());
 			data.setUser_id(getList.get(i).getUser_id());
 			data.setUser_name(getList.get(i).getUser_name());
-			//DB데이터의 날짜형식을 포멧시키기 위한 조건절
+			
+			//DB데이터의 날짜형식을 포멧시키기 위한 조건절 수행
 			if(!getList.get(i).getStart_date().equals("") || getList.get(i).getStart_date() != null) {
 				String startDate = getList.get(i).getStart_date();
 				startDate = startDate.substring(0,4) + "." + startDate.substring(4,6) + "." + startDate.substring(6,8);
-				System.out.println("startDate ==> " + startDate);
 				data.setStart_date(startDate);
-			}else {
-				//값이 비어있을 때 쓸 문자를 추가, 대응책필요
-			}
-			if(!getList.get(i).getEnd_date().equals("") || getList.get(i).getEnd_date() != null) {
+			}if(!getList.get(i).getEnd_date().equals("") || getList.get(i).getEnd_date() != null) {
 				String endDate = getList.get(i).getEnd_date();
 				endDate = endDate.substring(0,4) + "." + endDate.substring(4,6) + "." + endDate.substring(6,8);
-				System.out.println("endDate ==> " + endDate);
 				data.setEnd_date(endDate);
-			}else {
-				//값이 비어있을 때 쓸 문자를 추가, 대응책필요
-			}
-			if(!getList.get(i).getCreate_date().equals("") || getList.get(i).getCreate_date() != null) {
+			}if(!getList.get(i).getCreate_date().equals("") || getList.get(i).getCreate_date() != null) {
 				String createDate = getList.get(i).getCreate_date();
 				createDate = createDate.substring(0, 10).replaceAll("-",".");
-				System.out.println("createDate ==> " + createDate);
 				data.setCreate_date(createDate);
-			}else {
-				//값이 비어있을 때 쓸 문자를 추가, 대응책필요
 			}
 			
 			newList.add(data);	
-
 		}
-		
+		//
 		for(int i=0; i<newList.size(); i++) {
 			HashMap<String, String> param = new HashMap<String, String>();
 			//프론트로 보낼 json형식의 키와 값을 설정해준다 
@@ -380,27 +373,28 @@ public class LogServiceImpl implements LogService {
 			resultData.add(param);
 		}
 		
-		JSONArray data = new JSONArray();
-	    for(int i = 0; i < resultData.size(); i++) {
-	    	data.put(resultData.get(i));
-	    }
-		
-	    //jsonArray를 jsonObject에 담아 컨트롤러로 보내준다.
-	    JSONObject result = new JSONObject();
-	    result.put("list", data);
-		
-	    System.out.println(result);
+		/*  2022-08-01 사내 개인 노트북 인코딩 문제로 인한 JsonObject타입을 리턴하지 않고 HashMap으로 리턴타입을변경
+		 * 문제 해결을 위해서는 Json객체로 변환 시 인코딩 설정이 필요하다. => Json변환 시 인코딩 설정 확인해볼것
+		 * JSONArray data = new JSONArray(); for(int i = 0; i < resultData.size(); i++)
+		 * { data.put(resultData.get(i)); }
+		 * 
+		 * //jsonArray를 jsonObject에 담아 컨트롤러로 보내준다. JSONObject result = new JSONObject();
+		 * result.put("list", data);
+		 * 
+		 * System.out.println(result);
+		 */
 	    
-		return result;
+		return null;
 	}
 	
-	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr)
-			throws Exception {
+	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {
 		boolean isPost = false;
-
+		
+		//만약 post방식이면
 		if ("post".equals(type)) {
 			isPost = true;
-		} else {
+		//get방식
+		}else {
 			url = "".equals(jsonStr) ? url : url + "?request=" + jsonStr;
 																			
 			System.out.println("getDataFromJson url ==>" + url);
@@ -409,9 +403,9 @@ public class LogServiceImpl implements LogService {
 		return getStringFromURL(url, encoding, isPost, jsonStr, "application/json");
 	}
 
-	public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter,
-			String contentType) throws Exception {
-
+	public HashMap<String, Object> getStringFromURL(String url, String encoding, boolean isPost, String parameter, String contentType) throws Exception {
+		
+		//파라미터로 받은 url문자열로 url객체 생성
 		URL apiURL = new URL(url);
 
 		HttpURLConnection conn = null; 
@@ -424,8 +418,8 @@ public class LogServiceImpl implements LogService {
 		try {
 		
 			conn = (HttpURLConnection) apiURL.openConnection(); 
-			conn.setConnectTimeout(5000); 
-			conn.setReadTimeout(5000); 
+			conn.setConnectTimeout(10000); 
+			conn.setReadTimeout(10000); 
 			conn.setDoOutput(true);
 
 			if (isPost) { // 만약 post라면

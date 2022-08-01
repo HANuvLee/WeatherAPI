@@ -9,23 +9,23 @@ public class JsonParsing {
 
 	public JSONArray parse(JSONObject jsonObj) {
 		//result가져오기
-		JSONObject parse_result = (JSONObject)jsonObj.get("result");
+		JSONObject parseResult = (JSONObject)jsonObj.get("result");
 		// response 가져오기
-		JSONObject parse_response = (JSONObject)parse_result.get("response");
+		JSONObject parseResponse = (JSONObject)parseResult.get("response");
 		// response로부터 body 찾아오기
-		JSONObject parse_body = (JSONObject) parse_response.get("body");
+		JSONObject parseBody = (JSONObject) parseResponse.get("body");
 		// body 로 부터 items 받아오기
-		JSONObject parse_items = (JSONObject) parse_body.get("items");
+		JSONObject parseItems = (JSONObject) parseBody.get("items");
 		// items로 부터 item을 받아옵니다. item : 뒤에 [ 로 시작하므로 jsonarray입니다.
-		JSONArray parse_item = (JSONArray) parse_items.get("item");
+		JSONArray parseItem = (JSONArray) parseItems.get("item");
 		
-		return parse_item;
+		return parseItem;
 	}
 
 	public JSONArray parse2(JSONObject jsonObj) {
 		//result가져오기
-		JSONArray parse_item = (JSONArray)jsonObj.get("list");		
-		return parse_item;
+		JSONArray parseItem = (JSONArray)jsonObj.get("list");		
+		return parseItem;
 	}
 
 }

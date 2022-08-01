@@ -1,9 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
@@ -32,11 +31,11 @@ $(function(){
 		var user_id = $("#user_id").val();
 		var user_pw= $("#user_pw").val();
 		
-		if(user_id == ''){
-			alert("¾ÆÀÌµğ¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+		if(user_id == '' || user_id == null){
+			alert("ì•„ì´ë””ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”.");
 			return false;
-		}else if(user_pw == ''){
-			alert("ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+		}else if(user_pw == '' || user_pw == null){
+			alert("ë¹„ë°€ë²ˆí˜¸ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”.");
 			return false;
 		}else{
 			$.ajax({
@@ -49,15 +48,15 @@ $(function(){
 				/* contentType: 'application/json',
 				dataType: 'json', */
 				success: function(data, status, xhr) {
-					if(data.result == "success"){ //À¯ÀúÁ¤º¸°¡ Á¸Àç
-						if(data.url == null || data.url == ""){ //¿äÃ»ÁÖ¼Ò°¡ ºó°ªÀÌ°Å³ª ¾ø´Ù¸é
-							alert("ÁÖ¼Ò¿äÃ»¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
-							location.href = "/"; //½ºÅ©¸³Æ®¿¡¼­ ÄÁÆ®·Ñ·¯ ¿äÃ» (ÃÖ»óÀ§ ÁÖ¼Ò)
+					if(data.result == "success"){ //ìœ ì €ì •ë³´ê°€ ì¡´ì¬
+						if(data.url == null || data.url == ""){ //ìš”ì²­ì£¼ì†Œê°€ ë¹ˆê°’ì´ê±°ë‚˜ ì—†ë‹¤ë©´
+							alert("ì£¼ì†Œìš”ì²­ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
+							location.href = "/"; //ìŠ¤í¬ë¦½íŠ¸ì—ì„œ ì»¨íŠ¸ë¡¤ëŸ¬ ìš”ì²­ (ìµœìƒìœ„ ì£¼ì†Œ)
 						}else{							
-							location.href = data.url; //½ºÅ©¸³Æ®¿¡¼­ ÄÁÆ®·Ñ·¯ ¿äÃ»
+							location.href = data.url; //ìŠ¤í¬ë¦½íŠ¸ì—ì„œ ì»¨íŠ¸ë¡¤ëŸ¬ ìš”ì²­
 						}
 					}else{
-						alert("·Î±×ÀÎ¿¡ ½ÇÆĞÇß½À´Ï´Ù.");
+						alert("ë¡œê·¸ì¸ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
 						return false;
 					}
 					

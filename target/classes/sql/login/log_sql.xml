@@ -23,13 +23,24 @@
 			#{user_name}
 			);
 	</insert>
-	<select id="selectSearchInfo" resultType="com.hostate.api.vo.Tb_weather_search_scope_info">
-		select ROW_NUMBER() OVER(ORDER BY no DESC) AS no,
-		 user_id, 
-		 user_name,
-		 start_date,
-		 end_date,
-		 create_date
-		from tb_weather_search_scope_info
+	<select id="selectSearchInfo" parameterType="com.hostate.api.vo.PageVo" resultType="com.hostate.api.vo.Tb_weather_search_scope_info">
+		select 
+			numrow,
+			user_id, 
+			user_name,
+			start_date,
+			end_date,
+			create_date
+		from (
+		        select
+					 ROW_NUMBER() OVER(ORDER BY no desc) AS numrow,
+					 user_id as user_id,
+					 user_name as user_name,
+					 start_date as start_date,
+					 end_date as end_date,
+					 create_date as create_date 
+			    from tb_weather_search_scope_info 
+	            )t
+		WHERE numrow BETWEEN (#{pageNo}-1)*10 + 1 AND (#{pageNo})*10
 	</select>
 </mapper>

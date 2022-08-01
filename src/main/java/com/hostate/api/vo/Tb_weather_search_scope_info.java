@@ -11,6 +11,9 @@ public class Tb_weather_search_scope_info {
 	private String update_date;
 	private String update_user_name;
 	
+	//게시글 순번용
+    private int numrow;
+    
 	public String getNo() {
 		return no;
 	}

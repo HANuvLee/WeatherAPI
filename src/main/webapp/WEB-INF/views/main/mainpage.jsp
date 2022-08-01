@@ -1,10 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-	pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@include file="/WEB-INF/views/common/common.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/axisj/axisj/master/ui/arongi/AXJ.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
@@ -23,20 +21,20 @@
 			<a class="navbar-brand logo">HOSTATE</a>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<c:if test="${sessionScope.user_id == null}">
-					<a class="navbar-brand nav-link active logstate" href="/login/login.do">·Î±×ÀÎ</a>
+					<a class="navbar-brand nav-link active logstate" href="/login/login.do">ë¡œê·¸ì¸</a>
 				</c:if>
 				<c:if test="${sessionScope.user_id != null}">
-					<a class="navbar-brand nav-link active logstate" href="/login/logout.do" class="logoutbtn">·Î±×¾Æ¿ô</a>
+					<a class="navbar-brand nav-link active logstate" href="/login/logout.do" class="logoutbtn">ë¡œê·¸ì•„ì›ƒ</a>
 				</c:if>
 			</div>
 		</div>
 	</nav>
 	<div class="headerContent">
 		<c:if test="${sessionScope.user_id != null}">
-			<span class="headerContentText"> ¾Æ·¡ °Ë»ö±â´ÉÀ» ÅëÇØ ¿øÇÏ´Â ³¯ÀÇ ³¯¾¾¸¦ Á¶È¸ÇØº¸¼¼¿ä. </span>
+			<span class="headerContentText"> ì•„ë˜ ê²€ìƒ‰ê¸°ëŠ¥ì„ í†µí•´ ì›í•˜ëŠ” ë‚ ì˜ ë‚ ì”¨ë¥¼ ì¡°íšŒí•´ë³´ì„¸ìš”. </span>
 		</c:if>
 		<c:if test="${sessionScope.user_id == null}">
-			<span class="headerContentText"> ¿Â¶óÀÎÀ¸·Î <a href="/login/login.do">·Î±×ÀÎ</a>ÇÏ°í, ³¯¾¾¸¦ Á¶È¸ÇØº¸¼¼¿ä.
+			<span class="headerContentText"> ì˜¨ë¼ì¸ìœ¼ë¡œ <a href="/login/login.do">ë¡œê·¸ì¸</a>í•˜ê³ , ë‚ ì”¨ë¥¼ ì¡°íšŒí•´ë³´ì„¸ìš”.
 			</span>
 		</c:if>
 	</div>
@@ -58,7 +56,7 @@
 				&nbsp;&nbsp;&nbsp;&nbsp;
 				<button id="searcWeatherBtn" class="btn btn-light">search</button>
 				<div class="guidetext">
-					*±İÀÏºÎÅÍ ÃÖ´ë <b>7</b>ÀÏ±îÁö Á¶È¸°¡´ÉÇÕ´Ï´Ù.
+					*ê¸ˆì¼ë¶€í„° ìµœëŒ€ <b>7</b>ì¼ê¹Œì§€ ì¡°íšŒê°€ëŠ¥í•©ë‹ˆë‹¤.
 				</div>
 			</div>
 		</c:if>
@@ -74,7 +72,7 @@
 					<button type="button" id="searcWeatherBtn" class="btn btn-light" disabled="disabled">search</button>
 				</form>
 				<div class="guidetext">
-					*±İÀÏºÎÅÍ ÃÖ´ë <b>7</b>ÀÏ±îÁö Á¶È¸°¡´ÉÇÕ´Ï´Ù.
+					*ê¸ˆì¼ë¶€í„° ìµœëŒ€ <b>7</b>ì¼ê¹Œì§€ ì¡°íšŒê°€ëŠ¥í•©ë‹ˆë‹¤.
 				</div>
 			</div>
 		</c:if>
@@ -87,38 +85,53 @@
 	</div>
 </body>
 <script type="text/javascript" charset="utf-8">
-	var myGrid = new AXGrid(); // ±×¸®µå º¯¼ö¸¦ ÃÊ±âÈ­ ÇÕ´Ï´Ù.
+	var myGrid = new AXGrid(); // ê·¸ë¦¬ë“œ ë³€ìˆ˜ë¥¼ ì´ˆê¸°í™” í•©ë‹ˆë‹¤.
 	var fnObj = {
 	    pageStart: function(){
 	        myGrid.setConfig({
-	            targetID : "AXGridTarget",
-	            colHeadAlign: "center", // ÇìµåÀÇ ±âº» Á¤·Ä °ª
+	            targetID : "AXGridTarget", //grid div ID
+	            colHeadAlign: "center", // í—¤ë“œì˜ ê¸°ë³¸ ì •ë ¬ ê°’
 	            colGroup : [
-	                {key:"no", label:"¹øÈ£", width:"50", align:"right"},
-	                {key:"id", label:"»ç¿ëÀÚ¾ÆÀÌµğ", width:"200"},
-	                {key:"name", label:"ÀÌ¸§", width:"100"},
-	                {key:"stDate", label:"Á¶È¸½ÃÀÛ³¯Â¥", width:"100"},
-	                {key:"edDate", label:"Á¶È¸³¡³¯Â¥", width:"100", align:"right"},
-	                {key:"crDate", label:"Á¶È¸½Ã°£", width:"80", align:"right"}
+	                {key:"no", label:"ë²ˆí˜¸", width:"50", align:"center"},
+	                {key:"id", label:"ì‚¬ìš©ìì•„ì´ë””", width:"*", align:"center"},
+	                {key:"name", label:"ì´ë¦„", width:"*", align:"center"},
+	                {key:"stDate", label:"ì¡°íšŒì‹œì‘ë‚ ì§œ", width:"*", align:"center"},
+	                {key:"edDate", label:"ì¡°íšŒëë‚ ì§œ", width:"*", align:"center"},
+	                {key:"crDate", label:"ì¡°íšŒì‹œê°„", width:"*", align:"center"}
 	                ],
 	            body : {
 	                onclick: function(){
 	                    toast.push(Object.toJSON(this.item));
 	                }
 	            },
-		        page : {
-	                paging:false
-		        }
+	            page:{
+	            	 paging  : true, // {Boolean} -- í˜ì´ì§• ì‚¬ìš©ì—¬ë¶€ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
+	                 pageNo  : 1,    // {Number} -- í˜„ì¬ í˜ì´ì§€ ë²ˆí˜¸ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
+	                 pageSize: 10,  // {Number} -- í•œ í˜ì´ì§€ì¥ í‘œì‹œí•  ë°ì´í„° ìˆ˜ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
+	                 onchange: function(pageNo){
+	                	 myGrid.setList({
+	         	        	method : "get",
+	         	        	dataType: "json",
+	         	        	contentType: 'application/json; charset=utf-8',
+	         	        	ajaxUrl : "/main/searchPaging.do",
+	         	        	onLoad:function(data){
+	         	    	
+	         	        	},
+	         	            onError:function(){
+	         	            	
+	         	            }
+	         	        });
+	                 } // {Funtion} -- í˜ì´ì§€ ë³€ê²½ ì´ë²¤íŠ¸ì…ë‹ˆë‹¤.
+	            }
 	        });
-	   		
-	        var list = [];
 	        
 	        myGrid.setList({
-	        	method : "get",
-	        	dataType : "json",
+	        	method : "post",
+	        	dataType: "json",
+	        	contentType: 'application/json; charset=utf-8',
 	        	ajaxUrl : "/main/selectSearchList.do",
 	        	onLoad:function(data){
-	        		console.log("mygriddata ===> " + data.list);
+	    	
 	        	},
 	            onError:function(){
 	            	
@@ -127,70 +140,69 @@
 	    }    
 	};
 	
-
 	$("document").ready(function() {
-			startTime(); //¸ŞÀÎ ÆäÀÌÁö Å¸ÀÌ¸Ó »ı¼º
-			setCalendar();//´Ş·Â ¹üÀ§ ¼³Á¤
-			firstvilageweather(); //ÆäÀÌÁö ÃÖÃÊ Á¢¼Ó ½Ã API ¿äÃ»ÇÔ¼ö
+			startTime(); //ë©”ì¸ í˜ì´ì§€ íƒ€ì´ë¨¸ ìƒì„±
+			setCalendar();//ë‹¬ë ¥ ë²”ìœ„ ì„¤ì •
+			firstvilageweather(); //í˜ì´ì§€ ìµœì´ˆ ì ‘ì† ì‹œ API ìš”ì²­í•¨ìˆ˜
 		 	setTimeout(fnObj.pageStart, 1);
 	
 			function setCalendar() {
-				const toDay = getToday(); //yyyy-mm-ddÇü½Ä
-				const now = new Date();//ÇöÀç ³¯Â¥ ¹× ½Ã°£
+				const toDay = getToday(); //yyyy-mm-ddí˜•ì‹
+				const now = new Date();//í˜„ì¬ ë‚ ì§œ ë° ì‹œê°„
 				const stDate = new Date(toDay)
 				const edDate = new Date()
-				const after7= new Date(Date.parse(now) + 7 * 1000 * 60 * 60 * 24); //7ÀÏÈÄ
+				const after7= new Date(Date.parse(now) + 7 * 1000 * 60 * 60 * 24); //7ì¼í›„
 	
-				//Á¶È¸½ÃÀÛ³¯Â¥ ¼Ó¼º ¼³Á¤
+				//ì¡°íšŒì‹œì‘ë‚ ì§œ ì†ì„± ì„¤ì •
 				$("#startdate").attr("value", toDay);
 				$("#startdate").attr("min", toDay);
 				$("#startdate").attr("max", after7.toISOString().substr(0,10));
-				//Á¶È¸³¡³¯Â¥ ¼Ó¼º ¼³Á¤
+				//ì¡°íšŒëë‚ ì§œ ì†ì„± ì„¤ì •
 				$("#enddate").attr("value", toDay);
 				$("#enddate").attr("min", toDay);
 				$("#enddate").attr("max", after7.toISOString().substr(0,10));
 	
-				//Á¶È¸¹öÆ° Å¬¸¯ ½Ã
+				//ì¡°íšŒë²„íŠ¼ í´ë¦­ ì‹œ
 				$("#searcWeatherBtn").click(function() {
-					var start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"¹®ÀÚ¸¦ ¸ğµÎÁ¦°ÅÇÏ´Â Á¤±Ô½Ä,  ¼­¹ö È£Ãâ ½Ã ÀÎÀÚ°©À¸·Î º¸³»ÁØ´Ù
-					var end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"¹®ÀÚ¸¦ ¸ğµÎÁ¦°ÅÇÏ´Â Á¤±Ô½Ä, ¼­¹ö È£Ãâ ½Ã ÀÎÀÚ°©À¸·Î º¸³»ÁØ´Ù
-					//»ç¿ëÀÚ°¡ ¼±ÅÃÇÑ ÀÏ¼ö Â÷ÀÌ¸¦ ±¸ÇÏ±â À§ÇØ ¼±¾ğ 
+					let start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"ë¬¸ìë¥¼ ëª¨ë‘ì œê±°í•˜ëŠ” ì •ê·œì‹,  ì„œë²„ í˜¸ì¶œ ì‹œ ì¸ìê°‘ìœ¼ë¡œ ë³´ë‚´ì¤€ë‹¤
+					let end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"ë¬¸ìë¥¼ ëª¨ë‘ì œê±°í•˜ëŠ” ì •ê·œì‹, ì„œë²„ í˜¸ì¶œ ì‹œ ì¸ìê°‘ìœ¼ë¡œ ë³´ë‚´ì¤€ë‹¤
+					//ì‚¬ìš©ìê°€ ì„ íƒí•œ ì¼ìˆ˜ ì°¨ì´ë¥¼ êµ¬í•˜ê¸° ìœ„í•´ ì„ ì–¸ 
 					let stDate = $("#startdate").val();
 					let edDate = $("#enddate").val();
-					//°¢°¢ splitÇÔ¼ö·Î µ¥ÀÌÅÍ¸¦ ³ª´©¾î ¹è¿­¿¡ ´ã´Â´Ù.
+					//ê°ê° splití•¨ìˆ˜ë¡œ ë°ì´í„°ë¥¼ ë‚˜ëˆ„ì–´ ë°°ì—´ì— ë‹´ëŠ”ë‹¤.
 					const stDateArr = stDate.split("-");
 					const edDateArr = edDate.split("-");
 					const toDayArr = toDay.split("-");
-					//Date°´Ã¼ »ı¼º
+					//Dateê°ì²´ ìƒì„±
 					stDate = new Date(stDateArr[0], stDateArr[1], stDateArr[2]);
 					edDate = new Date(edDateArr[0], edDateArr[1], edDateArr[2]);
 					nowDate = new Date(toDayArr[0], toDayArr[1], toDayArr[2]); 
 					
-					//getime()À¸·Î ³¯Â¥½Ã°£À» ¼ıÀÚ·Î ¹İÈ¯ µÎ ³¯ÀÇ Â÷ÀÌ¸¦ ±¸ÇÑ´Ù.
+					//getime()ìœ¼ë¡œ ë‚ ì§œì‹œê°„ì„ ìˆ«ìë¡œ ë°˜í™˜ ë‘ ë‚ ì˜ ì°¨ì´ë¥¼ êµ¬í•œë‹¤.
 					const stDiff = stDate.getTime()-nowDate.getTime();
 					const edDiff = edDate.getTime()-nowDate.getTime();
-					//ÀÏ¼ö Â÷ÀÌ
+					//ì¼ìˆ˜ ì°¨ì´
 					const stDiffDay = stDiff/(1000*60*60*24);
 					const edDiffDay = edDiff/(1000*60*60*24);
 	
-				 	//Á¶È¸³¯Â¥ ±âÁØ¿¡ µû¸¥ apiÈ£Ãâ ¸®½ºÆ®
+				 	//ì¡°íšŒë‚ ì§œ ê¸°ì¤€ì— ë”°ë¥¸ apií˜¸ì¶œ ë¦¬ìŠ¤íŠ¸
 					if (start_date > end_date) {
-						alert("½ÃÀÛ³¯Â¥¿Í ³¡³¯Â¥¸¦ È®ÀÎÇÏ¼¼¿ä.");
+						alert("ì‹œì‘ë‚ ì§œì™€ ëë‚ ì§œë¥¼ í™•ì¸í•˜ì„¸ìš”.");
 						return false;
 					} else if (stDiffDay < 3 && edDiffDay < 3) {
 						alert("short!");
-						searchShortweather(String(start_date), String(end_date)); //´Ü±â¿¹º¸¸¸ È£Ãâ
+						searchShortweather(String(start_date), String(end_date)); //ë‹¨ê¸°ì˜ˆë³´ë§Œ í˜¸ì¶œ
 					} else if (stDiffDay > 2 && edDiffDay > 2) {
 						alert("middle!");
-						searchMidweather(String(start_date),String(end_date)); //Áß±â¿¹º¸¸¸È£Ãâ
+						searchMidweather(String(start_date),String(end_date)); //ì¤‘ê¸°ì˜ˆë³´ë§Œí˜¸ì¶œ
 					} else {
 						alert("All!");
-						searchAllweather(String(start_date),String(end_date)) //¸ğµÎÈ£Ãâ
+						searchAllweather(String(start_date),String(end_date)) //ëª¨ë‘í˜¸ì¶œ
 					} 
 				});
 			};
 	
-			/**************************************ÃÖÃÊ Á¢¼Ó ½Ã È£ÃâµÇ´Â ÇÔ¼ö******************************************/
+			/**************************************ìµœì´ˆ ì ‘ì† ì‹œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜******************************************/
 			function firstvilageweather() {
 				$.ajax({
 							type : 'get',
@@ -201,7 +213,7 @@
 	
 								console.log("firsthvilageweather success ==>");
 								console.log(data);
-								main(data); //ÀÀ´ä¹ŞÀº µ¥ÀÌÅÍ¸¦ ÀÎÀÚ°ªÀ¸·Î ¸ŞÀÎ ÆäÀÌÁö »ı¼º ÇÔ¼ö È£Ãâ	
+								main(data); //ì‘ë‹µë°›ì€ ë°ì´í„°ë¥¼ ì¸ìê°’ìœ¼ë¡œ ë©”ì¸ í˜ì´ì§€ ìƒì„± í•¨ìˆ˜ í˜¸ì¶œ	
 							},
 							error : function(e, status, xhr, data) {
 								console.log("error ==>");
@@ -210,7 +222,7 @@
 						});
 			}
 	
-			/**************************************´Ü±â¿¹º¸ È£Ãâ ÇÔ¼ö******************************************/
+			/**************************************ë‹¨ê¸°ì˜ˆë³´ í˜¸ì¶œ í•¨ìˆ˜******************************************/
 			function searchShortweather(st, ed) {
 				console.log("searchShortweather start");
 				$.ajax({
@@ -236,7 +248,7 @@
 				});
 			}
 	
-			/**************************************Áß±â¿¹º¸ È£Ãâ ÇÔ¼ö******************************************/
+			/**************************************ì¤‘ê¸°ì˜ˆë³´ í˜¸ì¶œ í•¨ìˆ˜******************************************/
 			function searchMidweather(st, ed) {
 				$.ajax({
 					type : 'get',
@@ -262,7 +274,7 @@
 					}
 				});
 			}
-			/**************************************´Ü±â&Áß±â¿¹º¸ È£Ãâ ÇÔ¼ö******************************************/
+			/**************************************ë‹¨ê¸°&ì¤‘ê¸°ì˜ˆë³´ í˜¸ì¶œ í•¨ìˆ˜******************************************/
 			function searchAllweather(st, ed) {
 				$.ajax({
 					type : 'get',
@@ -287,11 +299,11 @@
 					}
 				});
 			}
-			/***************************************¸ŞÀÎ ÆäÀÌÁö »ı¼º ÇÔ¼ö*******************************************/
+			/***************************************ë©”ì¸ í˜ì´ì§€ ìƒì„± í•¨ìˆ˜*******************************************/
 			function main(data) {
 				console.log("main function Start.");
 	
-				if (data.length != 0) { //ÃÖÃÊ Á¢¼Ó ½Ã api µ¥ÀÌÅÍ°¡ ¼º°øÀûÀ¸·Î Àü´ŞµÉ ¶§
+				if (data.length != 0) { //ìµœì´ˆ ì ‘ì† ì‹œ api ë°ì´í„°ê°€ ì„±ê³µì ìœ¼ë¡œ ì „ë‹¬ë  ë•Œ
 					console.log("main function success ==>");
 					console.log(data);
 					console.log("data length ==> " + data.list.length);
@@ -304,23 +316,23 @@
 								+ data.list[i].date + "</span>";
 						if (data.list[i].sky == 1) {
 							formHtml += "<div><img src='/resources/images/weather1.png' id=weatherPng"+data.list[i].sky+"></div>";
-							formHtml += "<div class=SKY, id=SKY>³¯¾¾ : ¸¼À½</div>";//ÇÏ´Ã					
+							formHtml += "<div class=SKY, id=SKY>ë‚ ì”¨ : ë§‘ìŒ</div>";//í•˜ëŠ˜					
 						}
 						if (data.list[i].sky == 2) {
 							formHtml += "<div><img src='/resources/images/weather2.png' id=weatherPng"+data.list[i].sky+"></div>";
-							formHtml += "<div class=SKY, id=SKY>³¯¾¾ : ±¸¸§Á¶±İ</div>";//ÇÏ´Ã					
+							formHtml += "<div class=SKY, id=SKY>ë‚ ì”¨ : êµ¬ë¦„ì¡°ê¸ˆ</div>";//í•˜ëŠ˜					
 						}
 						if (data.list[i].sky == 3) {
 							formHtml += "<div><img src=/resources/images/weather3.png id=weatherPng"+data.list[i].sky+"></div>";
-							formHtml += "<div class=SKY, id=SKY>³¯¾¾ : ±¸¸§¸¹À½</div>";//ÇÏ´Ã					
+							formHtml += "<div class=SKY, id=SKY>ë‚ ì”¨ : êµ¬ë¦„ë§ìŒ</div>";//í•˜ëŠ˜					
 						}
 						if (data.list[i].sky == 4) {
 							formHtml += "<div><img src=/resources/images/weather4.png id=weatherPng"+data.list[i].sky+"></div>";
-							formHtml += "<div class=SKY, id=SKY>³¯¾¾ : Èå¸²</div>";//ÇÏ´Ã					
+							formHtml += "<div class=SKY, id=SKY>ë‚ ì”¨ : íë¦¼</div>";//í•˜ëŠ˜					
 						}
-						formHtml += "<div class=POP, id=POP>°­¼öÈ®·ü : "+ data.list[i].pop + "%</div>"; //°­¼öÈ®·ü
-						formHtml += "<div class=TMN, id=TMN>ÃÖÀú±â¿Â : "+ data.list[i].tmn + "¡É</div>"; //ÃÖÀú±â¿Â
-						formHtml += "<div class=TMX, id=TMX>ÃÖ°í±â¿Â : "+ data.list[i].tmx + "¡É</div>"; //ÃÖ°í±â¿Â
+						formHtml += "<div class=POP, id=POP>ê°•ìˆ˜í™•ë¥  : "+ data.list[i].pop + "%</div>"; //ê°•ìˆ˜í™•ë¥ 
+						formHtml += "<div class=TMN, id=TMN>ìµœì €ê¸°ì˜¨ : "+ data.list[i].tmn + "â„ƒ</div>"; //ìµœì €ê¸°ì˜¨
+						formHtml += "<div class=TMX, id=TMX>ìµœê³ ê¸°ì˜¨ : "+ data.list[i].tmx + "â„ƒ</div>"; //ìµœê³ ê¸°ì˜¨
 						formHtml += "</div>";
 					}
 					$('.weatherContents').html(formHtml);
@@ -331,7 +343,7 @@
 				}
 			}
 	
-			/***************************************Å¸ÀÌ¸Ó »ı¼º ÇÔ¼ö*******************************************/
+			/***************************************íƒ€ì´ë¨¸ ìƒì„± í•¨ìˆ˜*******************************************/
 			function startTime() {
 				var today = new Date();
 				var hr = today.getHours();
@@ -368,7 +380,7 @@
 				return i;
 			}
 	
-			/***************************************¿À´Ã³¯Â¥ (YYYY-MM-DD) »ı¼º ÇÔ¼ö*******************************************/
+			/***************************************ì˜¤ëŠ˜ë‚ ì§œ (YYYY-MM-DD) ìƒì„± í•¨ìˆ˜*******************************************/
 			function getToday() {
 				var date = new Date();
 				var year = date.getFullYear();
