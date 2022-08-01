@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,9 +25,7 @@ import com.hostate.api.commonutil.ApiJsonFormat;
 import com.hostate.api.commonutil.DatesBetweenTwoDates;
 import com.hostate.api.commonutil.JsonParsing;
 import com.hostate.api.dao.LogDao;
-import com.hostate.api.vo.PageVo;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
-import com.mysql.cj.xdevapi.JsonArray;
 
 @Service
 public class LogServiceImpl implements LogService {
@@ -326,52 +323,93 @@ public class LogServiceImpl implements LogService {
 	
 	//프론트 grid테이블 값을 새로 업데이트 해주기 위한 서비스
 	@Override
-	public List<HashMap<String, String>> getSearchInfo(PageVo pageVo) throws Exception {
+	public HashMap<String, Object> getSearchInfo(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
 		//DB에서 조회이력테이블을 select한 값을 담은 list
-		List<Tb_weather_search_scope_info> getList = logdao.getSearchInfo(pageVo);
-		//날짜 형식을 가공하여 getList의 값을 담을 list
+		List<Tb_weather_search_scope_info> getList = logdao.getSearchInfo(tbWeatherInfo);
+		
+		//getList의 값들을 가공하여 프론트에 보내질 list
 		List<Tb_weather_search_scope_info> newList = new ArrayList<Tb_weather_search_scope_info>();
-		//jsonArray형식으로 변환할 ArrayList 선언
-		List<HashMap<String, String>> resultData = new ArrayList<HashMap<String,String>>();
-				
-		for(int i=0; i<getList.size(); i++) {
-			Tb_weather_search_scope_info data = new Tb_weather_search_scope_info();
+
+		//getList 데이터 가공 시 Json형식으로 변경된 데이터들을 담을 리스트
+		List<HashMap<String, String>> dataInfo = new ArrayList<HashMap<String,String>>();
+		
+		//최종적으로 컨트롤러로 응답할 HashMap
+		HashMap<String, Object> result = new HashMap<String, Object>();
+		
+		//조회이력저장 데이터 총 갯수
+		int totalCnt = logdao.getTotalCnt(tbWeatherInfo);
+		//페이징을 위한 설정
+		if(totalCnt != 0) {
+			//Json형식으로 값을 담기 위한 HashMap 객체 선언
+			HashMap<String, String> param = new HashMap<String, String>();
+			//한 페이지에 보여줄 데이터 갯수
+			int listCnt = tbWeatherInfo.getListCount();
+			//페이지번호
+			int pageno = tbWeatherInfo.getPageNo();
+			//총페이지 갯수 
+			int pageCnt = totalCnt / listCnt;
 			
+			if(totalCnt % listCnt > 0) {
+				pageCnt++;
+			}
+			//페이지 사이즈
+			int pagesize = tbWeatherInfo.getPageSize();
+			
+			//hashmap에 넣어주기 위해 String으로 캐스팅
+			String listCount = String.valueOf(listCnt);
+			String pageNo = String.valueOf(pageno);
+			String pageCount = String.valueOf(pageCnt);
+			String pageSize = String.valueOf(pagesize);
+			
+			param.put("pageNo", pageNo);
+			param.put("listCount", listCount);
+			param.put("pageCount", pageCount);
+			param.put("pageSize", pageSize);
+			
+			result.put("page", param);
+		}
+
+		for(int i=0; i<getList.size(); i++) {
+			Tb_weather_search_scope_info info = new Tb_weather_search_scope_info();
+
 			//조회이력저장테이블로부터 받은 데이터들을 순서대로 data 객체에 set해준 후 리스에 추가해준다.
-			data.setNo(getList.get(i).getNo());
-			data.setUser_id(getList.get(i).getUser_id());
-			data.setUser_name(getList.get(i).getUser_name());
+			info.setNo(String.valueOf(getList.get(i).getNumrow()));
+			info.setUser_id(getList.get(i).getUser_id());
+			info.setUser_name(getList.get(i).getUser_name());
 			
 			//DB데이터의 날짜형식을 포멧시키기 위한 조건절 수행
 			if(!getList.get(i).getStart_date().equals("") || getList.get(i).getStart_date() != null) {
 				String startDate = getList.get(i).getStart_date();
 				startDate = startDate.substring(0,4) + "." + startDate.substring(4,6) + "." + startDate.substring(6,8);
-				data.setStart_date(startDate);
+				info.setStart_date(startDate);
 			}if(!getList.get(i).getEnd_date().equals("") || getList.get(i).getEnd_date() != null) {
 				String endDate = getList.get(i).getEnd_date();
 				endDate = endDate.substring(0,4) + "." + endDate.substring(4,6) + "." + endDate.substring(6,8);
-				data.setEnd_date(endDate);
+				info.setEnd_date(endDate);
 			}if(!getList.get(i).getCreate_date().equals("") || getList.get(i).getCreate_date() != null) {
 				String createDate = getList.get(i).getCreate_date();
 				createDate = createDate.substring(0, 10).replaceAll("-",".");
-				data.setCreate_date(createDate);
+				info.setCreate_date(createDate);
 			}
 			
-			newList.add(data);	
+			newList.add(info);	
 		}
-		//
+
 		for(int i=0; i<newList.size(); i++) {
+			//Json형식으로 값을 담기 위한 HashMap 객체 선언
 			HashMap<String, String> param = new HashMap<String, String>();
 			//프론트로 보낼 json형식의 키와 값을 설정해준다 
-			param.put("no", newList.get(i).getNo());
+			param.put("no", String.valueOf(newList.get(i).getNo()));
 			param.put("id", newList.get(i).getUser_id());
 			param.put("name", newList.get(i).getUser_name());
 			param.put("stDate", newList.get(i).getStart_date());
 			param.put("edDate", newList.get(i).getEnd_date());
 			param.put("crDate", newList.get(i).getCreate_date());
 			
-			resultData.add(param);
-		}
+			dataInfo.add(param);
+			
+		}result.put("list", dataInfo);
+	
 		
 		/*  2022-08-01 사내 개인 노트북 인코딩 문제로 인한 JsonObject타입을 리턴하지 않고 HashMap으로 리턴타입을변경
 		 * 문제 해결을 위해서는 Json객체로 변환 시 인코딩 설정이 필요하다. => Json변환 시 인코딩 설정 확인해볼것
@@ -384,7 +422,7 @@ public class LogServiceImpl implements LogService {
 		 * System.out.println(result);
 		 */
 	    
-		return null;
+		return result;
 	}
 	
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {

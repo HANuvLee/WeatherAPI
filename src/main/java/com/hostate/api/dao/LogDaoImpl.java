@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.hostate.api.vo.PageVo;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
 @Repository
@@ -21,8 +20,14 @@ public class LogDaoImpl implements LogDao {
 	}
 
 	@Override
-	public List<Tb_weather_search_scope_info> getSearchInfo(PageVo pageVo) throws Exception {
+	public List<Tb_weather_search_scope_info> getSearchInfo(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
 		
-		return sqlSession.selectList("selectSearchInfo", pageVo);
+		return sqlSession.selectList("selectSearchInfo", tbWeatherInfo);
+	}
+
+	@Override
+	public int getTotalCnt(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("selectTotalCnt", tbWeatherInfo);
 	}
 }

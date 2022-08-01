@@ -8,11 +8,18 @@ public class Tb_weather_search_scope_info {
 	private String end_date;
 	private String create_date;
 	private String create_user_name;
+	
 	private String update_date;
 	private String update_user_name;
 	
-	//게시글 순번용
-    private int numrow;
+	//페이징 처리
+	private int pageNo = 0; //페이지 번호
+    private int listCount = 0; //한페이지당 출력할 데이터갯수
+    private int numrow; //프론트에 보여질 번호
+	private int pageCount; //총페이지 갯수
+	private int pageSize; //페이지 크기
+	private int totalCnt;
+	
     
 	public String getNo() {
 		return no;
@@ -68,5 +75,40 @@ public class Tb_weather_search_scope_info {
 	public void setUpdate_date(String update_date) {
 		this.update_date = update_date;
 	}
-	
+	public int getNumrow() {
+		return numrow;
+	}
+	public void setNumrow(int numrow) {
+		this.numrow = numrow;
+	}
+	public int getPageNo() {
+		return pageNo;
+	}
+	public void setPageNo(int pageNo) {
+		this.pageNo = pageNo;
+	}
+	public int getPageCount() {
+		return pageCount;
+	}
+	public void setPageCount(int pageCount) {
+		this.pageCount = pageCount;
+	}
+	public int getListCount() {
+		return listCount;
+	}
+	public void setListCount(int listCount) {
+		this.listCount = listCount;
+	}
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	public int getTotalCnt() {
+		return totalCnt;
+	}
+	public void setTotalCnt(int totalCnt) {
+		this.totalCnt = totalCnt;
+	}
 }

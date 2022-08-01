@@ -1,11 +1,9 @@
 package com.hostate.api.service;
 
 import java.util.HashMap;
-import java.util.List;
 
 import org.json.JSONObject;
 
-import com.hostate.api.vo.PageVo;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
 public interface LogService {
@@ -20,7 +18,7 @@ public interface LogService {
 	
 	JSONObject getAllWeather(Tb_weather_search_scope_info searchInfo) throws Exception;
 
-	List<HashMap<String, String>> getSearchInfo(PageVo pageVo) throws Exception;
+	HashMap<String, Object> getSearchInfo(Tb_weather_search_scope_info tbWeatherInfo) throws Exception;
 
 	
 

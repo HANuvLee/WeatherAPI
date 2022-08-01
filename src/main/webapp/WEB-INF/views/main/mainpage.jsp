@@ -105,28 +105,13 @@
 	                }
 	            },
 	            page:{
-	            	 paging  : true, // {Boolean} -- 페이징 사용여부를 설정합니다.
-	                 pageNo  : 1,    // {Number} -- 현재 페이지 번호를 설정합니다.
-	                 pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
-	                 onchange: function(pageNo){
-	                	 myGrid.setList({
-	         	        	method : "get",
-	         	        	dataType: "json",
-	         	        	contentType: 'application/json; charset=utf-8',
-	         	        	ajaxUrl : "/main/searchPaging.do",
-	         	        	onLoad:function(data){
-	         	    	
-	         	        	},
-	         	            onError:function(){
-	         	            	
-	         	            }
-	         	        });
-	                 } // {Funtion} -- 페이지 변경 이벤트입니다.
+	            	paging:true,
+	                status:{formatter: null}
 	            }
 	        });
 	        
 	        myGrid.setList({
-	        	method : "post",
+	        	method : "get",
 	        	dataType: "json",
 	        	contentType: 'application/json; charset=utf-8',
 	        	ajaxUrl : "/main/selectSearchList.do",
@@ -148,11 +133,10 @@
 	
 			function setCalendar() {
 				const toDay = getToday(); //yyyy-mm-dd형식
+				//date형식의 변수 선언
 				const now = new Date();//현재 날짜 및 시간
-				const stDate = new Date(toDay)
-				const edDate = new Date()
 				const after7= new Date(Date.parse(now) + 7 * 1000 * 60 * 60 * 24); //7일후
-	
+				
 				//조회시작날짜 속성 설정
 				$("#startdate").attr("value", toDay);
 				$("#startdate").attr("min", toDay);
@@ -164,7 +148,7 @@
 	
 				//조회버튼 클릭 시
 				$("#searcWeatherBtn").click(function() {
-					let start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식,  서버 호출 시 인자갑으로 보내준다
+					let start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
 					let end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
 					//사용자가 선택한 일수 차이를 구하기 위해 선언 
 					let stDate = $("#startdate").val();
