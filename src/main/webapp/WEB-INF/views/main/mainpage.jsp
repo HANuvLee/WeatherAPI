@@ -85,38 +85,49 @@
 	</div>
 </body>
 <script type="text/javascript" charset="utf-8">
-	var myGrid = new AXGrid(); // 그리드 변수를 초기화 합니다.
-	var fnObj = {
+	var myGridHo = new AXGrid(); // 그리드 변수를 초기화 합니다.
+	var fnObjHo = {
 	    pageStart: function(){
-	        myGrid.setConfig({
+	        myGridHo.setConfig({
 	            targetID : "AXGridTarget", //grid div ID
 	            colHeadAlign: "center", // 헤드의 기본 정렬 값
+	            /* remoteSort  : true, */           // {Boolean} [false] -- 서버에서 정렬을 처리(서버에서 별도 처리 필요)합니다. 헤더 클릭시 'sortBy=cost desc' 형식의 정렬 정보가 ajax 요청에 포함됩니다.
 	            colGroup : [
 	                {key:"no", label:"번호", width:"50", align:"center"},
+	                {key:"chk", width:"50", align:"center", formatter:"checkbox"},
 	                {key:"id", label:"사용자아이디", width:"*", align:"center"},
 	                {key:"name", label:"이름", width:"*", align:"center"},
 	                {key:"stDate", label:"조회시작날짜", width:"*", align:"center"},
 	                {key:"edDate", label:"조회끝날짜", width:"*", align:"center"},
 	                {key:"crDate", label:"조회시간", width:"*", align:"center"}
 	                ],
+	                
 	            body : {
-	                onclick: function(){
-	                    toast.push(Object.toJSON(this.item));
-	                }
+	            	onclick: function(){
+	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
+	                },
+	          
 	            },
 	            page:{
 	            	paging:true,
+	            	pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
 	                status:{formatter: null}
+	            },
+	            editor: {
+		            AXBind:{
+	                    type  : "selector", // {String} -- form.type == "text"인 경우 "number"|"money"|"selector"|"slider"|"twinSlider"|"date"|"twinDate"|"dateTime"|"switch"를 사용할 수 있습니다. form.type == "select"인 경우 "select"를 사용할 수 있습니다.
+	                    config: {} // {Object} -- API(http://jdoc.axisj.com/jQueryExtends.html)에서 bind + type으로 검색하세요.
+		            }	            	
 	            }
 	        });
-	        
-	        myGrid.setList({
+	     
+	        myGridHo.setList({
 	        	method : "get",
 	        	dataType: "json",
 	        	contentType: 'application/json; charset=utf-8',
 	        	ajaxUrl : "/main/selectSearchList.do",
 	        	onLoad:function(data){
-	    	
+	    		
 	        	},
 	            onError:function(){
 	            	
@@ -124,12 +135,14 @@
 	        });
 	    }    
 	};
+
 	
 	$("document").ready(function() {
 			startTime(); //메인 페이지 타이머 생성
 			setCalendar();//달력 범위 설정
 			firstvilageweather(); //페이지 최초 접속 시 API 요청함수
-		 	setTimeout(fnObj.pageStart, 1);
+		 	setTimeout(fnObjHo.pageStart, 1);
+		
 	
 			function setCalendar() {
 				const toDay = getToday(); //yyyy-mm-dd형식
@@ -222,7 +235,7 @@
 						console.log(data);
 						main(data);
 						console.log("searchShortweather success ==>");
-						setTimeout(fnObj.pageStart, 1);
+						setTimeout(fnObjHo.pageStart, 1);
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -248,7 +261,7 @@
 						console.log(data);
 						console.log("searchMidweather success ==>");
 						main(data);
-						setTimeout(fnObj.pageStart, 1);
+						setTimeout(fnObjHo.pageStart, 1);
 						
 	
 					},
@@ -274,7 +287,7 @@
 						console.log(data);
 						console.log("searchAllweather success ==>");
 						main(data);
-						setTimeout(fnObj.pageStart, 1);
+						setTimeout(fnObjHo.pageStart, 1);
 	
 					},
 					error : function(e, status, xhr, data) {

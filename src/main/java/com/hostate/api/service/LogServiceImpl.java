@@ -336,39 +336,42 @@ public class LogServiceImpl implements LogService {
 		//최종적으로 컨트롤러로 응답할 HashMap
 		HashMap<String, Object> result = new HashMap<String, Object>();
 		
-		//조회이력저장 데이터 총 갯수
-		int totalCnt = logdao.getTotalCnt(tbWeatherInfo);
-		//페이징을 위한 설정
+
+		//조회이력저장 데이터 총 갯수 
+		int totalCnt = logdao.getTotalCnt(tbWeatherInfo); 
+		
+		//페이징을 위한설정
 		if(totalCnt != 0) {
 			//Json형식으로 값을 담기 위한 HashMap 객체 선언
 			HashMap<String, String> param = new HashMap<String, String>();
-			//한 페이지에 보여줄 데이터 갯수
-			int listCnt = tbWeatherInfo.getListCount();
-			//페이지번호
-			int pageno = tbWeatherInfo.getPageNo();
-			//총페이지 갯수 
+			//한 페이지에 보여줄 데이터 갯수 
+			int listCnt = tbWeatherInfo.getListCount(); 
+			//페이지번호 
+			int pageno =tbWeatherInfo.getPageNo();
+			//총페이지 갯수
 			int pageCnt = totalCnt / listCnt;
-			
-			if(totalCnt % listCnt > 0) {
-				pageCnt++;
+			  
+			if(totalCnt % listCnt > 0) { 
+				  pageCnt++;	  
 			}
+			
 			//페이지 사이즈
 			int pagesize = tbWeatherInfo.getPageSize();
-			
-			//hashmap에 넣어주기 위해 String으로 캐스팅
+			  
+		    //hashmap에 넣어주기 위해 String으로 캐스팅 
 			String listCount = String.valueOf(listCnt);
-			String pageNo = String.valueOf(pageno);
-			String pageCount = String.valueOf(pageCnt);
+			String pageNo = String.valueOf(pageno); 
+			String pageCount = String.valueOf(pageCnt); 
 			String pageSize = String.valueOf(pagesize);
-			
-			param.put("pageNo", pageNo);
+			  
+			param.put("pageNo", pageNo); 
 			param.put("listCount", listCount);
-			param.put("pageCount", pageCount);
+			param.put("pageCount", pageCount); 
 			param.put("pageSize", pageSize);
-			
+			  
 			result.put("page", param);
 		}
-
+		 
 		for(int i=0; i<getList.size(); i++) {
 			Tb_weather_search_scope_info info = new Tb_weather_search_scope_info();
 
@@ -392,6 +395,7 @@ public class LogServiceImpl implements LogService {
 				info.setCreate_date(createDate);
 			}
 			
+			//날짜가 가공된 조회이력데이터를 새로운 리스트에 넣어 준다.
 			newList.add(info);	
 		}
 
@@ -399,7 +403,7 @@ public class LogServiceImpl implements LogService {
 			//Json형식으로 값을 담기 위한 HashMap 객체 선언
 			HashMap<String, String> param = new HashMap<String, String>();
 			//프론트로 보낼 json형식의 키와 값을 설정해준다 
-			param.put("no", String.valueOf(newList.get(i).getNo()));
+			param.put("no", newList.get(i).getNo());
 			param.put("id", newList.get(i).getUser_id());
 			param.put("name", newList.get(i).getUser_name());
 			param.put("stDate", newList.get(i).getStart_date());

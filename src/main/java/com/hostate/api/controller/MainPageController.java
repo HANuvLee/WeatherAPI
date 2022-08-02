@@ -33,19 +33,19 @@ public class MainPageController {
 	//axgrid의 ajax 호출 시 매핑 컨트롤러
 	@ResponseBody
 	@RequestMapping(value = "/main/selectSearchList.do", method = RequestMethod.GET)
-	public HashMap<String, Object> selectSearchTb(HttpServletRequest res, Tb_weather_search_scope_info tbWeatherInfo) throws Exception { 
+	public HashMap<String, Object> selectSearchTb(HttpServletRequest res, Tb_weather_search_scope_info tbWeatherInfo, String sortBy) throws Exception { 
 		System.out.println("조회서비스를 호출하셨습니다.");
-		
+		System.out.println("sortBy 나옵니까? ==> " + sortBy);
 		HashMap<String, Object> result = new HashMap<String,Object>(); 
 		
-		//최초 접속 시 pagno는 0이므로 1을 대입
-		if(tbWeatherInfo.getPageNo() == 0) {
-			tbWeatherInfo.setPageNo(1);
-			
-		}
-		if(tbWeatherInfo.getListCount() == 0) {
-			tbWeatherInfo.setListCount(10);
-		}
+		 //최초 접속 시 pagno는 0이므로 1을 대입 
+		 if(tbWeatherInfo.getPageNo() == 0) {
+			 tbWeatherInfo.setPageNo(1);
+		  }//최초 접속 시 listcount는 0이므로 1을 대입 
+		 if(tbWeatherInfo.getListCount() == 0) { 
+			 tbWeatherInfo.setListCount(10);
+		 }
+		 
 		
 		//날씨조회이력 select 서비스 호츨
 		result = logservice.getSearchInfo(tbWeatherInfo); 

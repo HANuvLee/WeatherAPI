@@ -30,6 +30,7 @@ public class SHA512 {
 		byte[] bytes = new byte[16];
 		random.nextBytes(bytes);
 		String salt = new String(Base64.encode(bytes));
+
 		return salt;
 	}
 	

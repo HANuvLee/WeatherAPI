@@ -12,7 +12,7 @@ public class Tb_weather_search_scope_info {
 	private String update_date;
 	private String update_user_name;
 	
-	//페이징 처리
+	//페이징 처리 시 사용
 	private int pageNo = 0; //페이지 번호
     private int listCount = 0; //한페이지당 출력할 데이터갯수
     private int numrow; //프론트에 보여질 번호
