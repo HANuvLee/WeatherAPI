@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hostate.api.service.LogService;
-
+import com.hostate.api.vo.Tb_User_InfoVO;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
 @Controller
@@ -61,5 +61,16 @@ public class MainPageController {
 		return result; 
 	}
 	
+	//메인 jsp 페이지 이동
+	@ResponseBody
+	@RequestMapping(value = "/main/selectUsers.do", method = RequestMethod.GET)
+	public List selectUsers(HttpServletRequest res) throws Exception {
+		System.out.println("/main/selectUsers.do");
+		
+		List<Tb_User_InfoVO> usersList = logservice.getUsersList(); 
+		
+		return usersList;
+	}
+
 	
 }

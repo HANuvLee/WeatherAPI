@@ -7,7 +7,7 @@
 <html>
 <head>
 <!-- jQuery에서 제공하는 3.5.1 버전의 jQuery CDN 호스트 -->
-<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-3.6.0.min.js"></script>
 <title></title>
 </head>
 <script src="/resources/js/jquery-1.10.2.js"></script>

@@ -25,6 +25,7 @@ import com.hostate.api.commonutil.ApiJsonFormat;
 import com.hostate.api.commonutil.DatesBetweenTwoDates;
 import com.hostate.api.commonutil.JsonParsing;
 import com.hostate.api.dao.LogDao;
+import com.hostate.api.vo.Tb_User_InfoVO;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
 
 @Service
@@ -429,6 +430,19 @@ public class LogServiceImpl implements LogService {
 		return result;
 	}
 	
+	@Override
+	public List<Tb_User_InfoVO> getUsersList() throws Exception {
+		System.out.println("getUsersList serviceImpl start");
+		
+		List<Tb_User_InfoVO> usersList = logdao.getUsersList();
+		for(int i = 0; i<usersList.size(); i++) {
+			System.out.println("getUsersList serviceImpl ==> " + usersList.get(i).getUser_name());
+		}
+		
+		return usersList;
+	}
+
+	
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {
 		boolean isPost = false;
 		
@@ -508,7 +522,5 @@ public class LogServiceImpl implements LogService {
 		}
 		return resultMap;
 	}
-
-
 
 }

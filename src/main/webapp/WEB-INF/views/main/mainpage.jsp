@@ -3,16 +3,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
 <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/axisj/axisj/master/ui/arongi/AXJ.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 <link rel="stylesheet" href="/resources/css/mainpage.css" >
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/1.12.3/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/axisj/axisj/master/dist/AXJ.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 
 <title>list</title>
 </head>
@@ -79,42 +79,108 @@
 		</c:if>
 		<h1 style="text-align: center;">AXGrid</h1>
 		<div id="AXPage">
-			<div id="AXPageBody">
+			<div id="AXPageBody">	
 				<div id="AXdemoPageContent" style="padding: 3%;">
-					<div id="AXGridTarget">
-					</div>
-					<div id="AXGridTarget2"></div>
+					<div class="ax-wrap AXdemoPageContent">
+		            <label class="AXInputLabel">
+		                <span>사용자 목록</span>
+		                <select name="" class="AXSelect" id="AXSelect1" tabindex="7"></select>
+		                <button type="button" class="AXButton" onclick="alert($('#AXSelect1').val())">valueCheck</button>
+		            </label>
+	            </div>
+				<div id="AXGridTarget"></div>
+				<div id="AXGridTarget2"></div>
 				</div>	
 			</div>
 		</div>
 	</div>
 </body>
 <script type="text/javascript" charset="utf-8">
+var pageID = "AXSelect";
+var fnObj2 = {
 
+	pageStart: function(){
+        $("#AXSelect1").bindSelect({
+        	maxHeight: 100,
+        	onChange: function(){
+        		trace(this);
+        	},
+            onLoad: function(){
+                trace(this);
+            }
+        });
+
+        // bindSelect option 
+        $(".classSelect").bindSelect();
+        
+	},
+    unbindSelect: function () {
+        $("#AXSelect1").unbindSelect();
+    },
+    bindSelect: function () {
+        $("#AXSelect1").bindSelect({
+        	onChange: function(){
+        		//toast.push(Object.toJSON(this));
+        	}
+        });
+       
+    },
+    bindSelectSetValue: function(a, b){
+    	$("#"+a).bindSelectSetValue(b);
+    },
+    bindSelectDisabled : function(a, b){
+    	$("#"+a).bindSelectDisabled(b);
+    }
+};
+	
 	var myGrid = new AXGrid(); // 그리드 변수를 초기화 합니다.
 	var fnObj = {
-	    pageStart: function(){ 	
+	    pageStart: function(){
+	    	
 	        myGrid.setConfig({
 	            targetID : "AXGridTarget", //grid div ID
 	            colHeadAlign: "center", // 헤드의 기본 정렬 값
 	            colGroup : [
-	            	{key:"users", width:"*", align:"center",
-	            		editor:{
-		            		type:"select",
-		            		options:[
-			            		/* {optionValue:"1", optionText:"첫번째"},
-			            		{optionValue:"2", optionText:"두번째"} */
-	            				]
-	            			}
-	            		},
-	                {key:"no", label:"번호", width:"50", align:"center"},
+	                {key:"no", label:"번호", width:"*", align:"center"},
 	                {key:"id", label:"사용자아이디", width:"*", align:"center"},
 	                {key:"name", label:"이름", width:"*", align:"center"},
 	                {key:"stDate", label:"조회시작날짜", width:"*", align:"center"},
 	                {key:"edDate", label:"조회끝날짜", width:"*", align:"center"},
 	                {key:"crDate", label:"조회시간", width:"*", align:"center"}
 	            ],
-	                
+	            colHead: { // 예제) http://dev.axisj.com/samples/AXGrid/colhead.html
+	                rows: [ // 컬럼 헤더를 병합할 수 있습니다. 사용법은 colGroup과 동일하며 key 대신 colSeq를 사용할 수 있습니다.
+	                    [
+	                    	{colspan:1, label:"사용자"},
+	                    	{colspan:1, 
+	                    		formatter: "select",
+	                    		 editor: {
+	                                    type: "AXSelect",
+	                                    options: [
+	                                        {optionValue: "1", optionText: "서울"},
+	                                        {optionValue: "2", optionText: "대전"},
+	                                        {optionValue: "3", optionText: "대구"},
+	                                        {optionValue: "4", optionText: "부산"}
+	                                    ]
+	                                }
+	                    	
+	                    	},
+	                		{key:"name", rowspan:2},
+		      	            {key:"stDate", rowspan:2},
+	      	                {key:"edDate", rowspan:2},
+	      	                {key:"crDate", rowspan:2}
+				        ],
+	                	[	
+	                		{key:"no"},
+	                		{key:"id"}
+	                	]
+				      
+	              
+	                ],
+	                onclick: function(){
+	                	
+	                } // {Function} -- 그리드의 컬럼 헤드를 클릭시 발생하는 이벤트 입니다. 아래 onclick 함수를 참고하세요.
+	            },
 	            body : {
 	            	onclick: function(){
 	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
@@ -151,6 +217,7 @@
 			setCalendar();//달력 범위 설정
 			firstvilageweather(); //페이지 최초 접속 시 API 요청함수
 		 	fnObj.pageStart();
+		 	fnObj2.pageStart();//목록
 			
 			function setCalendar() {
 				const toDay = getToday(); //yyyy-mm-dd형식
@@ -215,7 +282,6 @@
 							contentType : 'application/json',
 							dataType : 'json',
 							success : function(data, status, xhr) {
-	
 								console.log("firsthvilageweather success ==>");
 								console.log(data);
 								main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출	
@@ -243,7 +309,7 @@
 						console.log(data);
 						main(data);
 						console.log("searchShortweather success ==>");
-						setTimeout(fnObj.pageStart, 1);
+						fnObj.pageStart();
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -269,7 +335,7 @@
 						console.log(data);
 						console.log("searchMidweather success ==>");
 						main(data);
-						setTimeout(fnObj.pageStart, 1);
+						fnObj.pageStart();
 						
 	
 					},
@@ -295,7 +361,7 @@
 						console.log(data);
 						console.log("searchAllweather success ==>");
 						main(data);
-						setTimeout(fnObj.pageStart, 1);
+						fnObj.pageStart();
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -307,6 +373,8 @@
 			/***************************************메인 페이지 생성 함수*******************************************/
 			function main(data) {
 				console.log("main function Start.");
+				//selectBox에 날씨조회이력이있는 사용자 추가
+				selectUsers();
 	
 				if (data.length != 0) { //최초 접속 시 api 데이터가 성공적으로 전달될 때
 					console.log("main function success ==>");
@@ -346,6 +414,29 @@
 					console.log("main function fail");
 					console.log(data);
 				}
+			}
+			
+			//날씨조회이력이 존재한느 사용자들을 selectbox option에 set.
+			function selectUsers(){
+				$.ajax({
+					type : 'get',
+					url : '/main/selectUsers.do',
+					success : function(data, status, xhr){
+						
+						$('#AXSelect1').empty();
+						
+						for(let i=0; i<data.length; i++){
+							
+							var option = $("<option value ="+data[i].user_name+" >"+data[i].user_name+"</option>");                
+							$('#AXSelect1').append(option);
+							
+						}				
+					},
+					error : function(e, status, xhr, data) {
+						console.log("error ==>");
+						console.log(e);
+					}
+				});
 			}
 	
 			/***************************************타이머 생성 함수*******************************************/
