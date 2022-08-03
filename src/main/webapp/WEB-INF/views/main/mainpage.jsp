@@ -82,12 +82,17 @@
 			<div id="AXPageBody">	
 				<div id="AXdemoPageContent" style="padding: 3%;">
 					<div class="ax-wrap AXdemoPageContent">
-		            <label class="AXInputLabel">
-		                <span>사용자 목록</span>
-		                <select name="" class="AXSelect" id="AXSelect1" tabindex="7"></select>
-		                <button type="button" class="AXButton" onclick="alert($('#AXSelect1').val())">valueCheck</button>
-		            </label>
-	            </div>
+			            <label class="AXInputLabel">사용자 목록</label>
+			            <select name="UsersList" class="AXSelect" id="AXSelect1" tabindex="7"></select> 
+			             &nbsp;
+			            <label class="AXInputLabel">시작날짜</label>
+			            <input type="date" name="start_date" id="axStartDate" class="AXInput W100 AXdate"/>
+			             &nbsp;
+			            <label class="AXInputLabel">끝날짜</label>
+			            <input type="date" name="end_date" id="axEdDate" class="AXInput W100 AXdate"/>
+			            &nbsp;&nbsp;
+			            <span type="button" class="AXButton" onclick="alert($('#AXSelect1').val())">valueCheck</span>
+	            	</div>
 				<div id="AXGridTarget"></div>
 				<div id="AXGridTarget2"></div>
 				</div>	
@@ -96,43 +101,6 @@
 	</div>
 </body>
 <script type="text/javascript" charset="utf-8">
-var pageID = "AXSelect";
-var fnObj2 = {
-
-	pageStart: function(){
-        $("#AXSelect1").bindSelect({
-        	maxHeight: 100,
-        	onChange: function(){
-        		trace(this);
-        	},
-            onLoad: function(){
-                trace(this);
-            }
-        });
-
-        // bindSelect option 
-        $(".classSelect").bindSelect();
-        
-	},
-    unbindSelect: function () {
-        $("#AXSelect1").unbindSelect();
-    },
-    bindSelect: function () {
-        $("#AXSelect1").bindSelect({
-        	onChange: function(){
-        		//toast.push(Object.toJSON(this));
-        	}
-        });
-       
-    },
-    bindSelectSetValue: function(a, b){
-    	$("#"+a).bindSelectSetValue(b);
-    },
-    bindSelectDisabled : function(a, b){
-    	$("#"+a).bindSelectDisabled(b);
-    }
-};
-	
 	var myGrid = new AXGrid(); // 그리드 변수를 초기화 합니다.
 	var fnObj = {
 	    pageStart: function(){
@@ -217,7 +185,6 @@ var fnObj2 = {
 			setCalendar();//달력 범위 설정
 			firstvilageweather(); //페이지 최초 접속 시 API 요청함수
 		 	fnObj.pageStart();
-		 	fnObj2.pageStart();//목록
 			
 			function setCalendar() {
 				const toDay = getToday(); //yyyy-mm-dd형식
