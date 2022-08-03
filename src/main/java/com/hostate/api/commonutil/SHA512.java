@@ -41,6 +41,7 @@ public class SHA512 {
 		md.update(loginData.getUser_pw().getBytes()); //해쉬값 업데이트
 		
 		String hex = String.format("%064x", new BigInteger(1, md.digest()));
+		
 		return hex;
 	}
 	

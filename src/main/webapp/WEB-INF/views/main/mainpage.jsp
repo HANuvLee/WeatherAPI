@@ -13,6 +13,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+
 <title>list</title>
 </head>
 <body>
@@ -76,31 +77,43 @@
 				</div>
 			</div>
 		</c:if>
-		<h1 style="text-align: center;">AXGrid RWD</h1>
-		<div id="AXPageBody">
-			<div id="AXdemoPageContent" style="padding: 3%;">
-				<div id="AXGridTarget"></div>	
-			</div>	
+		<h1 style="text-align: center;">AXGrid</h1>
+		<div id="AXPage">
+			<div id="AXPageBody">
+				<div id="AXdemoPageContent" style="padding: 3%;">
+					<div id="AXGridTarget">
+					</div>
+					<div id="AXGridTarget2"></div>
+				</div>	
+			</div>
 		</div>
 	</div>
 </body>
 <script type="text/javascript" charset="utf-8">
-	var myGridHo = new AXGrid(); // 그리드 변수를 초기화 합니다.
-	var fnObjHo = {
-	    pageStart: function(){
-	        myGridHo.setConfig({
+
+	var myGrid = new AXGrid(); // 그리드 변수를 초기화 합니다.
+	var fnObj = {
+	    pageStart: function(){ 	
+	        myGrid.setConfig({
 	            targetID : "AXGridTarget", //grid div ID
 	            colHeadAlign: "center", // 헤드의 기본 정렬 값
-	            /* remoteSort  : true, */           // {Boolean} [false] -- 서버에서 정렬을 처리(서버에서 별도 처리 필요)합니다. 헤더 클릭시 'sortBy=cost desc' 형식의 정렬 정보가 ajax 요청에 포함됩니다.
 	            colGroup : [
+	            	{key:"users", width:"*", align:"center",
+	            		editor:{
+		            		type:"select",
+		            		options:[
+			            		/* {optionValue:"1", optionText:"첫번째"},
+			            		{optionValue:"2", optionText:"두번째"} */
+	            				]
+	            			}
+	            		},
 	                {key:"no", label:"번호", width:"50", align:"center"},
-	                {key:"chk", width:"50", align:"center", formatter:"checkbox"},
 	                {key:"id", label:"사용자아이디", width:"*", align:"center"},
 	                {key:"name", label:"이름", width:"*", align:"center"},
 	                {key:"stDate", label:"조회시작날짜", width:"*", align:"center"},
 	                {key:"edDate", label:"조회끝날짜", width:"*", align:"center"},
 	                {key:"crDate", label:"조회시간", width:"*", align:"center"}
-	                ],
+	            ],
 	                
 	            body : {
 	            	onclick: function(){
@@ -112,16 +125,11 @@
 	            	paging:true,
 	            	pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
 	                status:{formatter: null}
-	            },
-	            editor: {
-		            AXBind:{
-	                    type  : "selector", // {String} -- form.type == "text"인 경우 "number"|"money"|"selector"|"slider"|"twinSlider"|"date"|"twinDate"|"dateTime"|"switch"를 사용할 수 있습니다. form.type == "select"인 경우 "select"를 사용할 수 있습니다.
-	                    config: {} // {Object} -- API(http://jdoc.axisj.com/jQueryExtends.html)에서 bind + type으로 검색하세요.
-		            }	            	
 	            }
+	         
 	        });
-	     
-	        myGridHo.setList({
+	 
+	        myGrid.setList({
 	        	method : "get",
 	        	dataType: "json",
 	        	contentType: 'application/json; charset=utf-8',
@@ -134,6 +142,7 @@
 	            }
 	        });
 	    }    
+	
 	};
 
 	
@@ -141,9 +150,8 @@
 			startTime(); //메인 페이지 타이머 생성
 			setCalendar();//달력 범위 설정
 			firstvilageweather(); //페이지 최초 접속 시 API 요청함수
-		 	setTimeout(fnObjHo.pageStart, 1);
-		
-	
+		 	fnObj.pageStart();
+			
 			function setCalendar() {
 				const toDay = getToday(); //yyyy-mm-dd형식
 				//date형식의 변수 선언
@@ -235,7 +243,7 @@
 						console.log(data);
 						main(data);
 						console.log("searchShortweather success ==>");
-						setTimeout(fnObjHo.pageStart, 1);
+						setTimeout(fnObj.pageStart, 1);
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -261,7 +269,7 @@
 						console.log(data);
 						console.log("searchMidweather success ==>");
 						main(data);
-						setTimeout(fnObjHo.pageStart, 1);
+						setTimeout(fnObj.pageStart, 1);
 						
 	
 					},
@@ -287,7 +295,7 @@
 						console.log(data);
 						console.log("searchAllweather success ==>");
 						main(data);
-						setTimeout(fnObjHo.pageStart, 1);
+						setTimeout(fnObj.pageStart, 1);
 	
 					},
 					error : function(e, status, xhr, data) {

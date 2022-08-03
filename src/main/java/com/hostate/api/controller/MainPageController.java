@@ -1,6 +1,8 @@
 package com.hostate.api.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,11 +47,10 @@ public class MainPageController {
 		 if(tbWeatherInfo.getListCount() == 0) { 
 			 tbWeatherInfo.setListCount(10);
 		 }
-		 
 		
 		//날씨조회이력 select 서비스 호츨
 		result = logservice.getSearchInfo(tbWeatherInfo); 
-	
+		
 		/* 2022-08-01 사내 개인노트북 인코딩 문제로 인한 JsonObject타입을 리턴하지 않고 HashMap으로 리턴타입을변경
 		 * 문제 해결을 위해서는 Json객체로 변환 시 인코딩 설정이 필요하다. => Json변환 시 인코딩 설정 확인해볼것
 		 * list.put("result","ok"); */
