@@ -441,8 +441,27 @@ public class LogServiceImpl implements LogService {
 		
 		return usersList;
 	}
+	
+	@Override
+	public List<Tb_weather_search_scope_info> getselectAXUser(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
+		// TODO Auto-generated method stub
+		
+		//요청받은 사용자 이름을 변수에 대입
+		String userName = tbWeatherInfo.getUser_name();
+		
+		String getUserId = logdao.getUserId(userName);
+	    
+		//요청 파라미터 객체에 아이디 set
+	    tbWeatherInfo.setUser_id(getUserId);
+	    
+	    //객체 피라미터에는 사용자 아이디, 조회시작날짜, 끝날짜를 가지고 있다
+	    List<Tb_weather_search_scope_info> getselectAXUser = logdao.getselectAXUser(tbWeatherInfo);
+	    
+	    return getselectAXUser;
+	}
 
 	
+
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {
 		boolean isPost = false;
 		
@@ -522,5 +541,6 @@ public class LogServiceImpl implements LogService {
 		}
 		return resultMap;
 	}
+
 
 }

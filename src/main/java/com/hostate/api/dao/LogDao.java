@@ -15,4 +15,8 @@ public interface LogDao {
 
 	List<Tb_User_InfoVO> getUsersList() throws Exception;
 
+	String getUserId(String userName) throws Exception;
+
+	List<Tb_weather_search_scope_info> getselectAXUser(Tb_weather_search_scope_info tbWeatherInfo) throws Exception;
+
 }

@@ -81,19 +81,20 @@
 		<div id="AXPage">
 			<div id="AXPageBody">	
 				<div id="AXdemoPageContent" style="padding: 3%;">
-					<div class="ax-wrap AXdemoPageContent">
+					<div class="ax-wrap AXdemoPageContent" style="text-align: center;">
 			            <label class="AXInputLabel">사용자 목록</label>
 			            <select name="UsersList" class="AXSelect" id="AXSelect1" tabindex="7"></select> 
 			             &nbsp;
 			            <label class="AXInputLabel">시작날짜</label>
-			            <input type="date" name="start_date" id="axStartDate" class="AXInput W100 AXdate"/>
+			            <input type="date" name="start_date" id="axStDate" class="AXInput W100 AXdate"/>
 			             &nbsp;
 			            <label class="AXInputLabel">끝날짜</label>
 			            <input type="date" name="end_date" id="axEdDate" class="AXInput W100 AXdate"/>
 			            &nbsp;&nbsp;
-			            <span type="button" class="AXButton" onclick="alert($('#AXSelect1').val())">valueCheck</span>
+			            <span type="button" class="AXButton" id="AXSearchBtn">조회</span>
 	            	</div>
 				<div id="AXGridTarget"></div>
+				<h1 id="AXSelectUserTitle" style="text-align: center;"></h1>
 				<div id="AXGridTarget2"></div>
 				</div>	
 			</div>
@@ -104,7 +105,6 @@
 	var myGrid = new AXGrid(); // 그리드 변수를 초기화 합니다.
 	var fnObj = {
 	    pageStart: function(){
-	    	
 	        myGrid.setConfig({
 	            targetID : "AXGridTarget", //grid div ID
 	            colHeadAlign: "center", // 헤드의 기본 정렬 값
@@ -114,9 +114,9 @@
 	                {key:"name", label:"이름", width:"*", align:"center"},
 	                {key:"stDate", label:"조회시작날짜", width:"*", align:"center"},
 	                {key:"edDate", label:"조회끝날짜", width:"*", align:"center"},
-	                {key:"crDate", label:"조회시간", width:"*", align:"center"}
+	                {key:"crDate", label:"조회날짜", width:"*", align:"center"}
 	            ],
-	            colHead: { // 예제) http://dev.axisj.com/samples/AXGrid/colhead.html
+	    /*         colHead: { // 예제) http://dev.axisj.com/samples/AXGrid/colhead.html
 	                rows: [ // 컬럼 헤더를 병합할 수 있습니다. 사용법은 colGroup과 동일하며 key 대신 colSeq를 사용할 수 있습니다.
 	                    [
 	                    	{colspan:1, label:"사용자"},
@@ -148,7 +148,7 @@
 	                onclick: function(){
 	                	
 	                } // {Function} -- 그리드의 컬럼 헤드를 클릭시 발생하는 이벤트 입니다. 아래 onclick 함수를 참고하세요.
-	            },
+	            }, */
 	            body : {
 	            	onclick: function(){
 	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
@@ -178,13 +178,41 @@
 	    }    
 	
 	};
-
 	
+	var myGrid2 = new AXGrid(); // 그리드 변수를 초기화 합니다.
+	var fnObj2 = {
+	    pageStart: function(data){
+	        myGrid2.setConfig({
+	            targetID : "AXGridTarget2", //grid div ID
+	            colHeadAlign: "center", // 헤드의 기본 정렬 값
+	            colGroup : [
+	                {key:"user_name", label:"이름", width:"*", align:"center"},
+	                {key:"create_date", label:"조회날짜", width:"*", align:"center"},
+	                {key:"totalCnt", label:"조회수", width:"*", align:"center"}
+	            ],
+	            body : {
+	            	onclick: function(){
+	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
+	                },
+	          
+	            },
+	            page:{
+	            	paging:false,
+	            /* 	pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
+	                status:{formatter: null} */
+	            }
+	         
+	        });
+	        myGrid2.setList(data);
+	        
+	    }    
+	
+	};
+
 	$("document").ready(function() {
 			startTime(); //메인 페이지 타이머 생성
 			setCalendar();//달력 범위 설정
 			firstvilageweather(); //페이지 최초 접속 시 API 요청함수
-		 	fnObj.pageStart();
 			
 			function setCalendar() {
 				const toDay = getToday(); //yyyy-mm-dd형식
@@ -240,6 +268,40 @@
 					} 
 				});
 			};
+			
+			//날씨조회 사용자 목록 조회버튼
+			$("#AXSearchBtn").click(function(){
+				const toDay = getToday(); //yyyy-mm-dd형식
+			
+				let user = $("#AXSelect1").val();
+				let axStartDate = $("#axStDate").val();
+				let axEndDate = $("#axEdDate").val();
+				let start_date = parseInt($("#axStDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
+				let end_date = parseInt($("#axEdDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
+							
+				//조회날짜 검증 및 날씨조회 사용자 정보 그리드 호출
+				if (start_date > end_date) {
+					alert("시작날짜와 끝날짜를 확인하세요.");
+					return false;
+				}else{
+					if(user == null || user == ""){
+						alert("사용자를 선택해주세요");
+						return false;
+					}
+					if(axStartDate == null || axStartDate == ""){
+						alert("시작날짜를 선택해주세요");
+						return false;
+					}
+					if(axEndDate == null || axEndDate == ""){
+						alert("끝날짜를 선택해주세요");
+						return false;
+					}else{
+						alert("selectAXsearchBtn!!");
+						selectAxUser(axStartDate, axEndDate, user) //axgrid2 호출	
+					}
+				} 
+				
+			});
 	
 			/**************************************최초 접속 시 호출되는 함수******************************************/
 			function firstvilageweather() {
@@ -251,7 +313,8 @@
 							success : function(data, status, xhr) {
 								console.log("firsthvilageweather success ==>");
 								console.log(data);
-								main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출	
+								main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출
+								fnObj.pageStart();
 							},
 							error : function(e, status, xhr, data) {
 								console.log("error ==>");
@@ -277,6 +340,11 @@
 						main(data);
 						console.log("searchShortweather success ==>");
 						fnObj.pageStart();
+						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
+						if($(".AXGrid").length > 1){
+							//날씨조회 사용자 정보 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
+						}
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -298,12 +366,15 @@
 					contentType : 'application/json',
 					dataType : 'json',
 					success : function(data, status, xhr) {
-	
 						console.log(data);
 						console.log("searchMidweather success ==>");
 						main(data);
 						fnObj.pageStart();
-						
+						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
+						if($(".AXGrid").length > 1){
+							//날씨조회 사용자 정보 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
+						}
 	
 					},
 					error : function(e, status, xhr, data) {
@@ -324,12 +395,17 @@
 					contentType : 'application/json',
 					dataType : 'json',
 					success : function(data, status, xhr) {
-	
+						console.log("테이블길이 ->" + $(".AXGrid").length);
 						console.log(data);
 						console.log("searchAllweather success ==>");
 						main(data);
 						fnObj.pageStart();
-	
+						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
+						if($(".AXGrid").length > 1){
+							//날씨조회 사용자 정보 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
+						}
+
 					},
 					error : function(e, status, xhr, data) {
 						console.log("error ==>");
@@ -339,14 +415,13 @@
 			}
 			/***************************************메인 페이지 생성 함수*******************************************/
 			function main(data) {
+				alert("select값" + $("#AXSelect1").val());
+				selectUsers($("#AXSelect1").val());
+				//select태그의 값을 넣을 함수 호출
 				console.log("main function Start.");
 				//selectBox에 날씨조회이력이있는 사용자 추가
-				selectUsers();
-	
 				if (data.length != 0) { //최초 접속 시 api 데이터가 성공적으로 전달될 때
 					console.log("main function success ==>");
-					console.log(data);
-					console.log("data length ==> " + data.list.length);
 	
 					let formHtml = "";
 	
@@ -383,8 +458,9 @@
 				}
 			}
 			
-			//날씨조회이력이 존재한느 사용자들을 selectbox option에 set.
-			function selectUsers(){
+			//날씨조회 사용자들의 정보를 selectbox option에 set.
+			function selectUsers(userName){
+				let selectedUser = userName;
 				$.ajax({
 					type : 'get',
 					url : '/main/selectUsers.do',
@@ -393,17 +469,51 @@
 						$('#AXSelect1').empty();
 						
 						for(let i=0; i<data.length; i++){
-							
-							var option = $("<option value ="+data[i].user_name+" >"+data[i].user_name+"</option>");                
-							$('#AXSelect1').append(option);
-							
-						}				
+								var option = $("<option value ="+data[i].user_name+" >"+data[i].user_name+"</option>");                
+								$('#AXSelect1').append(option);
+						}
+						var option = $("<option value = all>전체</option>");
+						$('#AXSelect1').append(option);
+						
+						//최초접속 시 select는 사용자가 직접 설정하여 조회 
+						if(selectedUser == null){
+							$("#AXSelect1").val(data[1].user_name).attr("selected", "selected");
+						//검색 이후에는 선택한 사용자 이름을 유지
+						}else{
+							$("#AXSelect1").val(selectedUser).attr("selected", "selected");						
+						}
+
 					},
 					error : function(e, status, xhr, data) {
 						console.log("error ==>");
 						console.log(e);
 					}
 				});
+			}
+			
+			//날씨조회 사용자정보 이력과 날짜별 조회 횟수 또는 날씨조회 전체 사용자정보 이력과 날짜별 조회 횟수를 구하여 AXgrid2를 호출한다
+			function selectAxUser(st, ed, user) {
+				$.ajax({
+					type : 'post',
+					url : '/main/selectAXUser.do',
+					data : {
+						"start_date" : st,
+						"end_date" : ed,
+						"user_name" : user
+					},
+					success : function(data, status, xhr){
+						console.log(data);
+						$("#AXSelectUserTitle").html("날씨조회 사용자 정보");
+						fnObj2.pageStart(data);
+						
+					},
+					error : function(e, status, xhr, data) {
+						console.log("error ==>");
+						console.log(e);
+					}
+				});
+				
+				
 			}
 	
 			/***************************************타이머 생성 함수*******************************************/

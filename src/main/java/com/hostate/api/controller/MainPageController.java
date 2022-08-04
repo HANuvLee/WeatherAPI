@@ -71,6 +71,17 @@ public class MainPageController {
 		
 		return usersList;
 	}
+	
+	//날씨조회 사용자 정보 AXGrid2 요청 컨트롤러
+	@ResponseBody
+	@RequestMapping(value = "/main/selectAXUser.do", method = RequestMethod.POST)
+	public List selectAXUser(HttpServletRequest res, Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
+		
+		List<Tb_weather_search_scope_info> selectAXUser = logservice.getselectAXUser(tbWeatherInfo);
+		
+		
+		return selectAXUser;
+	}
 
 	
 }

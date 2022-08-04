@@ -24,6 +24,8 @@ public interface LogService {
 
 	List<Tb_User_InfoVO> getUsersList() throws Exception;
 
+	List<Tb_weather_search_scope_info> getselectAXUser(Tb_weather_search_scope_info tbWeatherInfo) throws Exception;
+
 	
 
 }
