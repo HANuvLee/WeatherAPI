@@ -71,7 +71,7 @@
 			(
 				SELECT user_name, DATE_FORMAT(create_date, "%Y-%m-%d") as crDate, count(*) as totalCnt
 				FROM tb_weather_search_scope_info
-				<if test="user_id != null or !user_id.equals('')">
+				<if test="user_id != null and !user_id.equals('')">
 					where user_id = #{user_id}				
 				</if>
 				GROUP BY DATE_FORMAT(create_date, "%Y-%m-%d") , user_name
