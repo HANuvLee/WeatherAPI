@@ -10,9 +10,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionContext;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -55,13 +60,13 @@ public class LogServiceImpl implements LogService {
 	StringBuilder baseTime = new StringBuilder(formatter.format(today));
 	// 중기조회 시 발표시각 세팅
 	StringBuilder tmfc = new StringBuilder(baseTime);
-	//(단기+중기예보조회 시 사용), 오늘날짜로부터 2틀후인 날을 가져온다.
 
 	@Override
 	public int searchWeatherLogInsert(Tb_weather_search_scope_info searchInfo) throws Exception {
 
 		return logdao.searchWeatherLogInsert(searchInfo);
 	}
+	
 	
 	//최초접속 API
 	@Override
@@ -102,6 +107,7 @@ public class LogServiceImpl implements LogService {
 
 	
 	//단기예보조회 서비스
+	
 	@Override
 	public JSONObject getShortWeather(Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("getShortWeather serviceimple start");
@@ -447,12 +453,12 @@ public class LogServiceImpl implements LogService {
 		// TODO Auto-generated method stub
 		
 		//요청받은 사용자 이름을 변수에 대입
-		String userName = tbWeatherInfo.getUser_name();
+		String userID = tbWeatherInfo.getUser_id();
 		
-		String getUserId = logdao.getUserId(userName);
+		/* String getUserId = logdao.getUserId(userID); */
 	    
 		//요청 파라미터 객체에 아이디 set
-	    tbWeatherInfo.setUser_id(getUserId);
+	    tbWeatherInfo.setUser_id(userID);
 	    
 	    //객체 피라미터에는 사용자 아이디, 조회시작날짜, 끝날짜를 가지고 있다
 	    List<Tb_weather_search_scope_info> getselectAXUser = logdao.getselectAXUser(tbWeatherInfo);
@@ -541,6 +547,5 @@ public class LogServiceImpl implements LogService {
 		}
 		return resultMap;
 	}
-
 
 }

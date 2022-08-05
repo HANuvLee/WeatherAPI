@@ -57,7 +57,7 @@ public class ApiController {
 	//중기예보
 	@RequestMapping(value = "/api/searchmidtaweather.do", method = RequestMethod.GET)
 	public String searchMidWeahter(HttpSession session, Tb_weather_search_scope_info searchInfo) throws Exception {
-		System.out.println("중기기온예보");
+		System.out.println("중기예보");
 		
 		//조회이력시 DB에 이력저장을 위한 사용자아이디와 이름을 set
 		searchInfo.setUser_id((String) session.getAttribute("user_id"));

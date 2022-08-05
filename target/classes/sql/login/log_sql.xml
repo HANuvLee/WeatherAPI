@@ -51,7 +51,7 @@
 	</select>
 	
 	<select id="getUsersList" resultType="com.hostate.api.vo.Tb_User_InfoVO">
-		select distinct user_name 
+		select distinct user_name, user_id 
 		from tb_weather_search_scope_info
 		ORDER BY user_name asc
 	</select>
@@ -59,7 +59,7 @@
 	<select id="getUserId" parameterType="String" resultType="String">
 		select distinct user_id
 		from tb_weather_search_scope_info
-		where user_name = #{user_name}
+		where user_id = #{user_id}
 	</select>
 	
 	<select id="getselectAXUser" parameterType="com.hostate.api.vo.Tb_User_InfoVO" resultType="com.hostate.api.vo.Tb_weather_search_scope_info">
@@ -69,13 +69,13 @@
 			totalCnt
 		from
 			(
-				SELECT user_name, DATE_FORMAT(create_date, "%Y-%m-%d") as crDate, count(*) as totalCnt
-				FROM tb_weather_search_scope_info
+				select user_name, DATE_FORMAT(create_date, "%Y-%m-%d") as crDate, count(*) as totalCnt
+				from tb_weather_search_scope_info
 				<if test="user_id != null and !user_id.equals('')">
 					where user_id = #{user_id}				
 				</if>
-				GROUP BY DATE_FORMAT(create_date, "%Y-%m-%d") , user_name
-				ORDER BY user_name, create_date
+				group by DATE_FORMAT(create_date, "%Y-%m-%d") , user_name
+				order by user_name, create_date
 		    ) t
 		where crDate between (#{start_date}) AND (#{end_date});
 	</select>

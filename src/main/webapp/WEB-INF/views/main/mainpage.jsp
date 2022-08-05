@@ -55,13 +55,13 @@
 				<label for="start">End date:</label>
 				<input type="date" id="enddate" name="end_date">
 				&nbsp;&nbsp;&nbsp;&nbsp;
-				<button id="searcWeatherBtn" class="btn btn-light">search</button>
+				<button type="button" id="searcWeatherBtn" class="btn btn-light">search</button>
 				<div class="guidetext">
 					*금일부터 최대 <b>7</b>일까지 조회가능합니다.
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${sessionScope.user_id == null}">
+	<%-- 	<c:if test="${sessionScope.user_id == null}">
 			<div class="search">
 				<form class="serarchform">
 					<label for="start">Start date:</label> 
@@ -76,25 +76,22 @@
 					*금일부터 최대 <b>7</b>일까지 조회가능합니다.
 				</div>
 			</div>
-		</c:if>
+		</c:if> --%>
 		<h1 style="text-align: center;">AXGrid</h1>
 		<div id="AXPage">
 			<div id="AXPageBody">	
 				<div id="AXdemoPageContent" style="padding: 3%;">
-					<div class="ax-wrap AXdemoPageContent" style="text-align: center;">
+				<div id="AXGridTarget"></div>
+				<h1 id="AXSelectUserTitle" style="text-align: center;"></h1>
+				<div class="ax-wrap AXdemoPageContent" style="text-align: center;">
 			            <label class="AXInputLabel">사용자 목록</label>
 			            <select name="UsersList" class="AXSelect" id="AXSelect1" tabindex="7"></select> 
 			             &nbsp;
 			            <label class="AXInputLabel">시작날짜</label>
 			            <input type="date" name="start_date" id="axStDate" class="AXInput W100 AXdate"/>
 			             &nbsp;
-			            <label class="AXInputLabel">끝날짜</label>
-			            <input type="date" name="end_date" id="axEdDate" class="AXInput W100 AXdate"/>
-			            &nbsp;&nbsp;
 			            <span type="button" class="AXButton" id="AXSearchBtn">조회</span>
 	            	</div>
-				<div id="AXGridTarget"></div>
-				<h1 id="AXSelectUserTitle" style="text-align: center;"></h1>
 				<div id="AXGridTarget2"></div>
 				</div>	
 			</div>
@@ -116,7 +113,7 @@
 	                {key:"edDate", label:"조회끝날짜", width:"*", align:"center"},
 	                {key:"crDate", label:"조회날짜", width:"*", align:"center"}
 	            ],
-	    /*         colHead: { // 예제) http://dev.axisj.com/samples/AXGrid/colhead.html
+	           /*  colHead: { // 예제) http://dev.axisj.com/samples/AXGrid/colhead.html
 	                rows: [ // 컬럼 헤더를 병합할 수 있습니다. 사용법은 colGroup과 동일하며 key 대신 colSeq를 사용할 수 있습니다.
 	                    [
 	                    	{colspan:1, label:"사용자"},
@@ -142,8 +139,6 @@
 	                		{key:"no"},
 	                		{key:"id"}
 	                	]
-				      
-	              
 	                ],
 	                onclick: function(){
 	                	
@@ -168,12 +163,6 @@
 	        	dataType: "json",
 	        	contentType: 'application/json; charset=utf-8',
 	        	ajaxUrl : "/main/selectSearchList.do",
-	        	onLoad:function(data){
-	    		
-	        	},
-	            onError:function(){
-	            	
-	            }
 	        });
 	    }    
 	
@@ -208,6 +197,35 @@
 	    }    
 	
 	};
+	
+	/* var myGrid3 = new AXGrid(); // 그리드 변수를 초기화 합니다.
+	var fnObj3 = {
+	    pageStart: function(){
+	        myGrid3.setConfig({
+	            targetID : "AXGridTarget3", //grid div ID
+	            colHeadAlign: "center", // 헤드의 기본 정렬 값
+	            colGroup : [
+	                {key:"user_name", label:"이름", width:"*", align:"center"},
+	                {key:"create_date", label:"시작날짜", width:"*", align:"center"},
+	                {key:"totalCnt", label:"끝날짜", width:"*", align:"center"}
+	            ],
+	            body : {
+	            	onclick: function(){
+	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
+	                },	          
+	            },
+	            page:{
+	            	paging:false,
+	                pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
+	                status:{formatter: null}
+	            }
+	         
+	        });
+	        myGrid3.setList();
+	        
+	    }    
+	};
+	*/
 
 	$("document").ready(function() {
 			startTime(); //메인 페이지 타이머 생성
@@ -228,46 +246,50 @@
 				$("#enddate").attr("value", toDay);
 				$("#enddate").attr("min", toDay);
 				$("#enddate").attr("max", after7.toISOString().substr(0,10));
-	
-				//조회버튼 클릭 시
-				$("#searcWeatherBtn").click(function() {
-					let start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
-					let end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
-					//사용자가 선택한 일수 차이를 구하기 위해 선언 
-					let stDate = $("#startdate").val();
-					let edDate = $("#enddate").val();
-					//각각 split함수로 데이터를 나누어 배열에 담는다.
-					const stDateArr = stDate.split("-");
-					const edDateArr = edDate.split("-");
-					const toDayArr = toDay.split("-");
-					//Date객체 생성
-					stDate = new Date(stDateArr[0], stDateArr[1], stDateArr[2]);
-					edDate = new Date(edDateArr[0], edDateArr[1], edDateArr[2]);
-					nowDate = new Date(toDayArr[0], toDayArr[1], toDayArr[2]); 
-					
-					//getime()으로 날짜시간을 숫자로 반환 두 날의 차이를 구한다.
-					const stDiff = stDate.getTime()-nowDate.getTime();
-					const edDiff = edDate.getTime()-nowDate.getTime();
-					//일수 차이
-					const stDiffDay = stDiff/(1000*60*60*24);
-					const edDiffDay = edDiff/(1000*60*60*24);
-	
-				 	//조회날짜 기준에 따른 api호출 리스트
-					if (start_date > end_date) {
-						alert("시작날짜와 끝날짜를 확인하세요.");
-						return false;
-					} else if (stDiffDay < 3 && edDiffDay < 3) {
-						alert("short!");
-						searchShortweather(String(start_date), String(end_date)); //단기예보만 호출
-					} else if (stDiffDay > 2 && edDiffDay > 2) {
-						alert("middle!");
-						searchMidweather(String(start_date),String(end_date)); //중기예보만호출
-					} else {
-						alert("All!");
-						searchAllweather(String(start_date),String(end_date)) //모두호출
-					} 
-				});
 			};
+			
+			//조회버튼 클릭 시
+			$("#searcWeatherBtn").click(function() {
+				const toDay = getToday(); //yyyy-mm-dd형식
+				let start_date = parseInt($("#startdate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
+				let end_date = parseInt($("#enddate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
+				
+				//사용자가 선택한 시작날짜와 끝날짜
+				let stDate = $("#startdate").val();
+				let edDate = $("#enddate").val();
+				
+				//선택한 시작날짜 끝날짜 split함수로 데이터를 나누어 배열에 담는다.
+				const stDateArr = stDate.split("-");
+				const edDateArr = edDate.split("-");
+				const toDayArr = toDay.split("-");
+				
+				//Date객체 생성
+				stDate = new Date(stDateArr[0], stDateArr[1], stDateArr[2]);
+				edDate = new Date(edDateArr[0], edDateArr[1], edDateArr[2]);
+				nowDate = new Date(toDayArr[0], toDayArr[1], toDayArr[2]); 
+				
+				//getime()으로 날짜시간을 숫자로 반환 두 날의 차이를 구한다.(조건문에서 조건값에 활용할 변수를 설정하기 위해 사용)
+				const stDiff = stDate.getTime()-nowDate.getTime();
+				const edDiff = edDate.getTime()-nowDate.getTime();
+				//일수 차이 (조건문에서 조건값에 활용)
+				const stDiffDay = stDiff/(1000*60*60*24);
+				const edDiffDay = edDiff/(1000*60*60*24);
+
+			 	//조회날짜 기준에 따른 api호출 리스트
+				if (start_date > end_date) {
+					alert("시작날짜와 끝날짜를 확인하세요.");
+					return false;
+				} else if (stDiffDay < 3 && edDiffDay < 3) {
+					alert("short!");
+					searchShortweather(String(start_date), String(end_date)); //단기예보만 호출
+				} else if (stDiffDay > 2 && edDiffDay > 2) {
+					alert("middle!");
+					searchMidweather(String(start_date),String(end_date)); //중기예보만호출
+				} else {
+					alert("All!");
+					searchAllweather(String(start_date),String(end_date)) //모두호출
+				} 
+			});
 			
 			//날씨조회 사용자 목록 조회버튼
 			$("#AXSearchBtn").click(function(){
@@ -314,7 +336,7 @@
 								console.log("firsthvilageweather success ==>");
 								console.log(data);
 								main(data); //응답받은 데이터를 인자값으로 메인 페이지 생성 함수 호출
-								fnObj.pageStart();
+								fnObj.pageStart(); //그리드 1 호출
 							},
 							error : function(e, status, xhr, data) {
 								console.log("error ==>");
@@ -339,10 +361,10 @@
 						console.log(data);
 						main(data);
 						console.log("searchShortweather success ==>");
-						fnObj.pageStart();
+						fnObj.pageStart(); //그리드 1 호출
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
-							//날씨조회 사용자 정보 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
 							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
 						}
 	
@@ -369,10 +391,10 @@
 						console.log(data);
 						console.log("searchMidweather success ==>");
 						main(data);
-						fnObj.pageStart();
+						fnObj.pageStart(); //그리드 1 호출
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
-							//날씨조회 사용자 정보 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
 							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
 						}
 	
@@ -395,14 +417,13 @@
 					contentType : 'application/json',
 					dataType : 'json',
 					success : function(data, status, xhr) {
-						console.log("테이블길이 ->" + $(".AXGrid").length);
 						console.log(data);
 						console.log("searchAllweather success ==>");
 						main(data);
-						fnObj.pageStart();
+						fnObj.pageStart(); //그리드 1 호출
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
-							//날씨조회 사용자 정보 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
 							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
 						}
 
@@ -415,7 +436,7 @@
 			}
 			/***************************************메인 페이지 생성 함수*******************************************/
 			function main(data) {
-				alert("select값" + $("#AXSelect1").val());
+				//선택했던 selectBox 옵션값을 넘겨준다. 
 				selectUsers($("#AXSelect1").val());
 				//select태그의 값을 넣을 함수 호출
 				console.log("main function Start.");
@@ -468,17 +489,19 @@
 						
 						$('#AXSelect1').empty();
 						
+						var option1 = $("<option value = 'all' selected>전체</option>");
+						$('#AXSelect1').append(option1);
+						
+						
 						for(let i=0; i<data.length; i++){
-								var option = $("<option value ="+data[i].user_name+" >"+data[i].user_name+"</option>");                
+								var option = $("<option value ="+data[i].user_id+" >"+data[i].user_name+"</option>");                
 								$('#AXSelect1').append(option);
 						}
-						var option = $("<option value = all>전체</option>");
-						$('#AXSelect1').append(option);
 						
-						//최초접속 시 select는 사용자가 직접 설정하여 조회 
+						//최초접속 시 select의 옵션값은 이름 오름차순 첫번째 사용자이름 
 						if(selectedUser == null){
-							$("#AXSelect1").val(data[1].user_name).attr("selected", "selected");
-						//검색 이후에는 선택한 사용자 이름을 유지
+							/* $("#AXSelect1").val("all").attr("selected", "selected"); */
+						//검색 이후에는 선택한 사용자 이름 유지
 						}else{
 							$("#AXSelect1").val(selectedUser).attr("selected", "selected");						
 						}
@@ -499,7 +522,7 @@
 					data : {
 						"start_date" : st,
 						"end_date" : ed,
-						"user_name" : user
+						"user_id" : user
 					},
 					success : function(data, status, xhr){
 						console.log(data);
