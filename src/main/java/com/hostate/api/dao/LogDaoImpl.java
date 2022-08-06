@@ -40,12 +40,6 @@ public class LogDaoImpl implements LogDao {
 	}
 
 	@Override
-	public String getUserId(String userName) throws Exception {
-		// TODO Auto-generated method stub
-		return sqlSession.selectOne("getUserId" , userName);
-	}
-
-	@Override
 	public List<Tb_weather_search_scope_info> getselectAXUser(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
 		// TODO Auto-generated method stub
 	

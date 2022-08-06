@@ -51,17 +51,12 @@
 	</select>
 	
 	<select id="getUsersList" resultType="com.hostate.api.vo.Tb_User_InfoVO">
-		select distinct user_name, user_id 
-		from tb_weather_search_scope_info
-		ORDER BY user_name asc
+		select distinct a.user_id, a.user_name, b.no
+		from tb_weather_search_scope_info a, tb_user_info b
+		where a.user_id = b.user_id
+		ORDER BY a.user_name asc
 	</select>
-	
-	<select id="getUserId" parameterType="String" resultType="String">
-		select distinct user_id
-		from tb_weather_search_scope_info
-		where user_id = #{user_id}
-	</select>
-	
+		
 	<select id="getselectAXUser" parameterType="com.hostate.api.vo.Tb_User_InfoVO" resultType="com.hostate.api.vo.Tb_weather_search_scope_info">
 		select 
 			user_name as user_name, 

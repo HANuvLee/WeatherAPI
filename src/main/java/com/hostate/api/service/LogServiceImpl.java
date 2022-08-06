@@ -443,6 +443,7 @@ public class LogServiceImpl implements LogService {
 		List<Tb_User_InfoVO> usersList = logdao.getUsersList();
 		for(int i = 0; i<usersList.size(); i++) {
 			System.out.println("getUsersList serviceImpl ==> " + usersList.get(i).getUser_name());
+			System.out.println("getUsersList serviceImpl ==> " + usersList.get(i).getNo());
 		}
 		
 		return usersList;
@@ -454,8 +455,6 @@ public class LogServiceImpl implements LogService {
 		
 		//요청받은 사용자 이름을 변수에 대입
 		String userID = tbWeatherInfo.getUser_id();
-		
-		/* String getUserId = logdao.getUserId(userID); */
 	    
 		//요청 파라미터 객체에 아이디 set
 	    tbWeatherInfo.setUser_id(userID);

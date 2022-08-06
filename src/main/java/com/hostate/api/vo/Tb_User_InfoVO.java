@@ -11,6 +11,9 @@ public class Tb_User_InfoVO {
 	  private String update_user_name;
 	  private String user_yn;
 	  
+	  //select태그 조회용
+	  private String no;
+	  
 	public String getUser_id() {
 		return user_id;
 	}
@@ -64,6 +67,12 @@ public class Tb_User_InfoVO {
 	}
 	public void setUser_yn(String user_yn) {
 		this.user_yn = user_yn;
+	}
+	public String getNo() {
+		return no;
+	}
+	public void setNo(String no) {
+		this.no = no;
 	};
 	  
 }

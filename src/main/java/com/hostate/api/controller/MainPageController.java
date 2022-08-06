@@ -61,9 +61,9 @@ public class MainPageController {
 		return result; 
 	}
 	
-	//메인 jsp 페이지 이동
+	//select태그 option값을 구하는 userList조회 컨트롤러
 	@ResponseBody
-	@RequestMapping(value = "/main/selectUsers.do", method = RequestMethod.GET)
+	@RequestMapping(value = "/main/selectBoxUsers.do", method = RequestMethod.GET)
 	public List selectUsers(HttpServletRequest res) throws Exception {
 		System.out.println("/main/selectUsers.do");
 		
@@ -72,7 +72,7 @@ public class MainPageController {
 		return usersList;
 	}
 	
-	//날씨조회 사용자 정보 AXGrid2 요청 컨트롤러
+	//날씨조회 사용자 정보 조회, 스크립트 selectAXUser요청 컨트롤러
 	@ResponseBody
 	@RequestMapping(value = "/main/selectAXUser.do", method = RequestMethod.POST)
 	public List selectAXUser(HttpServletRequest res, Tb_weather_search_scope_info tbWeatherInfo) throws Exception {

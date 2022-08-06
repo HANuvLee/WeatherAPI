@@ -87,7 +87,7 @@
 			            <label class="AXInputLabel">사용자 목록</label>
 			            <select name="UsersList" class="AXSelect" id="AXSelect1" tabindex="7"></select> 
 			             &nbsp;
-			            <label class="AXInputLabel">시작날짜</label>
+			            <label class="AXInputLabel">검색날짜</label>
 			            <input type="date" name="start_date" id="axStDate" class="AXInput W100 AXdate"/>
 			             &nbsp;
 			            <span type="button" class="AXButton" id="AXSearchBtn">조회</span>
@@ -297,32 +297,23 @@
 			
 				let user = $("#AXSelect1").val();
 				let axStartDate = $("#axStDate").val();
-				let axEndDate = $("#axEdDate").val();
+		/* 		let axEndDate = $("#axEdDate").val(); */
 				let start_date = parseInt($("#axStDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
-				let end_date = parseInt($("#axEdDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
+			/* 	let end_date = parseInt($("#axEdDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다 */
 							
 				//조회날짜 검증 및 날씨조회 사용자 정보 그리드 호출
-				if (start_date > end_date) {
-					alert("시작날짜와 끝날짜를 확인하세요.");
+			
+				if(user == null || user == ""){
+					alert("사용자를 선택해주세요");
+					return false;
+				}
+				if(axStartDate == null || axStartDate == ""){
+					alert("날짜를 선택해주세요");
 					return false;
 				}else{
-					if(user == null || user == ""){
-						alert("사용자를 선택해주세요");
-						return false;
-					}
-					if(axStartDate == null || axStartDate == ""){
-						alert("시작날짜를 선택해주세요");
-						return false;
-					}
-					if(axEndDate == null || axEndDate == ""){
-						alert("끝날짜를 선택해주세요");
-						return false;
-					}else{
-						alert("selectAXsearchBtn!!");
-						selectAxUser(axStartDate, axEndDate, user) //axgrid2 호출	
-					}
-				} 
-				
+					alert("selectAXsearchBtn!!");
+					selectAxUser(axStartDate, user) //axgrid2 ajax 호출	
+				}
 			});
 	
 			/**************************************최초 접속 시 호출되는 함수******************************************/
@@ -365,7 +356,7 @@
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
 							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
-							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
+							selectAxUser($("#axStDate").val(), $("#AXSelect1").val());
 						}
 	
 					},
@@ -395,7 +386,7 @@
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
 							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
-							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
+							selectAxUser($("#axStDate").val(), $("#AXSelect1").val());
 						}
 	
 					},
@@ -424,7 +415,7 @@
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
 							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
-							selectAxUser($("#axStDate").val(), $("#axEdDate").val(), $("#AXSelect1").val());
+							selectAxUser($("#axStDate").val(), $("#AXSelect1").val());
 						}
 
 					},
@@ -484,7 +475,7 @@
 				let selectedUser = userName;
 				$.ajax({
 					type : 'get',
-					url : '/main/selectUsers.do',
+					url : '/main/selectBoxUsers.do',
 					success : function(data, status, xhr){
 						
 						$('#AXSelect1').empty();
@@ -515,13 +506,12 @@
 			}
 			
 			//날씨조회 사용자정보 이력과 날짜별 조회 횟수 또는 날씨조회 전체 사용자정보 이력과 날짜별 조회 횟수를 구하여 AXgrid2를 호출한다
-			function selectAxUser(st, ed, user) {
+			function selectAxUser(st, user) {
 				$.ajax({
 					type : 'post',
 					url : '/main/selectAXUser.do',
 					data : {
 						"start_date" : st,
-						"end_date" : ed,
 						"user_id" : user
 					},
 					success : function(data, status, xhr){
