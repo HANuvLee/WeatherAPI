@@ -227,7 +227,7 @@
 	};
 	*/
 
-	$("document").ready(function() {
+	$("document").ready(function() { 
 			startTime(); //메인 페이지 타이머 생성
 			setCalendar();//달력 범위 설정
 			firstvilageweather(); //페이지 최초 접속 시 API 요청함수
@@ -293,16 +293,14 @@
 			
 			//날씨조회 사용자 목록 조회버튼
 			$("#AXSearchBtn").click(function(){
-				const toDay = getToday(); //yyyy-mm-dd형식
-			
+				//오늘날짜 , yyyy-mm-dd형식
+				const toDay = getToday();
+				
 				let user = $("#AXSelect1").val();
 				let axStartDate = $("#axStDate").val();
-		/* 		let axEndDate = $("#axEdDate").val(); */
-				let start_date = parseInt($("#axStDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다
-			/* 	let end_date = parseInt($("#axEdDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 인자갑으로 보내준다 */
+				let start_date = parseInt($("#axStDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 파라미터로 보내준다
 							
 				//조회날짜 검증 및 날씨조회 사용자 정보 그리드 호출
-			
 				if(user == null || user == ""){
 					alert("사용자를 선택해주세요");
 					return false;
@@ -427,7 +425,7 @@
 			}
 			/***************************************메인 페이지 생성 함수*******************************************/
 			function main(data) {
-				//선택했던 selectBox 옵션값을 넘겨준다. 
+				//선택했던 상대방ID 옵션값을 넘겨준다. 
 				selectUsers($("#AXSelect1").val());
 				//select태그의 값을 넣을 함수 호출
 				console.log("main function Start.");
@@ -471,8 +469,12 @@
 			}
 			
 			//날씨조회 사용자들의 정보를 selectbox option에 set.
-			function selectUsers(userName){
-				let selectedUser = userName;
+			function selectUsers(userId){
+				console.log("상대방이름 : " + userId);
+				let sessionId ='${sessionScope.user_id}';
+				let sessionName ='${sessionScope.user_name}';
+				//조회 시 선택된 이름
+				let selectedId = userId;
 				$.ajax({
 					type : 'get',
 					url : '/main/selectBoxUsers.do',
@@ -480,23 +482,27 @@
 						
 						$('#AXSelect1').empty();
 						
-						var option1 = $("<option value = 'all' selected>전체</option>");
-						$('#AXSelect1').append(option1);
+						//select태그 최상단에는 전체
+						let optionFirst = $("<option value = 'all'>전체</option>");
+						$('#AXSelect1').append(optionFirst);
 						
-						
+						//DB에서 조회된 사용자 명단을 select태그에 추가
 						for(let i=0; i<data.length; i++){
-								var option = $("<option value ="+data[i].user_id+" >"+data[i].user_name+"</option>");                
-								$('#AXSelect1').append(option);
+							let option = "";                
+				
+							option = $("<option value ="+data[i].user_id+">"+data[i].user_name+"</option>"); 
+							$('#AXSelect1').append(option);
+							
+							//조회를 한 상태가 아니라면
+							if(selectedId == null){
+								if(sessionId == data[i].user_id){
+									$("#AXSelect1").val(sessionId).attr("selected", "selected");
+								}
+							//조회를 한 상태라면	
+							}else{ 
+								$("#AXSelect1").val(selectedId).attr("selected", "selected");
+							}
 						}
-						
-						//최초접속 시 select의 옵션값은 이름 오름차순 첫번째 사용자이름 
-						if(selectedUser == null){
-							/* $("#AXSelect1").val("all").attr("selected", "selected"); */
-						//검색 이후에는 선택한 사용자 이름 유지
-						}else{
-							$("#AXSelect1").val(selectedUser).attr("selected", "selected");						
-						}
-
 					},
 					error : function(e, status, xhr, data) {
 						console.log("error ==>");

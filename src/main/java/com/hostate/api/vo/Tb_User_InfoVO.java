@@ -10,6 +10,7 @@ public class Tb_User_InfoVO {
 	  private String update_date;
 	  private String update_user_name;
 	  private String user_yn;
+	  private String user_sn;
 	  
 	  //select태그 조회용
 	  private String no;
@@ -73,6 +74,12 @@ public class Tb_User_InfoVO {
 	}
 	public void setNo(String no) {
 		this.no = no;
+	}
+	public String getUser_sn() {
+		return user_sn;
+	}
+	public void setUser_sn(String user_sn) {
+		this.user_sn = user_sn;
 	};
 	  
 }

@@ -37,7 +37,7 @@ public class MainPageController {
 	@RequestMapping(value = "/main/selectSearchList.do", method = RequestMethod.GET)
 	public HashMap<String, Object> selectSearchTb(HttpServletRequest res, Tb_weather_search_scope_info tbWeatherInfo, String sortBy) throws Exception { 
 		System.out.println("조회서비스를 호출하셨습니다.");
-		System.out.println("sortBy 나옵니까? ==> " + sortBy);
+
 		HashMap<String, Object> result = new HashMap<String,Object>(); 
 		
 		 //최초 접속 시 pagno는 0이므로 1을 대입 
@@ -76,7 +76,7 @@ public class MainPageController {
 	@ResponseBody
 	@RequestMapping(value = "/main/selectAXUser.do", method = RequestMethod.POST)
 	public List selectAXUser(HttpServletRequest res, Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
-		
+		System.out.println("controller chk date = > " + tbWeatherInfo.getStart_date());
 		List<Tb_weather_search_scope_info> selectAXUser = logservice.getselectAXUser(tbWeatherInfo);
 		
 		

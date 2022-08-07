@@ -440,19 +440,35 @@ public class LogServiceImpl implements LogService {
 	public List<Tb_User_InfoVO> getUsersList() throws Exception {
 		System.out.println("getUsersList serviceImpl start");
 		
+		//읽는 리스트
 		List<Tb_User_InfoVO> usersList = logdao.getUsersList();
+		//쓰는 리스트
+		List<Tb_User_InfoVO> resultList = new ArrayList<Tb_User_InfoVO>();
+		
 		for(int i = 0; i<usersList.size(); i++) {
-			System.out.println("getUsersList serviceImpl ==> " + usersList.get(i).getUser_name());
-			System.out.println("getUsersList serviceImpl ==> " + usersList.get(i).getNo());
+			Tb_User_InfoVO data = new Tb_User_InfoVO();		
+			
+			data.setUser_id(usersList.get(i).getUser_id());
+			//테이블 컬럼이 동명이인이라면
+			if(("1").equals(usersList.get(i).getUser_sn())) {
+				String userName = usersList.get(i).getUser_name();
+				String no = usersList.get(i).getNo();
+				
+				data.setUser_name(userName + no);
+			//동명이인이 아니라면
+			}else {
+				String userName = usersList.get(i).getUser_name();
+				data.setUser_name(userName);
+			}
+			resultList.add(data);	
 		}
 		
-		return usersList;
+		return resultList;
 	}
 	
 	@Override
 	public List<Tb_weather_search_scope_info> getselectAXUser(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
 		// TODO Auto-generated method stub
-		
 		//요청받은 사용자 이름을 변수에 대입
 		String userID = tbWeatherInfo.getUser_id();
 	    
