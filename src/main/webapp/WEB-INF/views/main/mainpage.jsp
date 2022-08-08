@@ -145,9 +145,10 @@
 	                } // {Function} -- 그리드의 컬럼 헤드를 클릭시 발생하는 이벤트 입니다. 아래 onclick 함수를 참고하세요.
 	            }, */
 	            body : {
+	            	
 	            	onclick: function(){
 	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
-	                },
+	                }
 	          
 	            },
 	            page:{
@@ -171,9 +172,11 @@
 	var myGrid2 = new AXGrid(); // 그리드 변수를 초기화 합니다.
 	var fnObj2 = {
 	    pageStart: function(data){
+	    	myGrid2.click()
 	        myGrid2.setConfig({
 	            targetID : "AXGridTarget2", //grid div ID
 	            colHeadAlign: "center", // 헤드의 기본 정렬 값
+	            mergeCells: [0],
 	            colGroup : [
 	                {key:"user_name", label:"이름", width:"*", align:"center"},
 	                {key:"create_date", label:"조회날짜", width:"*", align:"center"},
@@ -198,15 +201,15 @@
 									return this.item.allTotalCnt;
 								}, align: "center", width:"*"
 							}]
-	            			
 	            		]	
 	            	},
-	            	onclick: function(){
+	            	onclick : function(){
+	            		let selectName = $("#AXSelect1 option:checked").text();
+	            		console.log(selectName);
+	            		console.log("=>" + Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
 	            		toast.push(Object.toJSON({item:this.item}));
-	                },
-	          
+	                }
 	            },
-	    		
 	            page:{
 	            	paging:false,
 	            /* 	pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
