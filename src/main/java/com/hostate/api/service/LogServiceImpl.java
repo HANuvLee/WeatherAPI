@@ -9,15 +9,17 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import javax.xml.crypto.Data;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,6 +31,7 @@ import com.hostate.api.commonutil.ApiDateFormat;
 import com.hostate.api.commonutil.ApiJsonFormat;
 import com.hostate.api.commonutil.DatesBetweenTwoDates;
 import com.hostate.api.commonutil.JsonParsing;
+
 import com.hostate.api.dao.LogDao;
 import com.hostate.api.vo.Tb_User_InfoVO;
 import com.hostate.api.vo.Tb_weather_search_scope_info;
@@ -49,7 +52,7 @@ public class LogServiceImpl implements LogService {
 	
 	@Autowired
 	JsonParsing jsonParsing;
-	
+
 	//날짜 데이터변환
 	Date today = new Date(); // 메인페이지 접속 시간
 	Locale currentLocale = new Locale("KOREAN", "KOREA"); // 나라
@@ -107,7 +110,6 @@ public class LogServiceImpl implements LogService {
 
 	
 	//단기예보조회 서비스
-	
 	@Override
 	public JSONObject getShortWeather(Tb_weather_search_scope_info searchInfo) throws Exception {
 		System.out.println("getShortWeather serviceimple start");
@@ -436,6 +438,8 @@ public class LogServiceImpl implements LogService {
 		return result;
 	}
 	
+	
+	//메인페이지 select태그 option값 설정
 	@Override
 	public List<Tb_User_InfoVO> getUsersList() throws Exception {
 		System.out.println("getUsersList serviceImpl start");
@@ -447,10 +451,10 @@ public class LogServiceImpl implements LogService {
 		
 		for(int i = 0; i<usersList.size(); i++) {
 			Tb_User_InfoVO data = new Tb_User_InfoVO();		
-			
 			data.setUser_id(usersList.get(i).getUser_id());
 			//테이블 컬럼이 동명이인이라면
 			if(("1").equals(usersList.get(i).getUser_sn())) {
+
 				String userName = usersList.get(i).getUser_name();
 				String no = usersList.get(i).getNo();
 				
@@ -466,22 +470,73 @@ public class LogServiceImpl implements LogService {
 		return resultList;
 	}
 	
+	
+	//메인페이지 그리드2 응답데이터 설정
 	@Override
 	public List<Tb_weather_search_scope_info> getselectAXUser(Tb_weather_search_scope_info tbWeatherInfo) throws Exception {
 		// TODO Auto-generated method stub
-		//요청받은 사용자 이름을 변수에 대입
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		
+		int year =  Integer.parseInt(tbWeatherInfo.getEnd_date().substring(0,4));
+		int month = Integer.parseInt(tbWeatherInfo.getEnd_date().substring(6,7));
+		int day =  Integer.parseInt(tbWeatherInfo.getEnd_date().substring(9));
+		
+		//cal객체에 파라미터로 받은 날짜를 set
+		cal.set(year, month-1, day);	
+
+		int firstDate = cal.getMinimum(Calendar.DAY_OF_MONTH);
+		
+		//시작일을 cal객체에 set
+		cal.set(year, month-1, firstDate);
+		tbWeatherInfo.setStart_date(dateFormat.format(cal.getTime()));
+		
 		String userID = tbWeatherInfo.getUser_id();
-	    
-		//요청 파라미터 객체에 아이디 set
-	    tbWeatherInfo.setUser_id(userID);
-	    
+		
+		//전체 조회
+		if(userID.equals("all")) {
+			tbWeatherInfo.setUser_id("");
+		//요청 id 조회
+		}else {
+			//요청 파라미터 객체에 아이디 set
+			tbWeatherInfo.setUser_id(userID);
+		}
+		
 	    //객체 피라미터에는 사용자 아이디, 조회시작날짜, 끝날짜를 가지고 있다
-	    List<Tb_weather_search_scope_info> getselectAXUser = logdao.getselectAXUser(tbWeatherInfo);
-	    
-	    return getselectAXUser;
+	    List<Tb_weather_search_scope_info> getselectAXUser = logdao.getselectAXUser(tbWeatherInfo); 
+	    //응답 리스트
+	  	List<Tb_weather_search_scope_info> resultList = new ArrayList<Tb_weather_search_scope_info>();
+	
+		int lastIndex = getselectAXUser.size() - 1;
+		int allTotalCnt = 0;
+		
+		for(int i=0; i<getselectAXUser.size(); i++) {
+			Tb_weather_search_scope_info data = new Tb_weather_search_scope_info();	
+			
+	  		data.setCreate_date(getselectAXUser.get(i).getCreate_date());
+  			data.setTotalCnt(getselectAXUser.get(i).getTotalCnt());
+  	
+  			allTotalCnt += getselectAXUser.get(i).getTotalCnt();
+	  		
+	  		//테이블 컬럼이 동명이인이라면
+	  		if(("1").equals(getselectAXUser.get(i).getUser_sn())) {
+	  			String userName = getselectAXUser.get(i).getUser_name();
+  				String no = getselectAXUser.get(i).getNo();
+  				data.setUser_name(userName + no);
+	  		}//동명이인이 아니라면
+  			else {
+  				String userName = getselectAXUser.get(i).getUser_name();
+  				data.setUser_name(userName);
+  			}resultList.add(data);
+  			//리스트 마지막번째 요소라면
+  			if(i == lastIndex) {
+  				data.setName("총합계");
+  				data.setAllTotalCnt(String.valueOf(allTotalCnt));
+	  		}	  		
+		}
+		return resultList;
 	}
 
-	
 
 	public HashMap<String, Object> getDataFromJson(String url, String encoding, String type, String jsonStr) throws Exception {
 		boolean isPost = false;

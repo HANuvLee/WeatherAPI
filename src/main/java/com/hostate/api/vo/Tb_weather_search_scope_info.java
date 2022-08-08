@@ -20,7 +20,27 @@ public class Tb_weather_search_scope_info {
 	private int pageSize; //페이지 크기
 	private int totalCnt;
 	
+	//동명이인 구분
+	private String user_sn;
+	
+	//grid2 총계표시 
+	private String name;
+	private String allTotalCnt;
+	
+	
     
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getAllTotalCnt() {
+		return allTotalCnt;
+	}
+	public void setAllTotalCnt(String allTotalCnt) {
+		this.allTotalCnt = allTotalCnt;
+	}
 	public String getNo() {
 		return no;
 	}
@@ -110,5 +130,11 @@ public class Tb_weather_search_scope_info {
 	}
 	public void setTotalCnt(int totalCnt) {
 		this.totalCnt = totalCnt;
+	}
+	public String getUser_sn() {
+		return user_sn;
+	}
+	public void setUser_sn(String user_sn) {
+		this.user_sn = user_sn;
 	}
 }

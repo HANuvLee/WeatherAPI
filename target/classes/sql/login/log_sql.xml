@@ -58,14 +58,15 @@
 	</select>
 		
 	<select id="getselectAXUser" parameterType="com.hostate.api.vo.Tb_User_InfoVO" resultType="com.hostate.api.vo.Tb_weather_search_scope_info">
-		select user_name, DATE_FORMAT(create_date, "%Y-%m-%d") as create_date, count(*) as totalCnt
-		from tb_weather_search_scope_info
-		where create_date between (#{start_date}) AND (#{start_date})
+		select a.user_name,  DATE_FORMAT(a.create_date, "%Y-%m-%d") as create_date, count(a.user_name) as totalCnt, b.no, b.user_sn
+		from tb_weather_search_scope_info a, tb_user_info b
+		where a.user_id = b.user_id 
+		and DATE_FORMAT(a.create_date, "%Y-%m-%d") between (#{start_date}) AND (#{end_date})	
 		<if test="user_id != null and !user_id.equals('')">
-		 and user_id = #{user_id}
-		</if>	
-		group by DATE_FORMAT(create_date, "%Y-%m-%d") , user_name
-		order by user_name, create_date
+		and a.user_id = #{user_id}
+		</if>
+		group by DATE_FORMAT(a.create_date, "%Y-%m-%d"), b.user_id
+		order by a.user_name, a.create_date
 	</select>
 	
 </mapper>

@@ -88,7 +88,7 @@
 			            <select name="UsersList" class="AXSelect" id="AXSelect1" tabindex="7"></select> 
 			             &nbsp;
 			            <label class="AXInputLabel">검색날짜</label>
-			            <input type="date" name="start_date" id="axStDate" class="AXInput W100 AXdate"/>
+			            <input type="date" name="end_date" id="axEdDate" class="AXInput W100 AXdate"/>
 			             &nbsp;
 			            <span type="button" class="AXButton" id="AXSearchBtn">조회</span>
 	            	</div>
@@ -180,11 +180,33 @@
 	                {key:"totalCnt", label:"조회수", width:"*", align:"center"}
 	            ],
 	            body : {
+	            	marker : {
+	            		display: function () { 
+	            			return this.item.name ? true : false;
+	            			},
+	            		rows: [
+	            			[{
+								colSeq  : null, colspan: 2, formatter: function () {
+									//응답데이터 리스트 요소 중 합계를 문구표시값이 있다면
+									if(this.item.name != null || this.item.name != "");
+									return this.item.name;
+								}, align: "center", width:"*"
+							},{
+								colspan: 1, formatter: function () {
+									//응답데이터 리스트 요소 중 조회수 전체 합계값이 있다면
+									if(this.item.allTotalCnt != null || this.item.allTotalCnt != "");
+									return this.item.allTotalCnt;
+								}, align: "center", width:"*"
+							}]
+	            			
+	            		]	
+	            	},
 	            	onclick: function(){
-	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
+	            		toast.push(Object.toJSON({item:this.item}));
 	                },
 	          
 	            },
+	    		
 	            page:{
 	            	paging:false,
 	            /* 	pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
@@ -197,35 +219,6 @@
 	    }    
 	
 	};
-	
-	/* var myGrid3 = new AXGrid(); // 그리드 변수를 초기화 합니다.
-	var fnObj3 = {
-	    pageStart: function(){
-	        myGrid3.setConfig({
-	            targetID : "AXGridTarget3", //grid div ID
-	            colHeadAlign: "center", // 헤드의 기본 정렬 값
-	            colGroup : [
-	                {key:"user_name", label:"이름", width:"*", align:"center"},
-	                {key:"create_date", label:"시작날짜", width:"*", align:"center"},
-	                {key:"totalCnt", label:"끝날짜", width:"*", align:"center"}
-	            ],
-	            body : {
-	            	onclick: function(){
-	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
-	                },	          
-	            },
-	            page:{
-	            	paging:false,
-	                pageSize: 10,  // {Number} -- 한 페이지장 표시할 데이터 수를 설정합니다.
-	                status:{formatter: null}
-	            }
-	         
-	        });
-	        myGrid3.setList();
-	        
-	    }    
-	};
-	*/
 
 	$("document").ready(function() { 
 			startTime(); //메인 페이지 타이머 생성
@@ -297,20 +290,20 @@
 				const toDay = getToday();
 				
 				let user = $("#AXSelect1").val();
-				let axStartDate = $("#axStDate").val();
-				let start_date = parseInt($("#axStDate").val().replace(/\-/g, "")); //"-"문자를 모두제거하는 정규식, 서버 호출 시 파라미터로 보내준다
+				let axEdDate = $("#axEdDate").val();
+			
 							
 				//조회날짜 검증 및 날씨조회 사용자 정보 그리드 호출
 				if(user == null || user == ""){
 					alert("사용자를 선택해주세요");
 					return false;
 				}
-				if(axStartDate == null || axStartDate == ""){
+				if(axEdDate == null || axEdDate == ""){
 					alert("날짜를 선택해주세요");
 					return false;
 				}else{
 					alert("selectAXsearchBtn!!");
-					selectAxUser(axStartDate, user) //axgrid2 ajax 호출	
+					selectAxUser(axEdDate, user) //axgrid2 ajax 호출	
 				}
 			});
 	
@@ -354,7 +347,7 @@
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
 							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
-							selectAxUser($("#axStDate").val(), $("#AXSelect1").val());
+							selectAxUser($("#axEdDate").val(), $("#AXSelect1").val());
 						}
 	
 					},
@@ -384,7 +377,7 @@
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
 							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
-							selectAxUser($("#axStDate").val(), $("#AXSelect1").val());
+							selectAxUser($("#axEdDate").val(), $("#AXSelect1").val());
 						}
 	
 					},
@@ -413,7 +406,7 @@
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
 							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
-							selectAxUser($("#axStDate").val(), $("#AXSelect1").val());
+							selectAxUser($("#axEdDate").val(), $("#AXSelect1").val());
 						}
 
 					},
@@ -512,12 +505,12 @@
 			}
 			
 			//날씨조회 사용자정보 이력과 날짜별 조회 횟수 또는 날씨조회 전체 사용자정보 이력과 날짜별 조회 횟수를 구하여 AXgrid2를 호출한다
-			function selectAxUser(st, user) {
+			function selectAxUser(ed, user) {
 				$.ajax({
 					type : 'post',
 					url : '/main/selectAXUser.do',
 					data : {
-						"start_date" : st,
+						"end_date" : ed,
 						"user_id" : user
 					},
 					success : function(data, status, xhr){
