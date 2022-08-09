@@ -13,7 +13,11 @@
 <script type="text/javascript" src="https://cdn.rawgit.com/axisj/axisj/master/dist/AXJ.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+<style type="text/css">
+	.redcolor{
+		color: red !important;
+	}
+</style>
 <title>list</title>
 </head>
 <body>
@@ -88,7 +92,7 @@
 			            <select name="UsersList" class="AXSelect" id="AXSelect1" tabindex="7"></select> 
 			             &nbsp;
 			            <label class="AXInputLabel">검색날짜</label>
-			            <input type="date" name="end_date" id="axEdDate" class="AXInput W100 AXdate"/>
+			            <input type="month" name="end_date" id="axEdDate" class="AXInput W100 AXdate"/>
 			             &nbsp;
 			            <span type="button" class="AXButton" id="AXSearchBtn">조회</span>
 	            	</div>
@@ -145,7 +149,6 @@
 	                } // {Function} -- 그리드의 컬럼 헤드를 클릭시 발생하는 이벤트 입니다. 아래 onclick 함수를 참고하세요.
 	            }, */
 	            body : {
-	            	
 	            	onclick: function(){
 	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
 	                }
@@ -172,18 +175,35 @@
 	var myGrid2 = new AXGrid(); // 그리드 변수를 초기화 합니다.
 	var fnObj2 = {
 	    pageStart: function(data){
-	    	myGrid2.click()
-	        myGrid2.setConfig({
+	    	myGrid2.setConfig({
 	            targetID : "AXGridTarget2", //grid div ID
 	            colHeadAlign: "center", // 헤드의 기본 정렬 값
 	            mergeCells: [0],
 	            colGroup : [
 	                {key:"user_name", label:"이름", width:"*", align:"center"},
 	                {key:"create_date", label:"조회날짜", width:"*", align:"center"},
-	                {key:"totalCnt", label:"조회수", width:"*", align:"center"}
+	                {key:"totalCnt", label:"조회수", width:"*", align:"center", formatter: function(){
+	                	if(this.item.totalCnt >= 5){
+	                		
+	                		return "<p style= \"color: red\">"+this.item.totalCnt+"</p>";
+	                	}
+	                	else{
+	                	
+	                		return "<p>"+this.item.totalCnt+"</p>";
+	                	}
+	                	
+	                 }
+	                
+	               	}
+	                	/* addClass: function () {
+                       
+                                return "redcolor";
+                           
+                        }} */
 	            ],
 	            body : {
-	            	marker : {
+	            	//조회수 총합계
+	            	marker : { //그리드의 목록의 중간에 소계같은 원하는 데이터를 표현gridBodyClick()
 	            		display: function () { 
 	            			return this.item.name ? true : false;
 	            			},
@@ -196,18 +216,41 @@
 								}, align: "center", width:"*"
 							},{
 								colspan: 1, formatter: function () {
-									//응답데이터 리스트 요소 중 조회수 전체 합계값이 있다면
+									/* //응답데이터 리스트 요소 중 조회수 전체 합계값이 있다면
 									if(this.item.allTotalCnt != null || this.item.allTotalCnt != "");
-									return this.item.allTotalCnt;
+									return this.item.allTotalCnt; */
+									console.log("totalcnT!!! => " , this.item);
+									console.log("getList ==>" , myGrid2.getList());
+									
+									var arr = myGrid2.getList();
+									
+									console.log("arrGrid2 =>" , arr[0]);
+									console.log("arrGrid2 =>" , myGrid2.getList()[0]);
+									
+									let sum = 0;
+									for(let i =0; i < arr.length; i++){
+										console.log("arrTot => ", arr[i].totalCnt);
+										sum += arr[i].totalCnt;
+									}
+									return sum;
+									
 								}, align: "center", width:"*"
 							}]
 	            		]	
 	            	},
 	            	onclick : function(){
-	            		let selectName = $("#AXSelect1 option:checked").text();
-	            		console.log(selectName);
-	            		console.log("=>" + Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));
-	            		toast.push(Object.toJSON({item:this.item}));
+	            		//오늘날짜 변수
+	            		var today = new Date().toISOString().substring(0,10);
+	            		
+	            		for(let i=0; i<data.length; i++){
+	            			//오늘날짜와 같은 날인 data인덱스를 가져온다.
+	            			if(data[i].create_date == today){
+	            				this.index = i;
+	            				this.item = data[i];
+	                     		toast.push(Object.toJSON({index:this.index, item:this.item}));
+	            			}
+	            		}
+	
 	                }
 	            },
 	            page:{
@@ -217,6 +260,8 @@
 	            }
 	         
 	        });
+	   		
+	        myGrid2.click(data);
 	        myGrid2.setList(data);
 	        
 	    }    
@@ -346,10 +391,11 @@
 						console.log(data);
 						main(data);
 						console.log("searchShortweather success ==>");
-						fnObj.pageStart(); //그리드 1 호출
+						//그리드 1 호출
+						fnObj.pageStart(); 
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
-							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하여 반영
 							selectAxUser($("#axEdDate").val(), $("#AXSelect1").val());
 						}
 	
@@ -379,7 +425,7 @@
 						fnObj.pageStart(); //그리드 1 호출
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
-							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하여 반영
 							selectAxUser($("#axEdDate").val(), $("#AXSelect1").val());
 						}
 	
@@ -408,7 +454,7 @@
 						fnObj.pageStart(); //그리드 1 호출
 						//그리드가 1개 이상 열려 있을 때(날씨조회 사용자 정보 그리드가 열려있을때)
 						if($(".AXGrid").length > 1){
-							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하기 위함
+							//날씨조회 사용자정보를 조회 후 날씨검색을 조회했을 시 AXGrid2의 조회수 값을 업데이트 하여 반영
 							selectAxUser($("#axEdDate").val(), $("#AXSelect1").val());
 						}
 

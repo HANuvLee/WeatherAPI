@@ -61,7 +61,7 @@
 		select a.user_name,  DATE_FORMAT(a.create_date, "%Y-%m-%d") as create_date, count(a.user_name) as totalCnt, b.no, b.user_sn
 		from tb_weather_search_scope_info a, tb_user_info b
 		where a.user_id = b.user_id 
-		and DATE_FORMAT(a.create_date, "%Y-%m-%d") between (#{start_date}) AND (#{end_date})	
+		and DATE_FORMAT(a.create_date, "%Y-%m") = #{end_date}
 		<if test="user_id != null and !user_id.equals('')">
 		and a.user_id = #{user_id}
 		</if>
