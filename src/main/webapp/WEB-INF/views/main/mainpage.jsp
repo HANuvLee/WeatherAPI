@@ -184,22 +184,17 @@
 	                {key:"create_date", label:"조회날짜", width:"*", align:"center"},
 	                {key:"totalCnt", label:"조회수", width:"*", align:"center", formatter: function(){
 	                	if(this.item.totalCnt >= 5){
-	                		
+	     
 	                		return "<p style= \"color: red\">"+this.item.totalCnt+"</p>";
-	                	}
-	                	else{
-	                	
+	                		
+	                		}else{
+	  
 	                		return "<p>"+this.item.totalCnt+"</p>";
+	                		
+	                		}
 	                	}
-	                	
-	                 }
-	                
 	               	}
-	                	/* addClass: function () {
-                       
-                                return "redcolor";
-                           
-                        }} */
+	            
 	            ],
 	            body : {
 	            	//조회수 총합계
