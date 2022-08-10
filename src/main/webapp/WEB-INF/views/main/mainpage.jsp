@@ -17,6 +17,9 @@
 	.redcolor{
 		color: red !important;
 	}
+	.yellowcolor{
+		color : #EBFF82 !important;
+	}
 </style>
 <title>list</title>
 </head>
@@ -237,6 +240,8 @@
 	            		//오늘날짜 변수
 	            		var today = new Date().toISOString().substring(0,10);
 	            		
+	            		console.log("arrGrid2 =>" , myGrid2.getList());
+	            		
 	            		for(let i=0; i<data.length; i++){
 	            			//오늘날짜와 같은 날인 data인덱스를 가져온다.
 	            			if(data[i].create_date == today){
@@ -245,8 +250,11 @@
 	                     		toast.push(Object.toJSON({index:this.index, item:this.item}));
 	            			}
 	            		}
-	
-	                }
+	                },
+	            	
+	            	addClass : function() {
+	            		
+	            	}
 	            },
 	            page:{
 	            	paging:false,
