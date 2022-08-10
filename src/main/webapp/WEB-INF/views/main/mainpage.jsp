@@ -120,37 +120,7 @@
 	                {key:"edDate", label:"조회끝날짜", width:"*", align:"center"},
 	                {key:"crDate", label:"조회날짜", width:"*", align:"center"}
 	            ],
-	           /*  colHead: { // 예제) http://dev.axisj.com/samples/AXGrid/colhead.html
-	                rows: [ // 컬럼 헤더를 병합할 수 있습니다. 사용법은 colGroup과 동일하며 key 대신 colSeq를 사용할 수 있습니다.
-	                    [
-	                    	{colspan:1, label:"사용자"},
-	                    	{colspan:1, 
-	                    		formatter: "select",
-	                    		 editor: {
-	                                    type: "AXSelect",
-	                                    options: [
-	                                        {optionValue: "1", optionText: "서울"},
-	                                        {optionValue: "2", optionText: "대전"},
-	                                        {optionValue: "3", optionText: "대구"},
-	                                        {optionValue: "4", optionText: "부산"}
-	                                    ]
-	                                }
-	                    	
-	                    	},
-	                		{key:"name", rowspan:2},
-		      	            {key:"stDate", rowspan:2},
-	      	                {key:"edDate", rowspan:2},
-	      	                {key:"crDate", rowspan:2}
-				        ],
-	                	[	
-	                		{key:"no"},
-	                		{key:"id"}
-	                	]
-	                ],
-	                onclick: function(){
-	                	
-	                } // {Function} -- 그리드의 컬럼 헤드를 클릭시 발생하는 이벤트 입니다. 아래 onclick 함수를 참고하세요.
-	            }, */
+	     
 	            body : {
 	            	onclick: function(){
 	            		toast.push(Object.toJSON({index:this.index, r:this.r, c:this.c, item:this.item}));

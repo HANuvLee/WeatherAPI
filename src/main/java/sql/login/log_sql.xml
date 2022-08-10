@@ -68,5 +68,4 @@
 		group by DATE_FORMAT(a.create_date, "%Y-%m-%d"), a.user_id
 		order by a.user_name, b.no;
 	</select>
-	
 </mapper>
